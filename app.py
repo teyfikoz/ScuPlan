@@ -7,6 +7,7 @@ import math
 import logging
 import json
 import os
+import technical_diving
 
 # Loglama yapılandırması
 logging.basicConfig(level=logging.DEBUG)
@@ -80,6 +81,12 @@ def index():
 def checklist():
     """Kontrol listesi sayfası"""
     return render_template('checklist.html')
+
+# Teknik dalış sayfası rotası
+@app.route('/technical')
+def technical():
+    """Teknik dalış hesaplamaları sayfası"""
+    return render_template('technical.html')
 
 # Paylaşım sayfası rotası
 @app.route('/share')
@@ -528,6 +535,175 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
 
 # Gas tüketim hesaplaması
 @app.route('/api/gas_consumption', methods=['POST'])
+# API: Teknik dalış hesaplamaları
+@app.route('/api/tech/mod', methods=['POST'])
+def calculate_mod_api():
+    """Maximum Operating Depth (MOD) hesaplama API'si"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        o2_percentage = float(data.get('o2', 21.0))
+        max_po2 = float(data.get('maxPo2', 1.4))
+        
+        # Yüzde olarak verildiyse normalize et
+        if o2_percentage > 1:
+            o2_percentage = o2_percentage / 100
+            
+        mod = technical_diving.calculate_mod(o2_percentage, max_po2)
+        
+        return jsonify({
+            'mod': mod,
+            'o2_percentage': o2_percentage * 100,
+            'max_po2': max_po2
+        })
+    except Exception as e:
+        logger.error(f"Error calculating MOD: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/end', methods=['POST'])
+def calculate_end_api():
+    """Equivalent Narcotic Depth (END) hesaplama API'si"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        depth = float(data.get('depth', 0))
+        o2_percentage = float(data.get('o2', 21.0))
+        he_percentage = float(data.get('he', 0.0))
+        
+        # Yüzde olarak verildiyse normalize et
+        if o2_percentage > 1:
+            o2_percentage = o2_percentage / 100
+        if he_percentage > 1:
+            he_percentage = he_percentage / 100
+            
+        end = technical_diving.calculate_end(depth, o2_percentage, he_percentage)
+        
+        return jsonify({
+            'end': end,
+            'depth': depth,
+            'o2_percentage': o2_percentage * 100,
+            'he_percentage': he_percentage * 100,
+            'n2_percentage': (1 - o2_percentage - he_percentage) * 100
+        })
+    except Exception as e:
+        logger.error(f"Error calculating END: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/best-mix', methods=['POST'])
+def calculate_best_mix_api():
+    """Optimal gaz karışımı hesaplama API'si"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        depth = float(data.get('depth', 0))
+        max_po2 = float(data.get('maxPo2', 1.4))
+        max_end = float(data.get('maxEnd', 30.0))
+        
+        best_mix = technical_diving.calculate_best_mix(depth, max_po2, max_end)
+        
+        return jsonify(best_mix)
+    except Exception as e:
+        logger.error(f"Error calculating best mix: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/cns', methods=['POST'])
+def calculate_cns_api():
+    """CNS oksijen toksisitesi hesaplama API'si"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        exposure_segments = data.get('segments', [])
+        
+        if not exposure_segments:
+            return jsonify({'error': 'No exposure segments provided'}), 400
+            
+        total_cns = 0
+        segment_results = []
+        
+        for segment in exposure_segments:
+            depth = float(segment.get('depth', 0))
+            time = float(segment.get('time', 0))
+            o2_percentage = float(segment.get('o2', 21.0))
+            
+            # Yüzde olarak verildiyse normalize et
+            if o2_percentage > 1:
+                o2_percentage = o2_percentage / 100
+                
+            # pO2 hesapla
+            po2 = technical_diving.calculate_partial_pressure(o2_percentage, depth)
+            
+            # Bu segment için CNS hesapla
+            segment_cns = technical_diving.calculate_cns_loading(po2, time)
+            total_cns += segment_cns
+            
+            segment_results.append({
+                'depth': depth,
+                'time': time,
+                'o2_percentage': o2_percentage * 100,
+                'po2': round(po2, 2),
+                'segment_cns': round(segment_cns, 1)
+            })
+            
+        return jsonify({
+            'total_cns': round(total_cns, 1),
+            'segments': segment_results,
+            'warning': 'High CNS oxygen toxicity risk' if total_cns > 80 else None
+        })
+    except Exception as e:
+        logger.error(f"Error calculating CNS: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/multi-level', methods=['POST'])
+def calculate_multi_level_api():
+    """Çoklu seviye dalış profili hesaplama API'si"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        depth_segments = data.get('segments', [])
+        gases = data.get('gases', [])
+        
+        if not depth_segments or not gases:
+            return jsonify({'error': 'Segments and gases are required'}), 400
+            
+        # Veri formatını hazırla
+        formatted_segments = []
+        for segment in depth_segments:
+            depth = float(segment.get('depth', 0))
+            time = float(segment.get('time', 0))
+            gas_index = int(segment.get('gas_index', 0))
+            
+            formatted_segments.append((depth, time, gas_index))
+            
+        formatted_gases = []
+        for gas in gases:
+            o2 = float(gas.get('o2', 21.0))
+            he = float(gas.get('he', 0.0))
+            
+            formatted_gases.append((o2, he))
+            
+        profile = technical_diving.calculate_multi_level_profile(formatted_segments, formatted_gases)
+        
+        return jsonify(profile)
+    except Exception as e:
+        logger.error(f"Error calculating multi-level profile: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/gas-consumption', methods=['POST'])
 def calculate_gas_consumption():
     """Gaz tüketim hesaplama API'si"""
     try:

@@ -38,6 +38,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/technical' %}active{% endif %}" href="{{ url_for('technical') }}">
+                            <i class="fas fa-flask me-1"></i> Technical Diving
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" id="offlineStorageButton">
                             <i class="fas fa-save me-1"></i> Saved Plans
                         </a>
@@ -113,6 +118,7 @@
                     <ul class="footer-links">
                         <li><a href="{{ url_for('index') }}">Dive Calculator</a></li>
                         <li><a href="{{ url_for('checklist') }}">Dive Checklists</a></li>
+                        <li><a href="{{ url_for('technical') }}">Technical Diving</a></li>
                         <li><a href="#" id="footerSavedPlans">Saved Plans</a></li>
                     </ul>
                 </div>
