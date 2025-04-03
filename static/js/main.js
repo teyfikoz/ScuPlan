@@ -54,7 +54,7 @@ function initSharedPlanView() {
     const planId = urlParams.get('id');
     
     if (!planId) {
-        showPlanNotFound();
+        showPlanNotFound('No plan ID specified in the URL');
         return;
     }
     
@@ -66,6 +66,31 @@ function initSharedPlanView() {
     
     // Set up event listeners for the shared plan page
     setupSharedPlanEvents();
+}
+
+/**
+ * Show the plan not found message with a specific error
+ */
+function showPlanNotFound(errorMessage) {
+    console.log('Showing plan not found message:', errorMessage);
+    
+    // Hide loading indicator
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) loadingContainer.style.display = 'none';
+    
+    // Show error message
+    const planNotFound = document.getElementById('planNotFound');
+    if (planNotFound) {
+        planNotFound.innerHTML = `
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Dive plan not found.</strong> ${errorMessage || 'The plan may have been deleted or the link is invalid.'}
+        `;
+        planNotFound.style.display = 'block';
+    }
+    
+    // Hide plan details container if it exists
+    const planDetailsContainer = document.getElementById('planDetailsContainer');
+    if (planDetailsContainer) planDetailsContainer.style.display = 'none';
 }
 
 /**
@@ -1041,19 +1066,27 @@ function printCurrentPlan() {
         
         app.tanks.forEach((tank, index) => {
             let gasInfo = 'Air';
-            if (tank.gasType === 'nitrox') {
-                gasInfo = `Nitrox ${tank.o2Percentage}% O₂`;
-            } else if (tank.gasType === 'trimix') {
-                gasInfo = `Trimix ${tank.o2Percentage}% O₂, ${tank.hePercentage}% He`;
-            } else if (tank.gasType === 'oxygen') {
+            // Standart gaz bilgisi
+            let o2 = tank.o2Percentage || tank.o2 || 21;
+            let he = tank.hePercentage || tank.he || 0;
+            
+            if (tank.gasType === 'nitrox' || tank.gas_type === 'nitrox') {
+                gasInfo = `Nitrox ${o2}% O₂`;
+            } else if (tank.gasType === 'trimix' || tank.gas_type === 'trimix') {
+                gasInfo = `Trimix ${o2}% O₂, ${he}% He`;
+            } else if (tank.gasType === 'oxygen' || tank.gas_type === 'oxygen') {
                 gasInfo = 'Oxygen (100% O₂)';
             }
+            
+            // Tanklar için standart boyut ve basınç değerleri (eğer belirtilmemişse)
+            let tankSize = tank.size || 12; // Litre olarak
+            let tankPressure = tank.pressure || 200; // Bar olarak
             
             tanksHtml += `
                 <tr>
                     <td>${index + 1}</td>
-                    <td>${tank.size} L</td>
-                    <td>${tank.pressure} bar</td>
+                    <td>${tankSize} L</td>
+                    <td>${tankPressure} bar</td>
                     <td>${gasInfo}</td>
                 </tr>
             `;
@@ -1365,19 +1398,28 @@ function printSharedPlan() {
         
         window.sharedPlan.tanks.forEach((tank, index) => {
             let gasInfo = 'Air';
-            if (tank.gas_type === 'nitrox') {
-                gasInfo = `Nitrox ${tank.o2_percentage}% O₂`;
-            } else if (tank.gas_type === 'trimix') {
-                gasInfo = `Trimix ${tank.o2_percentage}% O₂, ${tank.he_percentage}% He`;
-            } else if (tank.gas_type === 'oxygen') {
+            
+            // Standart gaz bilgisi
+            let o2 = tank.o2_percentage || tank.o2 || 21;
+            let he = tank.he_percentage || tank.he || 0;
+            
+            if (tank.gas_type === 'nitrox' || tank.gasType === 'nitrox') {
+                gasInfo = `Nitrox ${o2}% O₂`;
+            } else if (tank.gas_type === 'trimix' || tank.gasType === 'trimix') {
+                gasInfo = `Trimix ${o2}% O₂, ${he}% He`;
+            } else if (tank.gas_type === 'oxygen' || tank.gasType === 'oxygen') {
                 gasInfo = 'Oxygen (100% O₂)';
             }
+            
+            // Tanklar için standart boyut ve basınç değerleri (eğer belirtilmemişse)
+            let tankSize = tank.size || 12; // Litre olarak
+            let tankPressure = tank.pressure || 200; // Bar olarak
             
             tanksHtml += `
                 <tr>
                     <td>${index + 1}</td>
-                    <td>${tank.size} L</td>
-                    <td>${tank.pressure} bar</td>
+                    <td>${tankSize} L</td>
+                    <td>${tankPressure} bar</td>
                     <td>${gasInfo}</td>
                 </tr>
             `;
