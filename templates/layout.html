@@ -63,25 +63,27 @@
                     <p>If you find ScuPlan helpful, please consider supporting the project with a crypto donation. Your contribution helps keep this tool free and continuously improving!</p>
                     
                     <div class="mt-3">
-                        <div class="form-group mb-3">
-                            <label for="cryptoSelect" class="form-label"><strong>Select Cryptocurrency:</strong></label>
-                            <select class="form-select" id="cryptoSelect">
-                                <option value="xrp" selected>XRP</option>
-                                <option value="usdt">USDT (TRC20)</option>
-                            </select>
-                        </div>
-                        
+                        <!-- XRP Address -->
                         <div class="mb-3">
-                            <label class="form-label"><strong>Donation Address:</strong></label>
+                            <label class="form-label"><strong>XRP Address:</strong></label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-coins"></i></span>
-                                <div class="form-control crypto-address" id="cryptoAddress" data-crypto="XRP">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</div>
-                                <button class="btn btn-warning" id="copyDonationBtn">
+                                <span class="input-group-text"><i class="fas fa-coins text-info"></i></span>
+                                <div class="form-control crypto-address" id="xrpAddress" data-crypto="XRP">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</div>
+                                <button class="btn btn-warning copy-btn" data-address="xrp">
                                     <i class="fas fa-copy"></i>
                                 </button>
                             </div>
-                            <div class="form-text mt-1">
-                                <span id="addressNote">XRP (Ripple) address</span>
+                        </div>
+                        
+                        <!-- USDT Address -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>USDT (TRC20) Address:</strong></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign text-success"></i></span>
+                                <div class="form-control crypto-address" id="usdtAddress" data-crypto="USDT (TRC20)">TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ</div>
+                                <button class="btn btn-warning copy-btn" data-address="usdt">
+                                    <i class="fas fa-copy"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -182,7 +184,7 @@
                             <h5>📌 Contact Information</h5>
                             <p>👤 Teyfik ÖZ</p>
                             <div class="social-links">
-                                <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i> linkedin.com/in/teyfik-ö-a3953935</a>
+                                <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i> LinkedIn</a>
                             </div>
                             <p class="mt-2">📧 Email: <a href="mailto:teyfikoz@yahoo.com">teyfikoz@yahoo.com</a></p>
                             <p class="mt-2">Feel free to reach out! 😊</p>

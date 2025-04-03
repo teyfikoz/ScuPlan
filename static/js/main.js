@@ -334,6 +334,8 @@ function calculateDivePlan() {
     const bottomTime = document.getElementById('bottomTime');
     const diveLocation = document.getElementById('diveLocation');
     const diveType = document.getElementById('diveType');
+    const diveDate = document.getElementById('diveDate');
+    const diveTime = document.getElementById('diveTime');
     const sacRate = document.getElementById('sacRate');
     
     if (!diveDepth || !bottomTime) {
@@ -345,6 +347,8 @@ function calculateDivePlan() {
     const time = parseFloat(bottomTime.value);
     const location = diveLocation ? diveLocation.value : '';
     const type = diveType ? diveType.value : 'recreational';
+    const date = diveDate ? diveDate.value : '';
+    const timeOfDay = diveTime ? diveTime.value : '';
     const sac = sacRate ? parseFloat(sacRate.value) : 20;
     
     // Input validation
@@ -369,6 +373,8 @@ function calculateDivePlan() {
         bottomTime: time,
         location: location,
         diveType: type,
+        diveDate: date,
+        diveTime: timeOfDay,
         sacRate: sac,
         tanks: app.tanks,
         buddies: app.buddies
@@ -729,11 +735,23 @@ function loadSharedPlan(planId) {
 function displaySharedPlanDetails(data) {
     // Update basic information
     document.getElementById('sharedLocation').textContent = data.location || 'Not specified';
-    document.getElementById('sharedDate').textContent = new Date(data.date).toLocaleDateString();
-    document.getElementById('sharedDiveType').textContent = capitalizeFirstLetter(data.dive_type);
+    
+    // Tarih ve saat bilgilerini birlikte göster
+    let dateDisplay = '';
+    if (data.diveDate) {
+        dateDisplay = new Date(data.diveDate).toLocaleDateString();
+        if (data.diveTime) {
+            dateDisplay += ' ' + data.diveTime;
+        }
+    } else {
+        dateDisplay = 'Not specified';
+    }
+    document.getElementById('sharedDate').textContent = dateDisplay;
+    
+    document.getElementById('sharedDiveType').textContent = capitalizeFirstLetter(data.diveType);
     document.getElementById('sharedMaxDepth').textContent = data.depth + ' meters';
-    document.getElementById('sharedBottomTime').textContent = data.bottom_time + ' minutes';
-    document.getElementById('sharedTotalTime').textContent = data.total_dive_time + ' minutes';
+    document.getElementById('sharedBottomTime').textContent = data.bottomTime + ' minutes';
+    document.getElementById('sharedTotalTime').textContent = data.totalDiveTime + ' minutes';
     
     // Update profile display values
     document.getElementById('sharedDescentTime').textContent = data.profile.descentTime.toFixed(1) + ' min';
@@ -1202,8 +1220,11 @@ function printCurrentPlan() {
                             <p class="value">${app.currentPlan.location || 'Not specified'}</p>
                         </div>
                         <div class="summary-item">
-                            <p class="label">Date</p>
-                            <p class="value">${formatDate(app.currentPlan.diveDate)}</p>
+                            <p class="label">Date & Time</p>
+                            <p class="value">${app.currentPlan.diveDate ? 
+                               (new Date(app.currentPlan.diveDate).toLocaleDateString() + 
+                                (app.currentPlan.diveTime ? ' ' + app.currentPlan.diveTime : '')) : 
+                               'Not specified'}</p>
                         </div>
                         <div class="summary-item">
                             <p class="label">Dive Type</p>
@@ -1523,8 +1544,11 @@ function printSharedPlan() {
                             <p class="value">${window.sharedPlan.location || 'Not specified'}</p>
                         </div>
                         <div class="summary-item">
-                            <p class="label">Date</p>
-                            <p class="value">${formatDate(window.sharedPlan.date)}</p>
+                            <p class="label">Date & Time</p>
+                            <p class="value">${window.sharedPlan.diveDate ? 
+                               (new Date(window.sharedPlan.diveDate).toLocaleDateString() + 
+                                (window.sharedPlan.diveTime ? ' ' + window.sharedPlan.diveTime : '')) : 
+                               formatDate(window.sharedPlan.date)}</p>
                         </div>
                         <div class="summary-item">
                             <p class="label">Dive Type</p>

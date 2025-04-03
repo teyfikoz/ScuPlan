@@ -125,12 +125,28 @@ def calculate_plan():
         # Dalış profili oluştur
         profile_data = generate_dive_profile(depth, bottom_time, gas_data)
         
+        # Tarih ve saat bilgilerini işle
+        dive_date = data.get('diveDate', '')
+        dive_time = data.get('diveTime', '')
+        
+        # Tarih bilgisi boşsa bugünü kullan
+        if not dive_date:
+            formatted_date = datetime.now().date()
+        else:
+            try:
+                formatted_date = datetime.strptime(dive_date, '%Y-%m-%d').date()
+            except ValueError:
+                # Geçersiz tarih formatı durumunda bugünü kullan
+                formatted_date = datetime.now().date()
+        
         # Yanıt verisi
         dive_plan = {
             'depth': depth,
             'bottomTime': bottom_time,
             'diveType': data.get('diveType', 'recreational'),
             'location': data.get('location', ''),
+            'diveDate': dive_date,
+            'diveTime': dive_time,
             'profile': profile_data,
             'tanks': tanks_data,
             'buddies': data.get('buddies', []),
@@ -139,12 +155,14 @@ def calculate_plan():
         
         # Veritabanına kaydet (opsiyonel)
         if data.get('save', True):  # Default olarak kaydet
+            # Eğer tarih gönderildiyse kullan, aksi takdirde bugünü kullan
             db_dive_plan = DivePlan(
                 dive_type=dive_plan['diveType'],
                 depth=depth,
                 bottom_time=bottom_time,
                 location=dive_plan['location'],
-                dive_date=datetime.now().date(),
+                dive_date=formatted_date,
+                dive_time=dive_time if dive_time else None,
                 total_dive_time=profile_data['totalTime'],
                 share_token=secrets.token_urlsafe(16)  # Paylaşım için benzersiz token
             )

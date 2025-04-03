@@ -28,23 +28,18 @@ function generateDonationQRCodes() {
  * Set up event listeners for donation-related elements
  */
 function setupDonationEventListeners() {
-    // Copy donation address to clipboard
-    const copyDonationBtn = document.getElementById('copyDonationBtn');
-    if (copyDonationBtn) {
-        copyDonationBtn.addEventListener('click', copyDonationAddress);
-    }
-    
-    // Crypto selection change
-    const cryptoSelect = document.getElementById('cryptoSelect');
-    if (cryptoSelect) {
-        cryptoSelect.addEventListener('change', function() {
-            // Update displayed address
-            updateDisplayedAddress(this.value);
-            
-            // Regenerate QR code
-            generateDonationQRCodes();
+    // Set up copy buttons for crypto addresses
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    copyButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const addressType = this.getAttribute('data-address');
+            if (addressType === 'xrp') {
+                copyAddressToClipboard('xrpAddress', 'XRP');
+            } else if (addressType === 'usdt') {
+                copyAddressToClipboard('usdtAddress', 'USDT (TRC20)');
+            }
         });
-    }
+    });
     
     // Set up donation info guide link
     const donationGuideLinks = document.querySelectorAll('#donationGuideLink');
@@ -100,15 +95,15 @@ function updateDisplayedAddress(cryptoType) {
 }
 
 /**
- * Copy the selected cryptocurrency donation address to clipboard
+ * Copy specific cryptocurrency address to clipboard
+ * @param {string} elementId - The ID of the element containing the address
+ * @param {string} cryptoType - The type of cryptocurrency
  */
-function copyDonationAddress() {
-    // Get the currently displayed address
-    const addressDisplay = document.getElementById('cryptoAddress');
-    const cryptoType = addressDisplay.getAttribute('data-crypto');
+function copyAddressToClipboard(elementId, cryptoType) {
+    const addressDisplay = document.getElementById(elementId);
     
     if (!addressDisplay || !addressDisplay.innerText) {
-        showAlert('No cryptocurrency address selected', 'warning');
+        showAlert('No cryptocurrency address found', 'warning');
         return;
     }
     

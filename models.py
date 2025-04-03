@@ -12,6 +12,7 @@ class DivePlan(db.Model):
     bottom_time = db.Column(db.Float, nullable=False)
     location = db.Column(db.String(100))
     dive_date = db.Column(db.Date, default=datetime.now().date)
+    dive_time = db.Column(db.String(10))  # Dive time in hh:mm format
     total_dive_time = db.Column(db.Float)
     deco_levels = db.Column(db.String(500))  # Comma-separated depths
     deco_times = db.Column(db.String(500))   # Comma-separated times
@@ -31,6 +32,7 @@ class DivePlan(db.Model):
             'bottomTime': self.bottom_time,
             'location': self.location,
             'diveDate': self.dive_date.isoformat() if self.dive_date else None,
+            'diveTime': self.dive_time,
             'totalDiveTime': self.total_dive_time,
             'shareToken': self.share_token,
             'createdAt': self.created_at.isoformat() if self.created_at else None,
