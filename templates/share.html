@@ -24,6 +24,11 @@
                     <strong>Dive plan not found.</strong> The plan may have been deleted or the link is invalid.
                 </div>
                 
+                <div id="jsNotFound" class="alert alert-warning" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>JavaScript error.</strong> There was a problem loading the plan details.
+                </div>
+                
                 <div id="planContent">
                     <div class="mb-4">
                         <h5 class="mb-3">Dive Information</h5>
@@ -171,8 +176,50 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the shared plan view
-        initSharedPlanView();
+        try {
+            // Initialize the shared plan view with error handling
+            if (typeof initSharedPlanView === 'function') {
+                initSharedPlanView();
+            } else {
+                console.error('initSharedPlanView function not found');
+                // Hide loading container
+                var loadingContainer = document.getElementById('loadingContainer');
+                if (loadingContainer) loadingContainer.style.display = 'none';
+                
+                // Show JavaScript error message
+                var jsNotFound = document.getElementById('jsNotFound');
+                if (jsNotFound) {
+                    jsNotFound.textContent = 'JavaScript error: Required functions not loaded correctly. Please try refreshing the page.';
+                    jsNotFound.style.display = 'block';
+                }
+                
+                // Show the plan container but hide plan content
+                var planDetailsContainer = document.getElementById('planDetailsContainer');
+                if (planDetailsContainer) planDetailsContainer.style.display = 'block';
+                
+                var planContent = document.getElementById('planContent');
+                if (planContent) planContent.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error initializing shared plan view:', error);
+            // Hide loading container
+            var loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) loadingContainer.style.display = 'none';
+            
+            // Show JavaScript error message
+            var jsNotFound = document.getElementById('jsNotFound');
+            if (jsNotFound) {
+                jsNotFound.textContent = 'JavaScript error: ' + error.message;
+                jsNotFound.style.display = 'block';
+            }
+            
+            // Show the plan container but hide plan content
+            var planDetailsContainer = document.getElementById('planDetailsContainer');
+            if (planDetailsContainer) planDetailsContainer.style.display = 'block';
+            
+            var planContent = document.getElementById('planContent');
+            if (planContent) planContent.style.display = 'none';
+        }
     });
 </script>
 {% endblock %}

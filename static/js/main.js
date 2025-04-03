@@ -49,23 +49,50 @@ function initDivePlanner() {
 function initSharedPlanView() {
     console.log('Initializing Shared Plan View');
     
-    // Get the plan ID from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const planId = urlParams.get('id');
-    
-    if (!planId) {
-        showPlanNotFound('No plan ID specified in the URL');
-        return;
+    try {
+        // Ensure the required DOM elements exist before proceeding
+        const loadingContainer = document.getElementById('loadingContainer');
+        const planDetailsContainer = document.getElementById('planDetailsContainer');
+        
+        if (!loadingContainer || !planDetailsContainer) {
+            console.error('Required DOM elements not found');
+            alert('Error: Page elements not found. Please refresh the page.');
+            return;
+        }
+        
+        // Get the plan ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planId = urlParams.get('id');
+        
+        if (!planId) {
+            showPlanNotFound('No plan ID specified in the URL');
+            return;
+        }
+        
+        // Load the shared plan
+        loadSharedPlan(planId);
+        
+        // Load a default pre-dive checklist
+        loadPreDiveChecklist();
+        
+        // Set up event listeners for the shared plan page
+        setupSharedPlanEvents();
+    } catch (error) {
+        console.error('Error in initSharedPlanView:', error);
+        
+        // Try to handle error gracefully
+        const errorMsg = document.getElementById('jsNotFound');
+        if (errorMsg) {
+            errorMsg.textContent = 'An error occurred: ' + error.message;
+            errorMsg.style.display = 'block';
+        }
+        
+        const loadingContainer = document.getElementById('loadingContainer');
+        if (loadingContainer) loadingContainer.style.display = 'none';
+        
+        const planDetailsContainer = document.getElementById('planDetailsContainer');
+        if (planDetailsContainer) planDetailsContainer.style.display = 'block';
     }
-    
-    // Load the shared plan
-    loadSharedPlan(planId);
-    
-    // Load a default pre-dive checklist
-    loadPreDiveChecklist();
-    
-    // Set up event listeners for the shared plan page
-    setupSharedPlanEvents();
 }
 
 /**
@@ -473,6 +500,39 @@ function displayDivePlanResults(data) {
     if (bottomTimeResult) bottomTimeResult.textContent = data.bottomTime.toFixed(0);
     if (totalTimeResult) totalTimeResult.textContent = data.totalDiveTime.toFixed(0);
     
+    // Display buddy information
+    const buddyResultsContainer = document.getElementById('buddyConsumptionResults');
+    if (buddyResultsContainer) {
+        if (app.buddies && app.buddies.length > 0) {
+            let buddyHtml = '';
+            app.buddies.forEach((buddy, index) => {
+                const certification = buddy.certification || 'Not specified';
+                const skillLevel = buddy.skillLevel ? 
+                    buddy.skillLevel.charAt(0).toUpperCase() + buddy.skillLevel.slice(1) : 
+                    'Not specified';
+                const specialty = buddy.specialty && buddy.specialty !== 'none' ? 
+                    buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) : 
+                    'None';
+                    
+                buddyHtml += `
+                    <div class="p-2 bg-light rounded mb-2">
+                        <div class="fw-bold">${buddy.name}</div>
+                        <div class="small">${certification}</div>
+                        <div class="small">Skill: ${skillLevel}</div>
+                        ${specialty !== 'None' ? `<div class="small">Specialty: ${specialty}</div>` : ''}
+                    </div>
+                `;
+            });
+            buddyResultsContainer.innerHTML = buddyHtml;
+        } else {
+            buddyResultsContainer.innerHTML = `
+                <div class="text-center text-muted">
+                    <small>Add buddies to see them here</small>
+                </div>
+            `;
+        }
+    }
+    
     // Show the profile visualization
     const profileVisualizationSection = document.getElementById('profileVisualizationSection');
     if (profileVisualizationSection) {
@@ -727,25 +787,73 @@ function loadSharedPlan(planId) {
     const planNotFound = document.getElementById('planNotFound');
     if (planNotFound) planNotFound.style.display = 'none';
     
+    const jsNotFound = document.getElementById('jsNotFound');
+    if (jsNotFound) jsNotFound.style.display = 'none';
+    
     console.log('Loading shared plan with ID:', planId);
+    
+    // Validate planId format before making request
+    if (!planId || planId.length < 8) {
+        console.error('Invalid plan ID format:', planId);
+        if (loadingContainer) loadingContainer.style.display = 'none';
+        
+        if (planNotFound) {
+            planNotFound.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>Dive plan not found.</strong> Invalid plan ID format.
+            `;
+            planNotFound.style.display = 'block';
+        }
+        return;
+    }
     
     // Fetch the plan
     fetch(`/api/plan/${planId}`)
     .then(response => {
         if (!response.ok) {
-            return response.json().then(errData => {
-                // Extract error details if available
-                const errorMsg = errData.message || 'Failed to load plan';
-                throw new Error(errorMsg);
-            }).catch(err => {
-                // If JSON parsing fails, use the response status text
-                throw new Error(`Failed to load plan: ${response.statusText}`);
-            });
+            // First try to read JSON error message
+            return response.json()
+                .then(errData => {
+                    // Extract error details if available
+                    const errorMsg = errData.message || 'Failed to load plan';
+                    throw new Error(errorMsg);
+                })
+                .catch(jsonError => {
+                    // If JSON parsing fails, use the response status text
+                    throw new Error(`Failed to load plan: ${response.statusText}`);
+                });
         }
         return response.json();
     })
     .then(data => {
         console.log('Successfully loaded shared plan');
+        
+        // Check if we have valid data
+        if (!data) {
+            throw new Error('Received empty response from server');
+        }
+        
+        // Validate required plan data
+        if (typeof data.depth === 'undefined' || data.depth === null) {
+            console.warn('Plan missing depth data');
+            data.depth = 0;
+        }
+        
+        if (typeof data.bottomTime === 'undefined' || data.bottomTime === null) {
+            console.warn('Plan missing bottom time data');
+            data.bottomTime = 0;
+        }
+        
+        if (!data.profile) {
+            console.warn('Plan missing profile data, creating default');
+            data.profile = {
+                descentTime: 0,
+                bottomTime: data.bottomTime || 0,
+                ascentTime: 0,
+                totalTime: data.bottomTime || 0,
+                decoStops: []
+            };
+        }
         
         // Store the plan data globally
         window.sharedPlan = data;
@@ -779,117 +887,214 @@ function loadSharedPlan(planId) {
  * Display the shared plan details on the share page
  */
 function displaySharedPlanDetails(data) {
-    // Update basic information
-    document.getElementById('sharedLocation').textContent = data.location || 'Not specified';
+    try {
+        // Safety check for the data parameter
+        if (!data) {
+            console.error('No data provided to displaySharedPlanDetails');
+            throw new Error('No plan data available');
+        }
+        
+        // Update basic information safely
+        const safeSetText = (id, value, defaultValue = 'Not specified') => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value || defaultValue;
+            } else {
+                console.warn(`Element with id ${id} not found`);
+            }
+        };
+        
+        safeSetText('sharedLocation', data.location);
+        
+        // Tarih ve saat bilgilerini birlikte göster
+        let dateDisplay = 'Not specified';
+        if (data.diveDate) {
+            try {
+                dateDisplay = new Date(data.diveDate).toLocaleDateString();
+                if (data.diveTime) {
+                    dateDisplay += ' ' + data.diveTime;
+                }
+            } catch (e) {
+                console.warn('Error formatting date:', e);
+                dateDisplay = 'Invalid date';
+            }
+        }
+        safeSetText('sharedDate', dateDisplay);
+        
+        safeSetText('sharedDiveType', data.diveType ? capitalizeFirstLetter(data.diveType) : 'Recreational');
+        safeSetText('sharedMaxDepth', (data.depth || '0') + ' meters');
+        safeSetText('sharedBottomTime', (data.bottomTime || '0') + ' minutes');
+        safeSetText('sharedTotalTime', (data.totalDiveTime || '0') + ' minutes');
     
-    // Tarih ve saat bilgilerini birlikte göster
-    let dateDisplay = '';
-    if (data.diveDate) {
-        dateDisplay = new Date(data.diveDate).toLocaleDateString();
-        if (data.diveTime) {
-            dateDisplay += ' ' + data.diveTime;
+        // Update profile display values safely
+        if (data.profile) {
+            safeSetText('sharedDescentTime', data.profile.descentTime ? data.profile.descentTime.toFixed(1) + ' min' : '0.0 min');
+            safeSetText('sharedBottomTimeDisplay', data.profile.bottomTime ? data.profile.bottomTime.toFixed(1) + ' min' : '0.0 min');
+            safeSetText('sharedAscentTime', data.profile.ascentTime ? data.profile.ascentTime.toFixed(1) + ' min' : '0.0 min');
+            safeSetText('sharedTotalTimeDisplay', data.profile.totalTime ? data.profile.totalTime.toFixed(1) + ' min' : '0.0 min');
+            
+            // Draw profile chart
+            if (typeof drawDiveProfileChart === 'function') {
+                drawDiveProfileChart(data.profile, 'sharedProfileChart');
+            }
+        } else {
+            console.warn('No profile data available');
+            safeSetText('sharedDescentTime', '0.0 min');
+            safeSetText('sharedBottomTimeDisplay', '0.0 min');
+            safeSetText('sharedAscentTime', '0.0 min');
+            safeSetText('sharedTotalTimeDisplay', '0.0 min');
+        }
+    
+        // Display decompression stops if any
+        const sharedDecoStopsContainer = document.getElementById('sharedDecoStopsContainer');
+        const sharedDecoStopsList = document.getElementById('sharedDecoStopsList');
+    
+    // Handle decompression stops safely
+    if (data.profile && data.profile.decoStops && data.profile.decoStops.length > 0) {
+        if (sharedDecoStopsContainer) sharedDecoStopsContainer.style.display = 'block';
+        if (sharedDecoStopsList) {
+            sharedDecoStopsList.innerHTML = '';
+            
+            data.profile.decoStops.forEach(stop => {
+                try {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${stop.depth ? stop.depth.toFixed(1) : '0.0'}</td>
+                        <td>${stop.time ? stop.time.toFixed(0) : '0'}</td>
+                    `;
+                    sharedDecoStopsList.appendChild(row);
+                } catch (e) {
+                    console.warn('Error creating deco stop row:', e);
+                }
+            });
         }
     } else {
-        dateDisplay = 'Not specified';
-    }
-    document.getElementById('sharedDate').textContent = dateDisplay;
-    
-    document.getElementById('sharedDiveType').textContent = capitalizeFirstLetter(data.diveType);
-    document.getElementById('sharedMaxDepth').textContent = data.depth + ' meters';
-    document.getElementById('sharedBottomTime').textContent = data.bottomTime + ' minutes';
-    document.getElementById('sharedTotalTime').textContent = data.totalDiveTime + ' minutes';
-    
-    // Update profile display values
-    document.getElementById('sharedDescentTime').textContent = data.profile.descentTime.toFixed(1) + ' min';
-    document.getElementById('sharedBottomTimeDisplay').textContent = data.profile.bottomTime.toFixed(1) + ' min';
-    document.getElementById('sharedAscentTime').textContent = data.profile.ascentTime.toFixed(1) + ' min';
-    document.getElementById('sharedTotalTimeDisplay').textContent = data.profile.totalTime.toFixed(1) + ' min';
-    
-    // Draw profile chart
-    if (typeof drawDiveProfileChart === 'function') {
-        drawDiveProfileChart(data.profile, 'sharedProfileChart');
+        if (sharedDecoStopsContainer) sharedDecoStopsContainer.style.display = 'none';
     }
     
-    // Display decompression stops if any
-    const sharedDecoStopsContainer = document.getElementById('sharedDecoStopsContainer');
-    const sharedDecoStopsList = document.getElementById('sharedDecoStopsList');
-    
-    if (data.profile.decoStops && data.profile.decoStops.length > 0) {
-        sharedDecoStopsContainer.style.display = 'block';
-        sharedDecoStopsList.innerHTML = '';
+        // Display tanks if any - safely with error handling
+        const sharedTanksContainer = document.getElementById('sharedTanksContainer');
+        const noSharedTanksMessage = document.getElementById('noSharedTanksMessage');
         
-        data.profile.decoStops.forEach(stop => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${stop.depth.toFixed(1)}</td>
-                <td>${stop.time.toFixed(0)}</td>
-            `;
-            sharedDecoStopsList.appendChild(row);
-        });
-    } else {
-        sharedDecoStopsContainer.style.display = 'none';
-    }
-    
-    // Display tanks if any
-    const sharedTanksContainer = document.getElementById('sharedTanksContainer');
-    const noSharedTanksMessage = document.getElementById('noSharedTanksMessage');
-    
-    if (data.tanks && data.tanks.length > 0) {
-        noSharedTanksMessage.style.display = 'none';
-        sharedTanksContainer.innerHTML = '';
-        
-        data.tanks.forEach((tank, index) => {
-            const tankDiv = document.createElement('div');
-            tankDiv.className = 'p-3 bg-light rounded mb-2';
-            
-            // Get gas info
-            let gasInfo = '';
-            if (tank.gas_type === 'air') {
-                gasInfo = 'Air';
-            } else if (tank.gas_type === 'nitrox') {
-                gasInfo = `Nitrox ${tank.o2_percentage}% O₂`;
-            } else if (tank.gas_type === 'trimix') {
-                gasInfo = `Trimix ${tank.o2_percentage}% O₂, ${tank.he_percentage}% He`;
-            } else if (tank.gas_type === 'oxygen') {
-                gasInfo = 'Oxygen (100% O₂)';
+        if (data.tanks && data.tanks.length > 0 && sharedTanksContainer && noSharedTanksMessage) {
+            try {
+                noSharedTanksMessage.style.display = 'none';
+                sharedTanksContainer.innerHTML = '';
+                
+                data.tanks.forEach((tank, index) => {
+                    try {
+                        const tankDiv = document.createElement('div');
+                        tankDiv.className = 'p-3 bg-light rounded mb-2';
+                        
+                        // Get tank properties with defaults
+                        const size = tank.size || '12';
+                        const pressure = tank.pressure || '200';
+                        
+                        // Get gas info
+                        let gasInfo = 'Air';
+                        const gasType = tank.gas_type || 'air';
+                        
+                        if (gasType === 'nitrox') {
+                            const o2 = tank.o2_percentage || 32;
+                            gasInfo = `Nitrox ${o2}% O₂`;
+                        } else if (gasType === 'trimix') {
+                            const o2 = tank.o2_percentage || 21;
+                            const he = tank.he_percentage || 35;
+                            gasInfo = `Trimix ${o2}% O₂, ${he}% He`;
+                        } else if (gasType === 'oxygen') {
+                            gasInfo = 'Oxygen (100% O₂)';
+                        }
+                        
+                        tankDiv.innerHTML = `
+                            <div class="fw-bold">Tank ${index + 1}</div>
+                            <div class="small">${size}L @ ${pressure} bar</div>
+                            <div class="small">${gasInfo}</div>
+                        `;
+                        
+                        sharedTanksContainer.appendChild(tankDiv);
+                    } catch (e) {
+                        console.warn('Error rendering tank:', e);
+                    }
+                });
+            } catch (e) {
+                console.error('Error displaying tanks:', e);
+                if (noSharedTanksMessage) {
+                    noSharedTanksMessage.style.display = 'block';
+                }
             }
-            
-            tankDiv.innerHTML = `
-                <div class="fw-bold">Tank ${index + 1}</div>
-                <div class="small">${tank.size}L @ ${tank.pressure} bar</div>
-                <div class="small">${gasInfo}</div>
-            `;
-            
-            sharedTanksContainer.appendChild(tankDiv);
-        });
-    } else {
-        noSharedTanksMessage.style.display = 'block';
-    }
+        } else {
+            if (noSharedTanksMessage) noSharedTanksMessage.style.display = 'block';
+        }
     
-    // Display buddies if any
-    const sharedBuddiesContainer = document.getElementById('sharedBuddiesContainer');
-    const noSharedBuddiesMessage = document.getElementById('noSharedBuddiesMessage');
-    
-    if (data.buddies && data.buddies.length > 0) {
-        noSharedBuddiesMessage.style.display = 'none';
-        sharedBuddiesContainer.innerHTML = '';
+        // Display buddies if any - safely with error handling
+        const sharedBuddiesContainer = document.getElementById('sharedBuddiesContainer');
+        const noSharedBuddiesMessage = document.getElementById('noSharedBuddiesMessage');
         
-        data.buddies.forEach(buddy => {
-            const buddyDiv = document.createElement('div');
-            buddyDiv.className = 'p-3 bg-light rounded mb-2';
-            
-            buddyDiv.innerHTML = `
-                <div class="fw-bold">${buddy.name}</div>
-                <div class="small">${buddy.certification || 'No certification specified'}</div>
-                <div class="small">Skill Level: ${capitalizeFirstLetter(buddy.skill_level || 'Not specified')}</div>
-                ${buddy.specialty && buddy.specialty !== 'none' ? 
-                    `<div class="small">Specialty: ${capitalizeFirstLetter(buddy.specialty)}</div>` : ''}
-            `;
-            
-            sharedBuddiesContainer.appendChild(buddyDiv);
-        });
-    } else {
-        noSharedBuddiesMessage.style.display = 'block';
+        if (data.buddies && data.buddies.length > 0 && sharedBuddiesContainer && noSharedBuddiesMessage) {
+            try {
+                noSharedBuddiesMessage.style.display = 'none';
+                sharedBuddiesContainer.innerHTML = '';
+                
+                data.buddies.forEach(buddy => {
+                    try {
+                        const buddyDiv = document.createElement('div');
+                        buddyDiv.className = 'p-3 bg-light rounded mb-2';
+                        
+                        // Get name with fallback
+                        const name = buddy.name || 'Unnamed Buddy';
+                        
+                        // Other properties with fallbacks
+                        const certification = buddy.certification || 'No certification specified';
+                        const skillLevel = buddy.skill_level || 'not specified';
+                        const formattedSkillLevel = capitalizeFirstLetter(skillLevel);
+                        
+                        // Only show specialty if it exists and isn't 'none'
+                        const specialtyLine = (buddy.specialty && buddy.specialty !== 'none')
+                            ? `<div class="small">Specialty: ${capitalizeFirstLetter(buddy.specialty)}</div>`
+                            : '';
+                        
+                        buddyDiv.innerHTML = `
+                            <div class="fw-bold">${name}</div>
+                            <div class="small">${certification}</div>
+                            <div class="small">Skill Level: ${formattedSkillLevel}</div>
+                            ${specialtyLine}
+                        `;
+                        
+                        sharedBuddiesContainer.appendChild(buddyDiv);
+                    } catch (e) {
+                        console.warn('Error rendering buddy:', e);
+                    }
+                });
+            } catch (e) {
+                console.error('Error displaying buddies:', e);
+                if (noSharedBuddiesMessage) {
+                    noSharedBuddiesMessage.style.display = 'block';
+                }
+            }
+        } else {
+            if (noSharedBuddiesMessage) noSharedBuddiesMessage.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('Error in displaySharedPlanDetails:', error);
+        
+        // Show JS error message
+        const jsNotFound = document.getElementById('jsNotFound');
+        if (jsNotFound) {
+            jsNotFound.textContent = 'JavaScript error: ' + error.message;
+            jsNotFound.style.display = 'block';
+        }
+        
+        // Hide loading and display plan container
+        const loadingContainer = document.getElementById('loadingContainer');
+        if (loadingContainer) loadingContainer.style.display = 'none';
+        
+        const planDetailsContainer = document.getElementById('planDetailsContainer');
+        if (planDetailsContainer) planDetailsContainer.style.display = 'block';
+        
+        // Hide the plan content
+        const planContent = document.getElementById('planContent');
+        if (planContent) planContent.style.display = 'none';
     }
 }
 
