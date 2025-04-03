@@ -954,6 +954,811 @@ function showOfflineGuide(e) {
 }
 
 /**
+ * Print the current dive plan
+ */
+function printCurrentPlan() {
+    // Only proceed if we have a dive plan
+    if (!app.currentPlan) {
+        showAlert('No dive plan to print', 'warning');
+        return;
+    }
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        showAlert('Pop-up blocked. Please allow pop-ups to print the plan.', 'warning');
+        return;
+    }
+    
+    // Function to format date
+    const formatDate = (date) => {
+        if (!date) return 'Not specified';
+        const d = new Date(date);
+        return d.toLocaleDateString();
+    };
+    
+    // Get total time from profile if available, otherwise use plan value
+    const totalTime = (app.currentPlan.profile && app.currentPlan.profile.totalTime) 
+        ? app.currentPlan.profile.totalTime.toFixed(1) 
+        : app.currentPlan.totalDiveTime;
+    
+    // Create tanks HTML if there are tanks
+    let tanksHtml = '';
+    if (app.tanks && app.tanks.length > 0) {
+        tanksHtml = `
+            <div class="section">
+                <h3>Tanks</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Size</th>
+                            <th>Pressure</th>
+                            <th>Gas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        app.tanks.forEach((tank, index) => {
+            let gasInfo = 'Air';
+            if (tank.gasType === 'nitrox') {
+                gasInfo = `Nitrox ${tank.o2Percentage}% O₂`;
+            } else if (tank.gasType === 'trimix') {
+                gasInfo = `Trimix ${tank.o2Percentage}% O₂, ${tank.hePercentage}% He`;
+            } else if (tank.gasType === 'oxygen') {
+                gasInfo = 'Oxygen (100% O₂)';
+            }
+            
+            tanksHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${tank.size} L</td>
+                    <td>${tank.pressure} bar</td>
+                    <td>${gasInfo}</td>
+                </tr>
+            `;
+        });
+        
+        tanksHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Create buddies HTML if there are buddies
+    let buddiesHtml = '';
+    if (app.buddies && app.buddies.length > 0) {
+        buddiesHtml = `
+            <div class="section">
+                <h3>Dive Buddies</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Certification</th>
+                            <th>Skill Level</th>
+                            <th>Specialty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        app.buddies.forEach(buddy => {
+            const specialtyDisplay = buddy.specialty && buddy.specialty !== 'none' 
+                ? buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) 
+                : 'None';
+            
+            buddiesHtml += `
+                <tr>
+                    <td>${buddy.name}</td>
+                    <td>${buddy.certification || 'Not specified'}</td>
+                    <td>${buddy.skillLevel ? buddy.skillLevel.charAt(0).toUpperCase() + buddy.skillLevel.slice(1) : 'Not specified'}</td>
+                    <td>${specialtyDisplay}</td>
+                </tr>
+            `;
+        });
+        
+        buddiesHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Create deco stops HTML if there are any
+    let decoStopsHtml = '';
+    if (app.currentPlan.profile && app.currentPlan.profile.decoStops && app.currentPlan.profile.decoStops.length > 0) {
+        decoStopsHtml = `
+            <div class="section">
+                <h3>Decompression Stops</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Depth (m)</th>
+                            <th>Time (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        app.currentPlan.profile.decoStops.forEach(stop => {
+            decoStopsHtml += `
+                <tr>
+                    <td>${stop.depth.toFixed(1)}</td>
+                    <td>${stop.time.toFixed(0)}</td>
+                </tr>
+            `;
+        });
+        
+        decoStopsHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Build the HTML content
+    const content = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Dive Plan</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    color: #333;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #ddd;
+                }
+                .logo {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #007bff;
+                }
+                .section {
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 10px;
+                }
+                table, th, td {
+                    border: 1px solid #ddd;
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f8f9fa;
+                }
+                .summary-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                    margin-bottom: 20px;
+                }
+                .summary-item {
+                    padding: 10px;
+                    background-color: #f8f9fa;
+                    border-radius: 4px;
+                }
+                .summary-item p {
+                    margin: 0;
+                }
+                .summary-item .label {
+                    font-size: 0.9em;
+                    color: #666;
+                }
+                .summary-item .value {
+                    font-weight: bold;
+                    font-size: 1.1em;
+                }
+                .footer {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #666;
+                    border-top: 1px solid #ddd;
+                    padding-top: 10px;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                    .print-button {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">ScuPlan</div>
+                    <p>Dive Plan Report</p>
+                </div>
+                
+                <div class="section">
+                    <h3>Dive Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p class="label">Location</p>
+                            <p class="value">${app.currentPlan.location || 'Not specified'}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Date</p>
+                            <p class="value">${formatDate(app.currentPlan.diveDate)}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Dive Type</p>
+                            <p class="value">${app.currentPlan.diveType ? app.currentPlan.diveType.charAt(0).toUpperCase() + app.currentPlan.diveType.slice(1) : 'Recreational'}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Maximum Depth</p>
+                            <p class="value">${app.currentPlan.depth.toFixed(1)} m</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Bottom Time</p>
+                            <p class="value">${app.currentPlan.bottomTime.toFixed(0)} min</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Total Dive Time</p>
+                            <p class="value">${totalTime} min</p>
+                        </div>
+                    </div>
+                </div>
+                
+                ${decoStopsHtml}
+                ${tanksHtml}
+                ${buddiesHtml}
+                
+                <div class="section">
+                    <h3>Dive Profile</h3>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Descent Time</th>
+                                <td>${app.currentPlan.profile ? app.currentPlan.profile.descentTime.toFixed(1) : '2.0'} min</td>
+                            </tr>
+                            <tr>
+                                <th>Bottom Time</th>
+                                <td>${app.currentPlan.bottomTime.toFixed(0)} min</td>
+                            </tr>
+                            <tr>
+                                <th>Ascent Time</th>
+                                <td>${app.currentPlan.profile ? app.currentPlan.profile.ascentTime.toFixed(1) : '3.0'} min</td>
+                            </tr>
+                            <tr>
+                                <th>Total Time</th>
+                                <td>${totalTime} min</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="footer">
+                    <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
+                    <p>This plan is for reference only. Always dive within your training and capabilities.</p>
+                </div>
+                
+                <div class="print-button" style="text-align: center; margin-top: 20px;">
+                    <button onclick="window.print()">Print this plan</button>
+                </div>
+            </div>
+            <script>
+                // Automatically open print dialog when page loads
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 500);
+                };
+            </script>
+        </body>
+        </html>
+    `;
+    
+    // Write the content to the new window and open print dialog
+    printWindow.document.open();
+    printWindow.document.write(content);
+    printWindow.document.close();
+}
+
+/**
+ * Print the shared dive plan
+ */
+function printSharedPlan() {
+    // Only proceed if we have a shared plan
+    if (!window.sharedPlan) {
+        showAlert('No shared plan data to print', 'warning');
+        return;
+    }
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        showAlert('Pop-up blocked. Please allow pop-ups to print the plan.', 'warning');
+        return;
+    }
+    
+    // Function to format date
+    const formatDate = (date) => {
+        if (!date) return 'Not specified';
+        const d = new Date(date);
+        return d.toLocaleDateString();
+    };
+    
+    // Create tanks HTML if there are tanks
+    let tanksHtml = '';
+    if (window.sharedPlan.tanks && window.sharedPlan.tanks.length > 0) {
+        tanksHtml = `
+            <div class="section">
+                <h3>Tanks</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Size</th>
+                            <th>Pressure</th>
+                            <th>Gas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        window.sharedPlan.tanks.forEach((tank, index) => {
+            let gasInfo = 'Air';
+            if (tank.gas_type === 'nitrox') {
+                gasInfo = `Nitrox ${tank.o2_percentage}% O₂`;
+            } else if (tank.gas_type === 'trimix') {
+                gasInfo = `Trimix ${tank.o2_percentage}% O₂, ${tank.he_percentage}% He`;
+            } else if (tank.gas_type === 'oxygen') {
+                gasInfo = 'Oxygen (100% O₂)';
+            }
+            
+            tanksHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${tank.size} L</td>
+                    <td>${tank.pressure} bar</td>
+                    <td>${gasInfo}</td>
+                </tr>
+            `;
+        });
+        
+        tanksHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Create buddies HTML if there are buddies
+    let buddiesHtml = '';
+    if (window.sharedPlan.buddies && window.sharedPlan.buddies.length > 0) {
+        buddiesHtml = `
+            <div class="section">
+                <h3>Dive Buddies</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Certification</th>
+                            <th>Skill Level</th>
+                            <th>Specialty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        window.sharedPlan.buddies.forEach(buddy => {
+            const specialtyDisplay = buddy.specialty && buddy.specialty !== 'none' 
+                ? buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) 
+                : 'None';
+            
+            buddiesHtml += `
+                <tr>
+                    <td>${buddy.name}</td>
+                    <td>${buddy.certification || 'Not specified'}</td>
+                    <td>${buddy.skill_level ? buddy.skill_level.charAt(0).toUpperCase() + buddy.skill_level.slice(1) : 'Not specified'}</td>
+                    <td>${specialtyDisplay}</td>
+                </tr>
+            `;
+        });
+        
+        buddiesHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Create deco stops HTML if there are any
+    let decoStopsHtml = '';
+    if (window.sharedPlan.profile && window.sharedPlan.profile.decoStops && window.sharedPlan.profile.decoStops.length > 0) {
+        decoStopsHtml = `
+            <div class="section">
+                <h3>Decompression Stops</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Depth (m)</th>
+                            <th>Time (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        window.sharedPlan.profile.decoStops.forEach(stop => {
+            decoStopsHtml += `
+                <tr>
+                    <td>${stop.depth.toFixed(1)}</td>
+                    <td>${stop.time.toFixed(0)}</td>
+                </tr>
+            `;
+        });
+        
+        decoStopsHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Build the HTML content
+    const content = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Shared Dive Plan</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    color: #333;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #ddd;
+                }
+                .logo {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #007bff;
+                }
+                .section {
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 10px;
+                }
+                table, th, td {
+                    border: 1px solid #ddd;
+                }
+                th, td {
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f8f9fa;
+                }
+                .summary-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                    margin-bottom: 20px;
+                }
+                .summary-item {
+                    padding: 10px;
+                    background-color: #f8f9fa;
+                    border-radius: 4px;
+                }
+                .summary-item p {
+                    margin: 0;
+                }
+                .summary-item .label {
+                    font-size: 0.9em;
+                    color: #666;
+                }
+                .summary-item .value {
+                    font-weight: bold;
+                    font-size: 1.1em;
+                }
+                .footer {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #666;
+                    border-top: 1px solid #ddd;
+                    padding-top: 10px;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                    .print-button {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">ScuPlan</div>
+                    <p>Shared Dive Plan Report</p>
+                </div>
+                
+                <div class="section">
+                    <h3>Dive Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <p class="label">Location</p>
+                            <p class="value">${window.sharedPlan.location || 'Not specified'}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Date</p>
+                            <p class="value">${formatDate(window.sharedPlan.date)}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Dive Type</p>
+                            <p class="value">${window.sharedPlan.dive_type ? window.sharedPlan.dive_type.charAt(0).toUpperCase() + window.sharedPlan.dive_type.slice(1) : 'Recreational'}</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Maximum Depth</p>
+                            <p class="value">${window.sharedPlan.depth.toFixed(1)} m</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Bottom Time</p>
+                            <p class="value">${window.sharedPlan.bottom_time.toFixed(0)} min</p>
+                        </div>
+                        <div class="summary-item">
+                            <p class="label">Total Dive Time</p>
+                            <p class="value">${window.sharedPlan.total_dive_time.toFixed(0)} min</p>
+                        </div>
+                    </div>
+                </div>
+                
+                ${decoStopsHtml}
+                ${tanksHtml}
+                ${buddiesHtml}
+                
+                <div class="section">
+                    <h3>Dive Profile</h3>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Descent Time</th>
+                                <td>${window.sharedPlan.profile ? window.sharedPlan.profile.descentTime.toFixed(1) : '2.0'} min</td>
+                            </tr>
+                            <tr>
+                                <th>Bottom Time</th>
+                                <td>${window.sharedPlan.bottom_time.toFixed(0)} min</td>
+                            </tr>
+                            <tr>
+                                <th>Ascent Time</th>
+                                <td>${window.sharedPlan.profile ? window.sharedPlan.profile.ascentTime.toFixed(1) : '3.0'} min</td>
+                            </tr>
+                            <tr>
+                                <th>Total Time</th>
+                                <td>${window.sharedPlan.total_dive_time.toFixed(0)} min</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="footer">
+                    <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
+                    <p>This shared plan is for reference only. Always dive within your training and capabilities.</p>
+                </div>
+                
+                <div class="print-button" style="text-align: center; margin-top: 20px;">
+                    <button onclick="window.print()">Print this plan</button>
+                </div>
+            </div>
+            <script>
+                // Automatically open print dialog when page loads
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 500);
+                };
+            </script>
+        </body>
+        </html>
+    `;
+    
+    // Write the content to the new window and open print dialog
+    printWindow.document.open();
+    printWindow.document.write(content);
+    printWindow.document.close();
+}
+
+/**
+ * Print the pre-dive checklist from the shared plan page
+ */
+function printPreDiveChecklist() {
+    const checklistContainer = document.getElementById('sharedPreDiveChecklist');
+    if (!checklistContainer) {
+        showAlert('No checklist available to print', 'warning');
+        return;
+    }
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        showAlert('Pop-up blocked. Please allow pop-ups to print the checklist.', 'warning');
+        return;
+    }
+    
+    // Get the current state of the checklist (which items are checked)
+    const items = [];
+    checklistContainer.querySelectorAll('.checklist-item').forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const label = item.querySelector('label');
+        
+        items.push({
+            text: label.textContent,
+            checked: checkbox.checked
+        });
+    });
+    
+    // Build the HTML content
+    const content = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Pre-Dive Checklist</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    color: #333;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #ddd;
+                }
+                .logo {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #007bff;
+                }
+                .checklist-item {
+                    padding: 8px 0;
+                    border-bottom: 1px solid #eee;
+                    display: flex;
+                    align-items: center;
+                }
+                .checklist-item input {
+                    margin-right: 10px;
+                }
+                .checklist-item.checked {
+                    color: #999;
+                    text-decoration: line-through;
+                }
+                .footer {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #666;
+                    border-top: 1px solid #ddd;
+                    padding-top: 10px;
+                }
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                    .print-button {
+                        display: none;
+                    }
+                    .checklist-item input {
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        appearance: none;
+                        width: 16px;
+                        height: 16px;
+                        border: 1px solid #333;
+                        margin-right: 10px;
+                        position: relative;
+                    }
+                    .checklist-item.checked input:before {
+                        content: '✓';
+                        position: absolute;
+                        top: -5px;
+                        left: 2px;
+                        font-size: 16px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">ScuPlan</div>
+                    <p>Pre-Dive Checklist</p>
+                </div>
+                
+                <div class="checklist-container">
+    `;
+    
+    // Add each checklist item
+    items.forEach(item => {
+        content += `
+            <div class="checklist-item ${item.checked ? 'checked' : ''}">
+                <input type="checkbox" ${item.checked ? 'checked' : ''}>
+                <span>${item.text}</span>
+            </div>
+        `;
+    });
+    
+    // Complete the HTML
+    const completeContent = content + `
+                </div>
+                
+                <div class="footer">
+                    <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
+                    <p>Always complete a thorough safety check before every dive.</p>
+                </div>
+                
+                <div class="print-button" style="text-align: center; margin-top: 20px;">
+                    <button onclick="window.print()">Print this checklist</button>
+                </div>
+            </div>
+            <script>
+                // Automatically open print dialog when page loads
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 500);
+                };
+            </script>
+        </body>
+        </html>
+    `;
+    
+    // Write the content to the new window and open print dialog
+    printWindow.document.open();
+    printWindow.document.write(completeContent);
+    printWindow.document.close();
+}
+
+/**
  * Show information about export and print functionality
  */
 function showExportGuide(e) {
