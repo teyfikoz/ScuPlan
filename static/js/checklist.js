@@ -612,7 +612,7 @@ function loadOfflineChecklists() {
     let savedChecklists = localStorage.getItem('offlineChecklists');
     
     if (!savedChecklists) {
-        noMessage.style.display = 'block';
+        if (noMessage) noMessage.style.display = 'block';
         container.innerHTML = '';
         return;
     }
@@ -621,13 +621,13 @@ function loadOfflineChecklists() {
         let checklists = JSON.parse(savedChecklists);
         
         if (checklists.length === 0) {
-            noMessage.style.display = 'block';
+            if (noMessage) noMessage.style.display = 'block';
             container.innerHTML = '';
             return;
         }
         
         // Hide no checklists message
-        noMessage.style.display = 'none';
+        if (noMessage) noMessage.style.display = 'none';
         
         // Display saved checklists
         container.innerHTML = '';

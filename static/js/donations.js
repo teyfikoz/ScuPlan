@@ -20,18 +20,35 @@ function initDonationFeatures() {
  * Generate QR codes for cryptocurrency donation addresses
  */
 function generateDonationQRCodes() {
-    // Bitcoin QR code
-    const btcAddress = document.getElementById('btcAddress').innerText;
+    // Get the selected cryptocurrency from the dropdown
+    const selectedCrypto = document.getElementById('cryptoSelect') ? 
+        document.getElementById('cryptoSelect').value : 'xrp';
     
-    if (btcAddress && typeof QRCode !== 'undefined') {
-        new QRCode(document.getElementById('donationQR'), {
-            text: 'bitcoin:' + btcAddress,
-            width: 128,
-            height: 128,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        });
+    // Clear existing QR code
+    const qrContainer = document.getElementById('donationQR');
+    if (qrContainer) {
+        qrContainer.innerHTML = '';
+    
+        let qrText = '';
+        
+        // Check which cryptocurrency is selected
+        if (selectedCrypto === 'xrp') {
+            qrText = 'https://xaman.app/detect/request:rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV';
+        } else if (selectedCrypto === 'usdt') {
+            qrText = 'TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ';
+        }
+        
+        // Generate QR code
+        if (qrText && typeof QRCode !== 'undefined') {
+            new QRCode(qrContainer, {
+                text: qrText,
+                width: 128,
+                height: 128,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
     }
 }
 
@@ -40,20 +57,63 @@ function generateDonationQRCodes() {
  */
 function setupDonationEventListeners() {
     // Copy donation address to clipboard
-    document.getElementById('copyDonationBtn').addEventListener('click', copyDonationAddress);
+    const copyDonationBtn = document.getElementById('copyDonationBtn');
+    if (copyDonationBtn) {
+        copyDonationBtn.addEventListener('click', copyDonationAddress);
+    }
+    
+    // Crypto selection change
+    const cryptoSelect = document.getElementById('cryptoSelect');
+    if (cryptoSelect) {
+        cryptoSelect.addEventListener('change', function() {
+            // Update displayed address
+            updateDisplayedAddress(this.value);
+            
+            // Regenerate QR code
+            generateDonationQRCodes();
+        });
+    }
+}
+
+/**
+ * Update the displayed address based on selected cryptocurrency
+ * @param {string} cryptoType - The type of cryptocurrency selected
+ */
+function updateDisplayedAddress(cryptoType) {
+    const addressDisplay = document.getElementById('cryptoAddress');
+    if (!addressDisplay) return;
+    
+    switch (cryptoType) {
+        case 'xrp':
+            addressDisplay.innerText = 'rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV';
+            addressDisplay.setAttribute('data-crypto', 'XRP');
+            break;
+        case 'usdt':
+            addressDisplay.innerText = 'TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ';
+            addressDisplay.setAttribute('data-crypto', 'USDT (TRC20)');
+            break;
+        default:
+            addressDisplay.innerText = 'Please select a cryptocurrency';
+            addressDisplay.setAttribute('data-crypto', '');
+    }
 }
 
 /**
  * Copy the selected cryptocurrency donation address to clipboard
  */
 function copyDonationAddress() {
-    // Default to BTC
-    const btcAddress = document.getElementById('btcAddress').innerText;
-    const ethAddress = document.getElementById('ethAddress').innerText;
+    // Get the currently displayed address
+    const addressDisplay = document.getElementById('cryptoAddress');
+    const cryptoType = addressDisplay.getAttribute('data-crypto');
+    
+    if (!addressDisplay || !addressDisplay.innerText) {
+        showAlert('No cryptocurrency address selected', 'warning');
+        return;
+    }
     
     // Create a temporary input element
     const tempInput = document.createElement('input');
-    tempInput.value = btcAddress; // Default to BTC
+    tempInput.value = addressDisplay.innerText;
     document.body.appendChild(tempInput);
     
     // Select the text
@@ -67,7 +127,7 @@ function copyDonationAddress() {
     document.body.removeChild(tempInput);
     
     // Show success message
-    showAlert('Bitcoin donation address copied to clipboard', 'success');
+    showAlert(`${cryptoType} donation address copied to clipboard`, 'success');
 }
 
 /**
@@ -87,27 +147,32 @@ function showDonationInfo(e) {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p>ScuPlan is a free, open-source dive planning tool. If you find it useful, please consider supporting the project with a cryptocurrency donation.</p>
+                            <p>ScuPlan is a free dive planning tool. If you find it useful, please consider supporting the project with a cryptocurrency donation.</p>
                             
                             <h6 class="mt-3">Donation Options:</h6>
                             
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <h6 class="card-title"><i class="fab fa-bitcoin me-2 text-warning"></i>Bitcoin (BTC)</h6>
-                                    <p class="small">Bitcoin is the original cryptocurrency that operates on a global peer-to-peer network.</p>
-                                    <div class="crypto-address mb-2" id="btcAddressModal">${document.getElementById('btcAddress').innerText}</div>
-                                    <button class="btn btn-sm btn-warning copy-address-btn" data-address="btc">
-                                        <i class="fas fa-copy me-1"></i>Copy Address
-                                    </button>
+                                    <h6 class="card-title"><i class="fas fa-coins me-2 text-info"></i>XRP</h6>
+                                    <p class="small">Fast, low-cost cryptocurrency for payments and financial services.</p>
+                                    <div class="crypto-address mb-2" id="xrpAddressModal">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</div>
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-info me-2 copy-address-btn" data-address="xrp">
+                                            <i class="fas fa-copy me-1"></i>Copy Address
+                                        </button>
+                                        <a href="https://xaman.app/detect/request:rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV" target="_blank" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-external-link-alt me-1"></i>Open in Xaman App
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <h6 class="card-title"><i class="fab fa-ethereum me-2 text-primary"></i>Ethereum (ETH)</h6>
-                                    <p class="small">Ethereum is a decentralized platform that supports smart contracts and applications.</p>
-                                    <div class="crypto-address mb-2" id="ethAddressModal">${document.getElementById('ethAddress').innerText}</div>
-                                    <button class="btn btn-sm btn-primary copy-address-btn" data-address="eth">
+                                    <h6 class="card-title"><i class="fas fa-dollar-sign me-2 text-success"></i>USDT (TRC20)</h6>
+                                    <p class="small">Stablecoin backed by USD on the TRON network with lower fees and faster transactions.</p>
+                                    <div class="crypto-address mb-2" id="usdtAddressModal">TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ</div>
+                                    <button class="btn btn-sm btn-success copy-address-btn" data-address="usdt">
                                         <i class="fas fa-copy me-1"></i>Copy Address
                                     </button>
                                 </div>
@@ -134,12 +199,12 @@ function showDonationInfo(e) {
                 let addressElement;
                 let successMessage;
                 
-                if (addressType === 'btc') {
-                    addressElement = document.getElementById('btcAddressModal');
-                    successMessage = 'Bitcoin address copied to clipboard';
-                } else if (addressType === 'eth') {
-                    addressElement = document.getElementById('ethAddressModal');
-                    successMessage = 'Ethereum address copied to clipboard';
+                if (addressType === 'xrp') {
+                    addressElement = document.getElementById('xrpAddressModal');
+                    successMessage = 'XRP address copied to clipboard';
+                } else if (addressType === 'usdt') {
+                    addressElement = document.getElementById('usdtAddressModal');
+                    successMessage = 'USDT (TRC20) address copied to clipboard';
                 }
                 
                 if (addressElement) {
