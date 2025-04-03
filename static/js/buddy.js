@@ -15,6 +15,12 @@ function initBuddyManagement() {
     }
     
     // Display any existing buddies
+    // Set up add buddy button 
+    const addBuddyButton = document.getElementById("addBuddyButton");
+    if (addBuddyButton) {
+        addBuddyButton.addEventListener("click", showAddBuddyModal);
+    }
+
     updateBuddiesDisplay();
 }
 
