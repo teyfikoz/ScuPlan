@@ -17,39 +17,11 @@ function initDonationFeatures() {
 }
 
 /**
- * Generate QR codes for cryptocurrency donation addresses
+ * No QR codes are needed anymore, just leaving a placeholder function
  */
 function generateDonationQRCodes() {
-    // Get the selected cryptocurrency from the dropdown
-    const selectedCrypto = document.getElementById('cryptoSelect') ? 
-        document.getElementById('cryptoSelect').value : 'xrp';
-    
-    // Clear existing QR code
-    const qrContainer = document.getElementById('donationQR');
-    if (qrContainer) {
-        qrContainer.innerHTML = '';
-    
-        let qrText = '';
-        
-        // Check which cryptocurrency is selected
-        if (selectedCrypto === 'xrp') {
-            qrText = 'https://xaman.app/detect/request:rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV';
-        } else if (selectedCrypto === 'usdt') {
-            qrText = 'TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ';
-        }
-        
-        // Generate QR code
-        if (qrText && typeof QRCode !== 'undefined') {
-            new QRCode(qrContainer, {
-                text: qrText,
-                width: 128,
-                height: 128,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-    }
+    // Function kept for compatibility, but QR code generation has been removed
+    console.log('QR code generation disabled as per user request');
 }
 
 /**
@@ -108,7 +80,7 @@ function updateDisplayedAddress(cryptoType) {
             addressDisplay.innerText = 'rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV';
             addressDisplay.setAttribute('data-crypto', 'XRP');
             if (addressNote) {
-                addressNote.innerText = 'XRP (Ripple) address - For Xaman app use the QR code';
+                addressNote.innerText = 'XRP (Ripple) address';
             }
             break;
         case 'usdt':
