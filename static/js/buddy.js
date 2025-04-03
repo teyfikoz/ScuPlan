@@ -22,11 +22,17 @@ function initBuddyManagement() {
  * Show the modal to add a new buddy
  */
 function showAddBuddyModal() {
+    const buddyForm = document.getElementById('buddyForm');
+    if (!buddyForm) return;
+    
     // Reset the form
-    document.getElementById('buddyForm').reset();
+    buddyForm.reset();
     
     // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('buddyModal'));
+    const buddyModal = document.getElementById('buddyModal');
+    if (!buddyModal) return;
+    
+    const modal = new bootstrap.Modal(buddyModal);
     modal.show();
     app.modalInstance = modal;
 }
@@ -39,20 +45,35 @@ function showEditBuddyModal(index) {
     // Get the buddy data
     const buddy = app.buddies[index];
     
+    const buddyNameInput = document.getElementById('buddyName');
+    const buddyCertInput = document.getElementById('buddyCertification');
+    const buddySkillSelect = document.getElementById('buddySkillLevel');
+    const buddySpecialtySelect = document.getElementById('buddySpecialty');
+    const saveBuddyButton = document.getElementById('saveBuddyButton');
+    const buddyModalLabel = document.getElementById('buddyModalLabel');
+    
+    if (!buddyNameInput || !buddyCertInput || !buddySkillSelect || 
+        !buddySpecialtySelect || !saveBuddyButton || !buddyModalLabel) {
+        return;
+    }
+    
     // Fill the form with existing data
-    document.getElementById('buddyName').value = buddy.name;
-    document.getElementById('buddyCertification').value = buddy.certification || '';
-    document.getElementById('buddySkillLevel').value = buddy.skillLevel || 'intermediate';
-    document.getElementById('buddySpecialty').value = buddy.specialty || 'none';
+    buddyNameInput.value = buddy.name;
+    buddyCertInput.value = buddy.certification || '';
+    buddySkillSelect.value = buddy.skillLevel || 'intermediate';
+    buddySpecialtySelect.value = buddy.specialty || 'none';
     
     // Set data attribute for the save button
-    document.getElementById('saveBuddyButton').setAttribute('data-edit-index', index);
+    saveBuddyButton.setAttribute('data-edit-index', index);
     
     // Update modal title
-    document.getElementById('buddyModalLabel').textContent = 'Edit Dive Buddy';
+    buddyModalLabel.textContent = 'Edit Dive Buddy';
     
     // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('buddyModal'));
+    const buddyModal = document.getElementById('buddyModal');
+    if (!buddyModal) return;
+    
+    const modal = new bootstrap.Modal(buddyModal);
     modal.show();
     app.modalInstance = modal;
 }
@@ -62,10 +83,22 @@ function showEditBuddyModal(index) {
  */
 function saveBuddy() {
     // Get form values
-    const name = document.getElementById('buddyName').value.trim();
-    const certification = document.getElementById('buddyCertification').value.trim();
-    const skillLevel = document.getElementById('buddySkillLevel').value;
-    const specialty = document.getElementById('buddySpecialty').value;
+    const buddyNameInput = document.getElementById('buddyName');
+    const buddyCertInput = document.getElementById('buddyCertification');
+    const buddySkillSelect = document.getElementById('buddySkillLevel');
+    const buddySpecialtySelect = document.getElementById('buddySpecialty');
+    const saveBuddyButton = document.getElementById('saveBuddyButton');
+    const buddyModalLabel = document.getElementById('buddyModalLabel');
+    
+    if (!buddyNameInput || !buddyCertInput || !buddySkillSelect || 
+        !buddySpecialtySelect || !saveBuddyButton) {
+        return;
+    }
+    
+    const name = buddyNameInput.value.trim();
+    const certification = buddyCertInput.value.trim();
+    const skillLevel = buddySkillSelect.value;
+    const specialty = buddySpecialtySelect.value;
     
     // Validate inputs
     if (!name) {
@@ -74,7 +107,7 @@ function saveBuddy() {
     }
     
     // Check if we're editing or adding
-    const editIndex = document.getElementById('saveBuddyButton').getAttribute('data-edit-index');
+    const editIndex = saveBuddyButton.getAttribute('data-edit-index');
     
     // Create buddy object
     const buddy = {
@@ -87,8 +120,11 @@ function saveBuddy() {
     if (editIndex !== null && editIndex !== undefined) {
         // Update existing buddy
         app.buddies[editIndex] = buddy;
-        document.getElementById('saveBuddyButton').removeAttribute('data-edit-index');
-        document.getElementById('buddyModalLabel').textContent = 'Add Dive Buddy';
+        saveBuddyButton.removeAttribute('data-edit-index');
+        
+        if (buddyModalLabel) {
+            buddyModalLabel.textContent = 'Add Dive Buddy';
+        }
     } else {
         // Add new buddy
         app.buddies.push(buddy);
@@ -121,7 +157,7 @@ function updateBuddiesDisplay() {
     const container = document.getElementById('buddiesContainer');
     const noMessage = document.getElementById('noBuddiesMessage');
     
-    if (!container) return; // Not on a page with buddies display
+    if (!container || !noMessage) return; // Not on a page with buddies display
     
     // Clear current content
     container.innerHTML = '';

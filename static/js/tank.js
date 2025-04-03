@@ -81,9 +81,14 @@ function showEditTankModal(index) {
  * Handle changes to the gas type selection
  */
 function handleGasTypeChange() {
-    const gasType = document.getElementById('gasType').value;
+    const gasTypeSelect = document.getElementById('gasType');
+    if (!gasTypeSelect) return; // Element doesn't exist
+    
+    const gasType = gasTypeSelect.value;
     const heliumContainer = document.getElementById('heliumContainer');
     const oxygenInput = document.getElementById('oxygenPercentage');
+    
+    if (!heliumContainer || !oxygenInput) return; // Elements don't exist
     
     // Show/hide helium input based on gas type
     if (gasType === 'trimix') {
@@ -160,13 +165,20 @@ function saveTank() {
     };
     
     // Check if we're editing or adding
-    const editIndex = document.getElementById('saveTankButton').getAttribute('data-edit-index');
+    const saveButton = document.getElementById('saveTankButton');
+    if (!saveButton) return;
+    
+    const editIndex = saveButton.getAttribute('data-edit-index');
     
     if (editIndex !== null && editIndex !== undefined) {
         // Update existing tank
         app.tanks[editIndex] = tank;
-        document.getElementById('saveTankButton').removeAttribute('data-edit-index');
-        document.getElementById('tankModalLabel').textContent = 'Add Tank';
+        saveButton.removeAttribute('data-edit-index');
+        
+        const tankModalLabel = document.getElementById('tankModalLabel');
+        if (tankModalLabel) {
+            tankModalLabel.textContent = 'Add Tank';
+        }
     } else {
         // Add new tank
         app.tanks.push(tank);
@@ -199,7 +211,7 @@ function updateTanksDisplay() {
     const container = document.getElementById('tanksContainer');
     const noMessage = document.getElementById('noTanksMessage');
     
-    if (!container) return; // Not on a page with tanks display
+    if (!container || !noMessage) return; // Not on a page with tanks display
     
     // Clear current content
     container.innerHTML = '';
