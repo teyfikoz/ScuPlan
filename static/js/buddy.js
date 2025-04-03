@@ -160,20 +160,26 @@ function removeBuddy(index) {
  * Update the display of buddies in the interface
  */
 function updateBuddiesDisplay() {
+/**
+ * Update the display of buddies in the interface
+ */
+function updateBuddiesDisplay() {
     const container = document.getElementById('buddiesContainer');
-    const noMessage = document.getElementById('noBuddiesMessage');
     
-    if (!container || !noMessage) return; // Not on a page with buddies display
+    if (!container) return; // Not on a page with buddies display
     
     // Clear current content
     container.innerHTML = '';
     
     // Show/hide the no buddies message
     if (app.buddies.length === 0) {
-        noMessage.style.display = 'block';
+        container.innerHTML = `
+            <div class="alert alert-info" id="noBuddiesMessage">
+                <i class="fas fa-info-circle me-2"></i>No buddies added yet. Add a buddy to start.
+            </div>
+        `;
         return;
-    } else {
-        noMessage.style.display = 'none';
+    }
     }
     
     // Add each buddy to the display
