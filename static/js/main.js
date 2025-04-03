@@ -698,15 +698,30 @@ function loadSharedPlan(planId) {
     if (loadingContainer) loadingContainer.style.display = 'block';
     if (planDetailsContainer) planDetailsContainer.style.display = 'none';
     
+    // Hide any previous error
+    const planNotFound = document.getElementById('planNotFound');
+    if (planNotFound) planNotFound.style.display = 'none';
+    
+    console.log('Loading shared plan with ID:', planId);
+    
     // Fetch the plan
     fetch(`/api/plan/${planId}`)
     .then(response => {
         if (!response.ok) {
-            throw new Error('Failed to load plan');
+            return response.json().then(errData => {
+                // Extract error details if available
+                const errorMsg = errData.message || 'Failed to load plan';
+                throw new Error(errorMsg);
+            }).catch(err => {
+                // If JSON parsing fails, use the response status text
+                throw new Error(`Failed to load plan: ${response.statusText}`);
+            });
         }
         return response.json();
     })
     .then(data => {
+        console.log('Successfully loaded shared plan');
+        
         // Store the plan data globally
         window.sharedPlan = data;
         
@@ -714,7 +729,6 @@ function loadSharedPlan(planId) {
         if (loadingContainer) loadingContainer.style.display = 'none';
         if (planDetailsContainer) planDetailsContainer.style.display = 'block';
         
-        const planNotFound = document.getElementById('planNotFound');
         if (planNotFound) planNotFound.style.display = 'none';
         
         displaySharedPlanDetails(data);
@@ -722,10 +736,17 @@ function loadSharedPlan(planId) {
     .catch(error => {
         console.error('Error loading shared plan:', error);
         
+        // Hide loading indicator
         if (loadingContainer) loadingContainer.style.display = 'none';
         
-        const planNotFound = document.getElementById('planNotFound');
-        if (planNotFound) planNotFound.style.display = 'block';
+        // Show error message with details
+        if (planNotFound) {
+            planNotFound.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>Dive plan not found.</strong> ${error.message || 'The plan may have been deleted or the link is invalid.'}
+            `;
+            planNotFound.style.display = 'block';
+        }
     });
 }
 

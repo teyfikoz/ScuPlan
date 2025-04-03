@@ -210,37 +210,68 @@ def calculate_plan():
 def get_plan(token):
     """Dalış planını token ile getir"""
     try:
+        logger.debug(f"Attempting to load dive plan with token: {token}")
+        
         # Önce ID ile kontrol et
         try:
             plan_id = int(token)
+            logger.debug(f"Treating token as ID: {plan_id}")
             plan = DivePlan.query.get(plan_id)
+            if plan:
+                logger.debug(f"Plan found by ID")
+            else:
+                logger.debug(f"No plan found with ID: {plan_id}")
         except ValueError:
             # Sayısal ID değilse, token ile ara
+            logger.debug(f"Treating token as share_token")
             plan = DivePlan.query.filter_by(share_token=token).first()
+            if plan:
+                logger.debug(f"Plan found by token")
+            else:
+                logger.debug(f"No plan found with token: {token}")
         
         if not plan:
-            return jsonify({'error': 'Dive plan not found'}), 404
+            logger.warning(f"Dive plan not found for token: {token}")
+            return jsonify({
+                'error': 'Dive plan not found',
+                'message': 'The plan may have been deleted or the link is invalid.'
+            }), 404
         
         # Plan verilerini JSON'a dönüştür
+        logger.debug(f"Converting plan #{plan.id} to JSON")
         plan_data = plan.to_dict()
         
         # Dalış profilini yeniden oluştur
+        logger.debug(f"Generating dive profile for plan")
+        gas_info = None
+        if plan.tanks:
+            primary_tank = plan.tanks[0]
+            gas_info = {
+                'gas_type': primary_tank.gas_type,
+                'o2_percentage': primary_tank.o2_percentage,
+                'he_percentage': primary_tank.he_percentage
+            }
+            logger.debug(f"Using gas data from tank: {gas_info}")
+        
         profile_data = generate_dive_profile(
             plan.depth, 
             plan.bottom_time,
-            {
-                'gas_type': plan.tanks[0].gas_type if plan.tanks else 'air',
-                'o2_percentage': plan.tanks[0].o2_percentage if plan.tanks else 21.0,
-                'he_percentage': plan.tanks[0].he_percentage if plan.tanks else 0.0
-            } if plan.tanks else None
+            gas_info
         )
         
         plan_data['profile'] = profile_data
+        logger.debug(f"Successfully prepared plan data")
         
         return jsonify(plan_data)
     except Exception as e:
         logger.error(f"Error retrieving dive plan: {str(e)}")
-        return jsonify({'error': f'Failed to retrieve dive plan: {str(e)}'}), 500
+        # Print traceback for easier debugging
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            'error': 'Failed to retrieve dive plan',
+            'message': f'An unexpected error occurred: {str(e)}'
+        }), 500
 
 # API: Kontrol listeleri getirme
 @app.route('/api/checklists')

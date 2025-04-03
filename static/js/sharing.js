@@ -38,16 +38,47 @@ function copyShareLink() {
         return;
     }
     
-    // Copy to clipboard
-    const tempInput = document.createElement('input');
-    tempInput.value = code.innerText;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempInput);
+    // Copy to clipboard using modern Clipboard API
+    const linkText = code.innerText;
     
-    // Show success message
-    showAlert('Share link copied to clipboard', 'success');
+    // Use the modern Clipboard API if available
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(linkText)
+            .then(() => {
+                showAlert('Share link copied to clipboard', 'success');
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+                fallbackCopyToClipboard(linkText);
+            });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyToClipboard(linkText);
+    }
+}
+
+/**
+ * Fallback copy method for older browsers
+ */
+function fallbackCopyToClipboard(text) {
+    try {
+        const tempInput = document.createElement('input');
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.focus();
+        tempInput.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        if (successful) {
+            showAlert('Share link copied to clipboard', 'success');
+        } else {
+            showAlert('Unable to copy link. Please copy it manually.', 'warning');
+        }
+    } catch (err) {
+        console.error('Failed to copy using fallback: ', err);
+        showAlert('Unable to copy link. Please copy it manually.', 'warning');
+    }
 }
 
 /**
