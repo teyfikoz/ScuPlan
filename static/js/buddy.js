@@ -20,10 +20,15 @@ function initBuddyManagement() {
     if (addBuddyButton) {
         addBuddyButton.addEventListener("click", showAddBuddyModal);
     }
+    
+    // Set up save buddy button
+    const saveBuddyButton = document.getElementById("saveBuddyButton");
+    if (saveBuddyButton) {
+        saveBuddyButton.addEventListener("click", saveBuddy);
+    }
 
     updateBuddiesDisplay();
 }
-
 /**
  * Show the modal to add a new buddy
  */
@@ -160,10 +165,6 @@ function removeBuddy(index) {
  * Update the display of buddies in the interface
  */
 function updateBuddiesDisplay() {
-/**
- * Update the display of buddies in the interface
- */
-function updateBuddiesDisplay() {
     const container = document.getElementById('buddiesContainer');
     
     if (!container) return; // Not on a page with buddies display
@@ -179,7 +180,6 @@ function updateBuddiesDisplay() {
             </div>
         `;
         return;
-    }
     }
     
     // Add each buddy to the display

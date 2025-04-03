@@ -20,12 +20,21 @@ function initTankManagement() {
         gasTypeSelect.addEventListener('change', handleGasTypeChange);
     }
     
+    // Set up add tank button
+    const addTankButton = document.getElementById('addTankButton');
+    if (addTankButton) {
+        addTankButton.addEventListener('click', showAddTankModal);
+    }
+    
+    // Set up save tank button
+    const saveTankButton = document.getElementById('saveTankButton');
+    if (saveTankButton) {
+        saveTankButton.addEventListener('click', saveTank);
+    }
+    
     // Display any existing tanks
     updateTanksDisplay();
 }
-
-/**
- * Show the modal to add a new tank
  */
 function showAddTankModal() {
     // Reset the form

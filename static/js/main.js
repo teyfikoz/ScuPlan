@@ -1,22 +1,28 @@
 /**
  * ScuPlan - Main Application Module
- * Contains the core functionality for the dive planning application
+ * Core functionality for the dive planning application
  */
 
-/**
- * Application state object
- */
-const app = {
+// Global application state
+window.app = {
     tanks: [],
     buddies: [],
     gasConsumptionData: null,
+    currentPlan: null,
     lastCalculatedPlan: null,
+    savedPlans: [],
+    modalInstance: null,
+    editingTankIndex: null,
     settings: {
         units: 'metric',
         language: 'en',
         showSafetyInfo: true
     }
 };
+
+// Alias for easier access
+const app = window.app;
+
 
 /**
  * Initialize the application when the DOM is fully loaded
@@ -121,7 +127,7 @@ function setupPlannerEvents() {
     const suggestMixBtn = document.getElementById('suggestMixBtn');
     if (suggestMixBtn) {
         suggestMixBtn.addEventListener('click', function() {
-            suggestOptimalMix();
+            suggestMix();
         });
     }
 }
@@ -904,7 +910,7 @@ function displayGasConsumption(gasData) {
 /**
  * Suggest optimal gas mix based on dive depth
  */
-function suggestOptimalMix() {
+function suggestMix() {
     const depthInput = document.getElementById('diveDepth');
     if (!depthInput) return;
     
@@ -1035,3 +1041,13 @@ function showAlert(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', () => {
     initDivePlanner();
 });
+
+/**
+ * Capitalize first letter of a string
+ * @param {string} string - Input string
+ * @returns {string} String with first letter capitalized
+ */
+function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
