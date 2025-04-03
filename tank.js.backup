@@ -282,7 +282,7 @@ function updateTanksDisplay() {
     }
     
     // Get current depth for END calculations
-    const depthInput = document.getElementById('diveDepth');
+    const depthInput = document.getElementById('maxDepth');
     const currentDepth = depthInput ? parseFloat(depthInput.value) : 30;
     
     // Add each tank to the display
