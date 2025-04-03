@@ -626,7 +626,37 @@ function calculateGasConsumption(planData) {
         } else {
             const gasConsumptionResults = document.getElementById('gasConsumptionResults');
             if (gasConsumptionResults) {
-                gasConsumptionResults.innerHTML = '<div class="alert alert-danger">Failed to calculate gas consumption</div>';
+                // Check if there are any tanks defined
+                if (!app.tanks || app.tanks.length === 0) {
+                    // No tanks added
+                    gasConsumptionResults.innerHTML = `
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            No tanks added. Please add at least one tank to calculate gas consumption.
+                        </div>
+                        <div class="text-center mt-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="showAddTankModal()">
+                                <i class="fas fa-plus me-1"></i> Add Tank
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // Other calculation error
+                    gasConsumptionResults.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Failed to calculate gas consumption. Please check your dive parameters and tank settings.
+                        </div>
+                        <div class="small text-muted mt-2">
+                            <p><strong>Possible reasons:</strong></p>
+                            <ul>
+                                <li>Tank size or pressure may be too low for this dive</li>
+                                <li>Technical dives may require specific gas mixtures</li>
+                                <li>Deep dives may need multiple tanks or special gases</li>
+                            </ul>
+                        </div>
+                    `;
+                }
             }
         }
     });

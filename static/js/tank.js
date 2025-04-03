@@ -87,6 +87,7 @@ function handleGasTypeChange() {
     const gasType = gasTypeSelect.value;
     const heliumContainer = document.getElementById('heliumContainer');
     const oxygenInput = document.getElementById('oxygenPercentage');
+    const helperContainer = document.getElementById('gasTypeHelper');
     
     if (!heliumContainer || !oxygenInput) return; // Elements don't exist
     
@@ -97,23 +98,55 @@ function handleGasTypeChange() {
         heliumContainer.style.display = 'none';
     }
     
+    // Reset helper text initially
+    if (helperContainer) {
+        helperContainer.innerHTML = '';
+    }
+    
     // Set appropriate oxygen ranges based on gas type
     if (gasType === 'air') {
         oxygenInput.value = '21';
         oxygenInput.setAttribute('readonly', 'readonly');
+        if (helperContainer) {
+            helperContainer.innerHTML = '<small class="text-muted">Standard air contains 21% oxygen.</small>';
+        }
     } else if (gasType === 'nitrox') {
         oxygenInput.removeAttribute('readonly');
         oxygenInput.min = '22';
         oxygenInput.max = '40';
         if (parseFloat(oxygenInput.value) < 22) oxygenInput.value = '32';
+        
+        if (helperContainer) {
+            helperContainer.innerHTML = '<small class="text-muted">Typical recreational nitrox mixes are 32% or 36% oxygen.</small>';
+        }
     } else if (gasType === 'trimix') {
         oxygenInput.removeAttribute('readonly');
         oxygenInput.min = '5';
         oxygenInput.max = '30';
         if (parseFloat(oxygenInput.value) < 5 || parseFloat(oxygenInput.value) > 30) oxygenInput.value = '18';
+        
+        if (helperContainer) {
+            helperContainer.innerHTML = `
+                <small class="text-muted">
+                    <div class="mb-1">Common Trimix Configurations:</div>
+                    <ul class="ps-3 mb-1">
+                        <li>Trimix 18/45 - For depths ~45-60m (18% O₂, 45% He)</li>
+                        <li>Trimix 15/55 - For depths ~60-75m (15% O₂, 55% He)</li>
+                        <li>Trimix 10/70 - For depths ~75-100m (10% O₂, 70% He)</li>
+                    </ul>
+                    <div>Click for recommended mix for your planned depth.</div>
+                </small>
+                <button type="button" class="btn btn-sm btn-outline-info mt-1" onclick="suggestBestMix()">
+                    <i class="fas fa-calculator me-1"></i> Suggest Mix
+                </button>
+            `;
+        }
     } else if (gasType === 'oxygen') {
         oxygenInput.value = '100';
         oxygenInput.setAttribute('readonly', 'readonly');
+        if (helperContainer) {
+            helperContainer.innerHTML = '<small class="text-warning">Warning: 100% oxygen has a maximum operating depth of 6 meters.</small>';
+        }
     }
 }
 
@@ -205,6 +238,30 @@ function removeTank(index) {
 }
 
 /**
+ * Calculate Equivalent Narcotic Depth (END) for a given gas mix
+ * @param {number} depth - Actual depth in meters
+ * @param {number} o2Percent - Oxygen percentage
+ * @param {number} hePercent - Helium percentage
+ * @returns {number} END in meters
+ */
+function calculateEND(depth, o2Percent, hePercent = 0) {
+    // Convert percentages to decimals
+    const fO2 = o2Percent / 100;
+    const fHe = hePercent / 100;
+    const fN2 = 1 - fO2 - fHe;
+    
+    // Calculate narcotic effect of nitrogen at depth
+    const ambientPressure = (depth / 10) + 1; // in bars
+    const n2Narcotic = fN2 * ambientPressure;
+    
+    // Calculate END
+    const end = ((n2Narcotic / 0.79) - 1) * 10;
+    
+    // Round for display
+    return Math.floor(end);
+}
+
+/**
  * Update the display of tanks in the interface
  */
 function updateTanksDisplay() {
@@ -224,10 +281,14 @@ function updateTanksDisplay() {
         noMessage.style.display = 'none';
     }
     
+    // Get current depth for END calculations
+    const depthInput = document.getElementById('maxDepth');
+    const currentDepth = depthInput ? parseFloat(depthInput.value) : 30;
+    
     // Add each tank to the display
     app.tanks.forEach((tank, index) => {
         const tankElement = document.createElement('div');
-        tankElement.className = 'tank-item';
+        tankElement.className = 'tank-item mb-3 p-3 bg-light rounded';
         
         // Get gas info string
         let gasInfo = '';
@@ -236,25 +297,38 @@ function updateTanksDisplay() {
         } else if (tank.gasType === 'nitrox') {
             gasInfo = `Nitrox ${tank.o2}% O₂`;
         } else if (tank.gasType === 'trimix') {
-            gasInfo = `Trimix ${tank.o2}% O₂, ${tank.he}% He`;
+            gasInfo = `Trimix ${tank.o2}/${tank.he}`;
         } else if (tank.gasType === 'oxygen') {
             gasInfo = 'Oxygen (100% O₂)';
         }
         
-        // Get MOD info for nitrox
-        let modInfo = '';
-        if (tank.gasType === 'nitrox' || tank.gasType === 'oxygen') {
-            const mod = calculateMOD(tank.o2);
-            modInfo = `<div class="small">MOD: ${mod}m</div>`;
+        // Calculate technical diving values
+        let techInfo = '';
+        
+        // MOD for any gas with oxygen
+        const mod = calculateMOD(tank.o2);
+        techInfo += `<div class="small ${mod < currentDepth ? 'text-danger fw-bold' : ''}">
+                      MOD: ${mod}m ${mod < currentDepth ? '⚠️' : ''}
+                     </div>`;
+        
+        // END for trimix
+        if (tank.gasType === 'trimix') {
+            const end = calculateEND(currentDepth, tank.o2, tank.he);
+            techInfo += `<div class="small ${end > 30 ? 'text-warning' : ''}">
+                          END at ${currentDepth}m: ${end}m ${end > 30 ? '⚠️' : ''}
+                         </div>`;
         }
+        
+        // Tank volume calculation
+        const totalVolume = tank.size * tank.pressure;
         
         tankElement.innerHTML = `
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <div class="fw-bold mb-1">Tank ${index + 1}</div>
-                    <div class="small mb-1">${tank.size}L @ ${tank.pressure} bar</div>
+                    <div class="small mb-1">${tank.size}L @ ${tank.pressure} bar (${totalVolume.toFixed(0)}L gas)</div>
                     <div class="small mb-1">${gasInfo}</div>
-                    ${modInfo}
+                    ${techInfo}
                 </div>
                 <div>
                     <button type="button" class="btn btn-sm btn-outline-primary me-1 edit-tank-btn" data-index="${index}">
@@ -301,6 +375,57 @@ function calculateMOD(o2Percent, ppO2Max = 1.4) {
     
     // Round down to be conservative
     return Math.floor(mod);
+}
+
+/**
+ * Suggest the best gas mix based on planned dive depth
+ */
+function suggestBestMix() {
+    // Get the planned depth from the dive plan form
+    const depthInput = document.getElementById('maxDepth');
+    
+    if (!depthInput) {
+        showAlert('Please enter your planned depth first', 'warning');
+        return;
+    }
+    
+    const depth = parseFloat(depthInput.value);
+    
+    if (isNaN(depth) || depth <= 0) {
+        showAlert('Please enter a valid depth', 'warning');
+        return;
+    }
+    
+    // Call API to get best mix
+    fetch(`/api/technical/best-mix?depth=${depth}&max_po2=1.4&max_end=30`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Fill in the form with the calculated values
+            const oxygenInput = document.getElementById('oxygenPercentage');
+            const heliumInput = document.getElementById('heliumPercentage');
+            
+            if (oxygenInput && heliumInput) {
+                oxygenInput.value = Math.round(data.o2_percentage);
+                heliumInput.value = Math.round(data.he_percentage);
+                
+                // Show a success message with details
+                showAlert(`
+                    <strong>Suggested Trimix:</strong><br>
+                    ${Math.round(data.o2_percentage)}% O₂, ${Math.round(data.he_percentage)}% He<br>
+                    MOD: ${Math.floor(data.mod)}m<br>
+                    END at ${depth}m: ${Math.floor(data.end)}m
+                `, 'success', 8000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Failed to calculate best mix', 'danger');
+        });
 }
 
 /**
