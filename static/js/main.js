@@ -642,6 +642,38 @@ function calculateGasConsumption(planData) {
                     `;
                 } else {
                     // Other calculation error
+                    // Get the current dive depth and time
+                    const diveDepth = parseFloat(document.getElementById('diveDepth')?.value || document.getElementById('maxDepth')?.value || 0);
+                    const diveTime = parseFloat(document.getElementById('diveTime')?.value || document.getElementById('bottomTime')?.value || 0);
+                    
+                    // Calculate approximate gas needs
+                    const atmosphericPressure = (diveDepth / 10) + 1; // in bars
+                    const avgSacRate = 20; // Average SAC rate in L/min
+                    const estimatedGasNeeded = avgSacRate * atmosphericPressure * diveTime;
+                    const recommendedReserve = estimatedGasNeeded * 0.5; // 50% reserve
+                    const totalGasNeeded = estimatedGasNeeded + recommendedReserve;
+                    
+                    // Recommendations based on depth
+                    let recommendedTanks = '';
+                    let recommendedGasMix = '';
+                    
+                    if (diveDepth <= 18) {
+                        recommendedTanks = '1 x 12L tank (2400L gas @ 200 bar)';
+                        recommendedGasMix = 'Air or Nitrox 32%';
+                    } else if (diveDepth <= 30) {
+                        recommendedTanks = '1 x 15L tank (3000L gas @ 200 bar)';
+                        recommendedGasMix = 'Air or Nitrox 32%';
+                    } else if (diveDepth <= 40) {
+                        recommendedTanks = '1 x 15L tank + deco tank (total ~3600L gas)';
+                        recommendedGasMix = 'Nitrox 32% or Trimix 21/35';
+                    } else if (diveDepth <= 60) {
+                        recommendedTanks = '2 x 12L tanks or 1 x 20L tank + deco (~4800L gas)';
+                        recommendedGasMix = 'Trimix 18/45';
+                    } else {
+                        recommendedTanks = 'Twin tanks + stage bottles (~6000L+ gas)';
+                        recommendedGasMix = 'Trimix 15/55 or 10/70';
+                    }
+                    
                     gasConsumptionResults.innerHTML = `
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
@@ -654,6 +686,18 @@ function calculateGasConsumption(planData) {
                                 <li>Technical dives may require specific gas mixtures</li>
                                 <li>Deep dives may need multiple tanks or special gases</li>
                             </ul>
+                            
+                            <div class="mt-3 border-top pt-2">
+                                <p><strong>Gas Requirements for this Dive:</strong></p>
+                                <ul>
+                                    <li>Estimated gas needed: ~${Math.round(estimatedGasNeeded)}L (w/o reserve)</li>
+                                    <li>Recommended with reserve: ~${Math.round(totalGasNeeded)}L</li>
+                                    <li>Recommended configuration: ${recommendedTanks}</li>
+                                    <li>Recommended gas mix: ${recommendedGasMix}</li>
+                                </ul>
+                                <p class="small fst-italic">Based on average SAC rate of ${avgSacRate}L/min at surface. 
+                                Your actual consumption may vary based on experience, conditions, and exertion level.</p>
+                            </div>
                         </div>
                     `;
                 }
