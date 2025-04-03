@@ -73,6 +73,14 @@ function setupDonationEventListeners() {
             generateDonationQRCodes();
         });
     }
+    
+    // Set up donation info guide link
+    const donationGuideLinks = document.querySelectorAll('#donationGuideLink');
+    donationGuideLinks.forEach(link => {
+        if (link) {
+            link.addEventListener('click', showDonationInfo);
+        }
+    });
 }
 
 /**
@@ -81,20 +89,41 @@ function setupDonationEventListeners() {
  */
 function updateDisplayedAddress(cryptoType) {
     const addressDisplay = document.getElementById('cryptoAddress');
+    const addressNote = document.getElementById('addressNote');
+    const xamanAppLink = document.querySelector('a[href^="https://xaman.app"]');
+    
     if (!addressDisplay) return;
+    
+    // Show/hide Xaman app link based on crypto type
+    if (xamanAppLink) {
+        if (cryptoType === 'xrp') {
+            xamanAppLink.style.display = 'inline-block';
+        } else {
+            xamanAppLink.style.display = 'none';
+        }
+    }
     
     switch (cryptoType) {
         case 'xrp':
             addressDisplay.innerText = 'rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV';
             addressDisplay.setAttribute('data-crypto', 'XRP');
+            if (addressNote) {
+                addressNote.innerText = 'XRP (Ripple) address - For Xaman app use the QR code';
+            }
             break;
         case 'usdt':
             addressDisplay.innerText = 'TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ';
             addressDisplay.setAttribute('data-crypto', 'USDT (TRC20)');
+            if (addressNote) {
+                addressNote.innerText = 'USDT (TRC20) address - Tether on the TRON network';
+            }
             break;
         default:
             addressDisplay.innerText = 'Please select a cryptocurrency';
             addressDisplay.setAttribute('data-crypto', '');
+            if (addressNote) {
+                addressNote.innerText = 'Please select a cryptocurrency';
+            }
     }
 }
 
