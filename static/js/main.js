@@ -418,6 +418,12 @@ function calculateDivePlan() {
         showAlert('Please enter a valid SAC rate', 'danger');
         return;
     }
+    // Check if tanks are added for gas consumption calculation
+    if (!app.tanks || app.tanks.length === 0) {
+        showAlert("Please add at least one tank to calculate gas consumption", "warning");
+        // Continue with dive plan calculation but without gas consumption
+    }
+    
     
     // Construct plan data
     const planData = {
@@ -460,8 +466,41 @@ function calculateDivePlan() {
         displayDivePlanResults(data);
         
         // Calculate gas consumption
-        if (app.tanks.length > 0) {
+        if (app.tanks && app.tanks.length > 0) {
             calculateGasConsumption(data);
+        } else {
+            // Display a message indicating tanks are needed for gas consumption
+            const gasConsumptionResults = document.getElementById("gasConsumptionResults");
+            if (gasConsumptionResults) {
+                gasConsumptionResults.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        No tanks added. Please add at least one tank to calculate gas consumption.
+                    </div>
+                    <div class="text-center mt-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="showAddTankModal()">
+                            <i class="fas fa-plus me-1"></i> Add Tank
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        } else {
+            // Display a message indicating tanks are needed for gas consumption
+            const gasConsumptionResults = document.getElementById('gasConsumptionResults');
+            if (gasConsumptionResults) {
+                gasConsumptionResults.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        No tanks added. Please add at least one tank to calculate gas consumption.
+                    </div>
+                    <div class="text-center mt-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="showAddTankModal()">
+                            <i class="fas fa-plus me-1"></i> Add Tank
+                        </button>
+                    </div>
+                `;
+            }
         }
     })
     .catch(error => {

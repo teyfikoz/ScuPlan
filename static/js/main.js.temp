@@ -1,0 +1,7 @@
+$(grep -A 419 "^function calculateDivePlan" main.js)
+    // Check if tanks are added for gas consumption calculation
+    if (!app.tanks || app.tanks.length === 0) {
+        showAlert('Please add at least one tank to calculate gas consumption', 'warning');
+        // Continue with dive plan calculation but without gas consumption
+    }
+$(grep -A 1000 "    // Construct plan data" main.js)
