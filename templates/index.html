@@ -72,6 +72,11 @@
                         </div>
                     </div>
                     
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="button" class="btn btn-primary btn-lg py-2" id="calculateButton">
+                            <i class="fas fa-calculator me-2"></i>Calculate Dive Plan
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -81,7 +86,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-flask me-2"></i>Tanks</span>
-                    <button type="button" class="btn btn-sm btn-primary" id="addTankButton"">
+                    <button type="button" class="btn btn-sm btn-secondary" id="addTankButton">
                         <i class="fas fa-plus me-1"></i>Add Tank
                     </button>
                 </div>
@@ -101,7 +106,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-users me-2"></i>Dive Buddies</span>
-                    <button type="button" class="btn btn-sm btn-primary" id="addBuddyButton">
+                    <button type="button" class="btn btn-sm btn-accent" id="addBuddyButton">
                         <i class="fas fa-plus me-1"></i>Add Buddy
                     </button>
                 </div>
@@ -110,18 +115,11 @@
                 <div id="buddiesContainer">
                     <!-- Buddy items will be inserted here dynamically -->
                     <div class="alert alert-info" id="noBuddiesMessage">
-                        <i class="fas fa-info-circle me-2"></i>No buddies added yet. Add a buddy to start.
+                        <i class="fas fa-info-circle me-2"></i>No buddies added yet. Add your dive buddies for better planning.
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Calculate Dive Plan Button -->
-        <div class="d-grid gap-2 mt-4 mb-4">
-            <button type="button" class="btn btn-primary btn-lg py-3" id="calculateButton">
-                <i class="fas fa-calculator me-2"></i>Calculate Dive Plan
-            </button>
-        </div>
-        
     </div>
     
     <!-- Right Panel: Results -->
@@ -351,7 +349,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveTankButton"">Save Tank</button>
+                <button type="button" class="btn btn-primary" id="saveTankButton">Save Tank</button>
             </div>
         </div>
     </div>
@@ -403,7 +401,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveBuddyButton"">Save Buddy</button>
+                <button type="button" class="btn btn-primary" id="saveBuddyButton">Save Buddy</button>
             </div>
         </div>
     </div>

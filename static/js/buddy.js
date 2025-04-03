@@ -15,20 +15,9 @@ function initBuddyManagement() {
     }
     
     // Display any existing buddies
-    // Set up add buddy button 
-    const addBuddyButton = document.getElementById("addBuddyButton");
-    if (addBuddyButton) {
-        addBuddyButton.addEventListener("click", showAddBuddyModal);
-    }
-    
-    // Set up save buddy button
-    const saveBuddyButton = document.getElementById("saveBuddyButton");
-    if (saveBuddyButton) {
-        saveBuddyButton.addEventListener("click", saveBuddy);
-    }
-
     updateBuddiesDisplay();
 }
+
 /**
  * Show the modal to add a new buddy
  */
@@ -166,20 +155,19 @@ function removeBuddy(index) {
  */
 function updateBuddiesDisplay() {
     const container = document.getElementById('buddiesContainer');
+    const noMessage = document.getElementById('noBuddiesMessage');
     
-    if (!container) return; // Not on a page with buddies display
+    if (!container || !noMessage) return; // Not on a page with buddies display
     
     // Clear current content
     container.innerHTML = '';
     
     // Show/hide the no buddies message
     if (app.buddies.length === 0) {
-        container.innerHTML = `
-            <div class="alert alert-info" id="noBuddiesMessage">
-                <i class="fas fa-info-circle me-2"></i>No buddies added yet. Add a buddy to start.
-            </div>
-        `;
+        noMessage.style.display = 'block';
         return;
+    } else {
+        noMessage.style.display = 'none';
     }
     
     // Add each buddy to the display
