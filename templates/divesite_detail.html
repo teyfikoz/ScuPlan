@@ -1,0 +1,150 @@
+{% extends 'layout.html' %}
+
+{% block title %}ScuPlan - Dive Site Details{% endblock %}
+
+{% block head_extras %}
+<!-- Leaflet CSS for maps -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<style>
+    .rating-stars .fas {
+        color: #ffc107;
+    }
+    .rating-stars .far {
+        color: #e4e5e9;
+    }
+    .dive-site-gallery {
+        height: 300px;
+        overflow: hidden;
+        position: relative;
+    }
+    .dive-site-gallery img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dive-site-thumbnail {
+        height: 80px;
+        width: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+    }
+    .dive-site-thumbnail:hover, .dive-site-thumbnail.active {
+        opacity: 1;
+    }
+    .gallery-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        z-index: 10;
+    }
+    .gallery-nav-btn:hover {
+        background: rgba(0,0,0,0.8);
+    }
+    .gallery-nav-prev {
+        left: 10px;
+    }
+    .gallery-nav-next {
+        right: 10px;
+    }
+    .property-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .property-value {
+        color: #212529;
+    }
+    .property-group {
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    #diveSiteMap {
+        height: 300px;
+        border-radius: 0.375rem;
+    }
+    .rating-form-stars {
+        display: inline-block;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    .rating-form-stars i {
+        color: #e4e5e9;
+        transition: color 0.2s;
+    }
+    .rating-form-stars i.active, .rating-form-stars i:hover {
+        color: #ffc107;
+    }
+    .rating-card {
+        transition: transform 0.2s;
+    }
+    .rating-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dive_sites') }}">Dive Sites</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" id="diveSiteBreadcrumb">Loading...</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 mb-1" id="diveSiteTitle">Loading dive site details...</h1>
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-3 rating-stars" id="diveSiteRating">
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <span class="text-muted small" id="diveSiteRatingCount">(0 ratings)</span>
+            </div>
+            <p class="lead" id="diveSiteLocation">Loading location...</p>
+        </div>
+        <div class="col-md-4 d-flex justify-content-md-end align-items-center mt-3 mt-md-0">
+            <button type="button" class="btn btn-outline-secondary me-2" id="backToDiveSitesBtn">
+                <i class="fas fa-arrow-left me-1"></i> Back to List
+            </button>
+            <button type="button" class="btn btn-primary" id="editThisDiveSiteBtn">
+                <i class="fas fa-edit me-1"></i> Edit Site
+            </button>
+        </div>
+    </div>
+
+    <div class="row" id="diveSiteDetailsContent">
+        <div class="col-12 text-center py-5" id="loadingIndicator">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading dive site details...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet JS for maps -->
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/divesites.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dive site detail page
+        initDiveSiteDetail({{ site_id }});
+    });
+</script>
+{% endblock %}
