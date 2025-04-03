@@ -1,0 +1,405 @@
+:root {
+    --primary-color: #0066cc;
+    --secondary-color: #00aaff;
+    --accent-color: #ff6600;
+    --background-color: #f5f8fa;
+    --dark-blue: #004080;
+    --light-blue: #e6f2ff;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --gray-dark: #343a40;
+    --gray: #6c757d;
+    --gray-light: #f8f9fa;
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--gray-dark);
+    padding-top: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Header and Navigation */
+.navbar {
+    background-color: rgba(0, 102, 204, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: white !important;
+    font-size: 1.8rem;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    margin: 0 0.2rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Form Elements */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 0.6rem 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 170, 255, 0.25);
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--gray-dark);
+}
+
+.input-group-text {
+    background-color: var(--light-blue);
+    border: 1px solid #ced4da;
+    color: var(--gray-dark);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 6px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-blue);
+    border-color: var(--dark-blue);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #0088cc;
+    border-color: #0088cc;
+}
+
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #e65c00;
+    border-color: #e65c00;
+    color: white;
+}
+
+/* Dive Plan Card */
+.dive-plan-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.dive-stats {
+    background-color: var(--light-blue);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Dive Profile Chart */
+.dive-profile-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.profile-chart-container {
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+/* Tank Section */
+.tank-card {
+    border-left: 4px solid var(--secondary-color);
+}
+
+.tank-item {
+    background-color: var(--light-blue);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.tank-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: var(--danger-color);
+    cursor: pointer;
+}
+
+/* Buddy Section */
+.buddy-card {
+    border-left: 4px solid var(--accent-color);
+}
+
+.buddy-item {
+    background-color: #fff9f2;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    position: relative;
+    border-left: 3px solid var(--accent-color);
+}
+
+.buddy-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: var(--danger-color);
+    cursor: pointer;
+}
+
+/* Checklist Section */
+.checklist-card {
+    border-left: 4px solid var(--success-color);
+}
+
+.checklist-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+}
+
+.checklist-item:last-child {
+    border-bottom: none;
+}
+
+.checklist-item input[type="checkbox"] {
+    margin-right: 15px;
+}
+
+.checklist-item.completed {
+    text-decoration: line-through;
+    color: var(--gray);
+}
+
+/* Donation Section */
+.donation-section {
+    background-color: #fffdf0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px 0;
+    border-left: 4px solid var(--warning-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.donation-title {
+    font-weight: 600;
+    color: var(--gray-dark);
+    margin-bottom: 10px;
+}
+
+.crypto-address {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: monospace;
+    word-break: break-all;
+    margin: 5px 0;
+    border: 1px dashed #ddd;
+}
+
+.qr-code-container {
+    text-align: center;
+    margin: 15px 0;
+}
+
+/* Sharing Section */
+.sharing-container {
+    margin: 20px 0;
+}
+
+.share-link {
+    background-color: var(--light-blue);
+    padding: 15px;
+    border-radius: 6px;
+    word-break: break-all;
+    margin-bottom: 15px;
+}
+
+/* Footer */
+footer {
+    background-color: var(--gray-dark);
+    color: white;
+    padding: 30px 0;
+    margin-top: 40px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+    .container {
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .stat-value {
+        font-size: 1.4rem;
+    }
+    
+    .profile-chart-container {
+        height: 250px;
+    }
+    
+    .donation-section {
+        padding: 15px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar, .footer, .donation-section, .btn, .no-print {
+        display: none !important;
+    }
+    
+    body {
+        padding-top: 0;
+        background-color: white;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Offline Indicator */
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--danger-color);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+}
+
+.offline-indicator.show {
+    display: block;
+    animation: slideIn 0.3s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

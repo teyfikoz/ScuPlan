@@ -1,0 +1,341 @@
+{% extends "layout.html" %}
+
+{% block title %}Dive Checklists - ScuPlan{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="mb-4"><i class="fas fa-tasks me-2"></i>Dive Checklists</h2>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>Use these checklists to ensure you're prepared for your dive. You can create custom checklists or use our defaults.
+        </div>
+        
+        <!-- Checklist Tabs -->
+        <ul class="nav nav-tabs mb-3" id="checklistTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pre-dive-tab" data-bs-toggle="tab" data-bs-target="#pre-dive" type="button" role="tab" aria-controls="pre-dive" aria-selected="true">
+                    <i class="fas fa-clipboard-check me-1"></i> Pre-Dive
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="post-dive-tab" data-bs-toggle="tab" data-bs-target="#post-dive" type="button" role="tab" aria-controls="post-dive" aria-selected="false">
+                    <i class="fas fa-clipboard me-1"></i> Post-Dive
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="emergency-tab" data-bs-toggle="tab" data-bs-target="#emergency" type="button" role="tab" aria-controls="emergency" aria-selected="false">
+                    <i class="fas fa-exclamation-triangle me-1"></i> Emergency
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom" type="button" role="tab" aria-controls="custom" aria-selected="false">
+                    <i class="fas fa-edit me-1"></i> Custom
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="checklistTabContent">
+            <!-- Pre-Dive Tab -->
+            <div class="tab-pane fade show active" id="pre-dive" role="tabpanel" aria-labelledby="pre-dive-tab">
+                <div class="card checklist-card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Pre-Dive Checklist</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary print-checklist-btn" data-type="pre-dive">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="preChecklistItems" class="checklist-items-container">
+                            <!-- Pre-dive checklist items will be loaded here -->
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading checklist...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="savePreDiveChecklist">
+                                <label class="form-check-label" for="savePreDiveChecklist">Save this checklist offline</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Post-Dive Tab -->
+            <div class="tab-pane fade" id="post-dive" role="tabpanel" aria-labelledby="post-dive-tab">
+                <div class="card checklist-card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Post-Dive Checklist</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary print-checklist-btn" data-type="post-dive">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="postChecklistItems" class="checklist-items-container">
+                            <!-- Post-dive checklist items will be loaded here -->
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading checklist...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="savePostDiveChecklist">
+                                <label class="form-check-label" for="savePostDiveChecklist">Save this checklist offline</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Emergency Tab -->
+            <div class="tab-pane fade" id="emergency" role="tabpanel" aria-labelledby="emergency-tab">
+                <div class="card checklist-card mb-4" style="border-left: 4px solid var(--danger-color);">
+                    <div class="card-header" style="background-color: var(--danger-color);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Emergency Procedures</span>
+                            <button type="button" class="btn btn-sm btn-outline-light print-checklist-btn" data-type="emergency">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <strong>Important:</strong> Familiarize yourself with these emergency procedures before every dive.
+                        </div>
+                        
+                        <div id="emergencyChecklistItems" class="checklist-items-container">
+                            <!-- Emergency checklist items will be loaded here -->
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-danger" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading checklist...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="saveEmergencyChecklist">
+                                <label class="form-check-label" for="saveEmergencyChecklist">Save this checklist offline</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Custom Checklists Tab -->
+            <div class="tab-pane fade" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Custom Checklists</span>
+                            <button type="button" class="btn btn-sm btn-primary" id="createChecklistBtn">
+                                <i class="fas fa-plus me-1"></i>Create New
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="customChecklistsContainer">
+                            <!-- Custom checklists will be loaded here -->
+                            <div class="text-center py-3">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading custom checklists...</p>
+                            </div>
+                        </div>
+                        
+                        <div id="noCustomChecklistsMessage" class="alert alert-info" style="display: none;">
+                            <i class="fas fa-info-circle me-2"></i>You haven't created any custom checklists yet. Click "Create New" to get started.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="sticky-md-top" style="top: 80px;">
+            <!-- Tips for Using Checklists -->
+            <div class="card mb-4">
+                <div class="card-header">Checklist Tips</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check-square text-success me-2"></i>
+                            <strong>Pre-Dive:</strong> Complete at least 1 hour before your dive
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-square text-success me-2"></i>
+                            <strong>Buddy Check:</strong> Always perform a final buddy check
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-square text-success me-2"></i>
+                            <strong>Post-Dive:</strong> Complete immediately after your dive
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-square text-success me-2"></i>
+                            <strong>Custom:</strong> Create checklists for specific dive types
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-square text-success me-2"></i>
+                            <strong>Print:</strong> Keep a physical copy for backup
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Offline Checklists -->
+            <div class="card mb-4">
+                <div class="card-header">Offline Checklists</div>
+                <div class="card-body">
+                    <p>Saved checklists can be accessed offline when you have no internet connection.</p>
+                    
+                    <div id="offlineChecklistsContainer">
+                        <!-- Offline checklists will be listed here -->
+                        <div class="alert alert-info" id="noOfflineChecklistsMessage">
+                            <i class="fas fa-info-circle me-2"></i>No checklists saved for offline use.
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-outline-primary btn-sm mt-2 w-100" id="manageOfflineChecklistsBtn">
+                        <i class="fas fa-cog me-1"></i>Manage Offline Checklists
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Checklist Modal -->
+<div class="modal fade" id="createChecklistModal" tabindex="-1" aria-labelledby="createChecklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createChecklistModalLabel">Create Custom Checklist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createChecklistForm">
+                    <div class="mb-3">
+                        <label for="checklistName" class="form-label">Checklist Name</label>
+                        <input type="text" class="form-control" id="checklistName" placeholder="e.g., Night Dive Checklist">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="checklistType" class="form-label">Checklist Type</label>
+                        <select class="form-select" id="checklistType">
+                            <option value="pre-dive">Pre-Dive</option>
+                            <option value="post-dive">Post-Dive</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="custom">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Checklist Items</label>
+                        <div id="checklistItemsContainer">
+                            <div class="input-group mb-2 checklist-item-input">
+                                <input type="text" class="form-control" placeholder="Enter checklist item">
+                                <button class="btn btn-outline-danger remove-item-btn" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-sm btn-secondary mt-2" id="addChecklistItemBtn">
+                            <i class="fas fa-plus me-1"></i>Add Item
+                        </button>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="saveChecklistOffline">
+                        <label class="form-check-label" for="saveChecklistOffline">
+                            Save checklist for offline use
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveChecklistBtn">Create Checklist</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View/Edit Checklist Modal -->
+<div class="modal fade" id="viewChecklistModal" tabindex="-1" aria-labelledby="viewChecklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewChecklistModalLabel">View Checklist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="viewChecklistContent">
+                    <!-- Checklist items will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="printViewedChecklistBtn">
+                    <i class="fas fa-print me-1"></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Offline Checklists Modal -->
+<div class="modal fade" id="manageOfflineModal" tabindex="-1" aria-labelledby="manageOfflineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="manageOfflineModalLabel">Manage Offline Checklists</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Offline checklists are saved in your browser and available without internet connection.
+                </div>
+                
+                <div id="manageOfflineChecklistsList">
+                    <!-- Offline checklists list will be displayed here -->
+                </div>
+                
+                <div class="alert alert-warning mt-3" id="noOfflineChecklistsToManageMessage" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>You don't have any offline checklists to manage.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="clearAllOfflineBtn">Clear All Offline Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize checklist functionality
+        initChecklists();
+    });
+</script>
+{% endblock %}

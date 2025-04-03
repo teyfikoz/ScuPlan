@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ScuPlan - Dive Planning Made Easy{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head_extras %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-water me-2"></i>ScuPlan
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="fas fa-calculator me-1"></i> Dive Planner
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/checklist' %}active{% endif %}" href="{{ url_for('checklist') }}">
+                            <i class="fas fa-tasks me-1"></i> Checklists
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="offlineStorageButton">
+                            <i class="fas fa-save me-1"></i> Saved Plans
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Donation Section - Present on all pages -->
+    <div class="container">
+        <div class="donation-section">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="donation-title">
+                        <i class="fas fa-heart text-danger me-2"></i>Support ScuPlan
+                    </h4>
+                    <p>If you find ScuPlan helpful, please consider supporting the project with a crypto donation. Your contribution helps keep this tool free and continuously improving!</p>
+                    
+                    <div class="mt-3">
+                        <div class="mb-2">
+                            <strong><i class="fab fa-bitcoin me-2"></i>Bitcoin (BTC):</strong>
+                            <div class="crypto-address" id="btcAddress">bc1q3gdvp89gxe94ewg7f03w54x5kv6l3e80qeyk5f</div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong><i class="fab fa-ethereum me-2"></i>Ethereum (ETH):</strong>
+                            <div class="crypto-address" id="ethAddress">0x1a2F8fc87b41472958D6B10D810eDc6E6EE85635</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-sm btn-warning mt-2" id="copyDonationBtn">
+                        <i class="fas fa-copy me-1"></i> Copy Address
+                    </button>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="qr-code-container">
+                        <!-- QR code for BTC donation -->
+                        <div id="donationQR"></div>
+                        <small class="d-block mt-2">Scan to donate</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h5 class="mb-3">About ScuPlan</h5>
+                    <p>ScuPlan is a comprehensive tool designed to help divers create safe and efficient dive plans. Features include gas consumption calculation, decompression planning, buddy management, and more.</p>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="mb-3">Features</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Dive Calculator</a></li>
+                        <li><a href="{{ url_for('checklist') }}">Dive Checklists</a></li>
+                        <li><a href="#" id="footerSavedPlans">Saved Plans</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5 class="mb-3">Resources</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" id="offlineGuideLink">Offline Usage Guide</a></li>
+                        <li><a href="#" id="exportGuideLink">Export & Print Guide</a></li>
+                        <li><a href="#" id="donationGuideLink">Support ScuPlan</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="background-color: rgba(255,255,255,0.1);">
+            
+            <div class="text-center">
+                <p class="mb-0">&copy; <span id="currentYear"></span> ScuPlan. All rights reserved.</p>
+                <small class="d-block mt-1">Use this app responsibly. Always dive within your training and certification limits.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi me-2"></i> You're offline. Some features may be limited.
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="{{ url_for('static', filename='js/dive.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tank.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/buddy.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/checklist.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sharing.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/donations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
