@@ -337,3 +337,119 @@ footer {
         margin-bottom: 20px;
     }
 }
+
+/* PWA-related styles */
+.pwa-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #0A192F;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.offline-indicator {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #f44336;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 14px;
+    z-index: 1000;
+    display: none;
+    transition: transform 0.3s ease;
+}
+
+.offline-indicator.active {
+    display: block;
+}
+
+/* Language selector mobile */
+.language-selector-mobile {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 999;
+}
+
+/* AR Preview styles */
+.ar-preview-container {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+#arCanvas {
+    border: 1px solid #ddd;
+    background-color: #333;
+    max-height: 60vh;
+}
+
+.ar-permission-request {
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+}
+
+/* Styles for LinkedIn button in About Me */
+.btn-linkedin {
+    background-color: #0077b5;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.btn-linkedin:hover {
+    background-color: #005e93;
+    color: white;
+    text-decoration: none;
+}
+
+/* Social sharing styles */
+.share-qr-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.social-share-buttons {
+    margin-top: 20px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .pwa-banner {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .language-selector-mobile {
+        bottom: 120px;
+    }
+}
+
+/* Dive site AR preview button */
+.ar-preview-btn {
+    background-color: #5755d9;
+    border-color: #5755d9;
+}
+
+.ar-preview-btn:hover {
+    background-color: #4240c7;
+    border-color: #3f3dbd;
+}
