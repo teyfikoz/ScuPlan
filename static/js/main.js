@@ -600,7 +600,7 @@ function calculateGasConsumption(planData) {
         tanks: app.tanks
     };
     
-    fetch('/api/gas_consumption', {
+    fetch('/api/gas-consumption', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
