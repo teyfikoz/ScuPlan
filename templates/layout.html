@@ -3,23 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Advanced dive planning application with technical dive support, safety tools, and community features">
-    <meta name="theme-color" content="#0A192F">
-    <meta name="description" content="Advanced dive planning application with technical dive support, safety tools, and community features">
-    <meta name="theme-color" content="#0A192F">
-    <!-- PWA Support -->
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-192x192.png') }}">
- 
-    <meta name="description" content="Advanced dive planning application with technical dive support, safety tools, and community features">
-    <meta name="theme-color" content="#0A192F">
-    <!-- PWA Support -->
     <title>{% block title %}ScuPlan - Dive Planning Made Easy{% endblock %}</title>
-    
-    <!-- PWA Support -->
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-192x192.png') }}">
-    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -59,7 +43,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        " id="offlineStorageButton">s*<i class="fas fa-save me-1"></i> Saved Planss*</a>#" id="offlineStorageButton">
+                        <a class="nav-link" href="#" id="offlineStorageButton">
                             <i class="fas fa-save me-1"></i> Saved Plans
                         </a>
                     </li>
@@ -154,7 +138,6 @@
             <div class="text-center">
                 <p class="mb-0">&copy; <span id="currentYear"></span> ScuPlan. All rights reserved.</p>
                 <small class="d-block mt-1">Use this app responsibly. Always dive within your training and certification limits.</small>
-    <script src="{{ url_for('static', filename='js/gas_validation.js') }}"></script>
             </div>
         </div>
     </footer>
@@ -162,31 +145,9 @@
     <!-- Offline Indicator -->
     <div class="offline-indicator" id="offlineIndicator">
         <i class="fas fa-wifi me-2"></i> You're offline. Some features may be limited.
-    <!-- New Features -->
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/social_sharing.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ar_preview.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
-    
-    <!-- New Features -->
     </div>
 
     <!-- JavaScript Dependencies -->
-    <!-- Offline Indicator -->
-    <div class="offline-indicator" id="offlineIndicator">
-        <i class="fas fa-wifi me-2"></i> You're offline. Some features may be limited.
-    </div>
-
-    <!-- Install PWA Banner -->
-    <div class="pwa-banner" id="pwaBanner" style="display: none;">
-        <div>Add ScuPlan to your home screen for a better experience</div>
-        <div>
-            <button id="installPwaButton" class="btn btn-primary btn-sm">Install</button>
-            <button id="closePwaBanner" class="btn btn-secondary btn-sm ms-2">Maybe Later</button>
-        </div>
-    </div>
-
-    <!-- Language Selector Mobile -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
@@ -200,15 +161,6 @@
     <script src="{{ url_for('static', filename='js/sharing.js') }}"></script>
     <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
     <script src="{{ url_for('static', filename='js/donations.js') }}"></script>
-    
-    <!-- New Features -->
-    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/social_sharing.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ar_preview.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
-    
-    <!-- Main App Script (load last) -->
-    <!-- Main App Script (load last) -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     
     {% block scripts %}{% endblock %}
@@ -237,8 +189,8 @@
                         <div class="text-center mt-4">
                             <h5>📌 Contact Information</h5>
                             <p>👤 Teyfik ÖZ</p>
-                            <div class="social-links mb-2">
-                                <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" title="LinkedIn" class="btn btn-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                            <div class="social-links">
+                                <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i> LinkedIn</a>
                             </div>
                             <p class="mt-2">📧 Email: <a href="mailto:teyfikoz@yahoo.com">teyfikoz@yahoo.com</a></p>
                             <p class="mt-2">Feel free to reach out! 😊</p>

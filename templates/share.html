@@ -1,165 +1,225 @@
 {% extends "layout.html" %}
 
-{% block title %}Shared Dive Plan{% endblock %}
+{% block title %}Shared Dive Plan - ScuPlan{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">
-                        <i class="fas fa-share-alt me-2"></i> Shared Dive Plan
-                    </h4>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-share-alt me-2"></i>Shared Dive Plan</h4>
+            </div>
+            <div class="card-body" id="loadingContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading dive plan...</p>
                 </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        This is a dive plan shared with you. You can view its details below.
+            </div>
+            
+            <div class="card-body" id="planDetailsContainer" style="display: none;">
+                <div id="planNotFound" class="alert alert-danger" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Dive plan not found.</strong> The plan may have been deleted or the link is invalid.
+                </div>
+                
+                <div id="jsNotFound" class="alert alert-warning" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>JavaScript error.</strong> There was a problem loading the plan details.
+                </div>
+                
+                <div id="planContent">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Dive Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Location:</div>
+                                <div id="sharedLocation">-</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Date:</div>
+                                <div id="sharedDate">-</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Dive Type:</div>
+                                <div id="sharedDiveType">-</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Max Depth:</div>
+                                <div id="sharedMaxDepth">-</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Bottom Time:</div>
+                                <div id="sharedBottomTime">-</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="fw-bold">Total Dive Time:</div>
+                                <div id="sharedTotalTime">-</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <h5>Dive Information</h5>
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>Location</th>
-                                    <td>{{ plan.location or 'Not specified' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <td>{{ plan.dive_date }} {{ plan.dive_time }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Dive Type</th>
-                                    <td>{{ plan.dive_type|capitalize }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Maximum Depth</th>
-                                    <td>{{ plan.depth }} m</td>
-                                </tr>
-                                <tr>
-                                    <th>Bottom Time</th>
-                                    <td>{{ plan.bottom_time }} min</td>
-                                </tr>
-                                <tr>
-                                    <th>Total Dive Time</th>
-                                    <td>{{ plan.total_dive_time }} min</td>
-                                </tr>
-                            </table>
+                    <div class="dive-profile-container mb-4">
+                        <h5 class="mb-3">Dive Profile</h5>
+                        <div class="profile-chart-container mb-3">
+                            <canvas id="sharedProfileChart"></canvas>
                         </div>
                         
-                        <div class="col-md-6">
-                            <h5>Decompression Information</h5>
-                            {% if plan.deco_levels %}
-                                <table class="table table-bordered">
+                        <div class="row text-center mb-3">
+                            <div class="col-6 col-md-3 mb-2">
+                                <div class="stat-label">Descent</div>
+                                <div class="stat-value text-primary" id="sharedDescentTime">-</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <div class="stat-label">Bottom</div>
+                                <div class="stat-value text-primary" id="sharedBottomTimeDisplay">-</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <div class="stat-label">Ascent</div>
+                                <div class="stat-value text-primary" id="sharedAscentTime">-</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <div class="stat-label">Total</div>
+                                <div class="stat-value text-primary" id="sharedTotalTimeDisplay">-</div>
+                            </div>
+                        </div>
+                        
+                        <div id="sharedDecoStopsContainer" style="display: none;">
+                            <h6><i class="fas fa-hourglass-half me-2"></i>Decompression Stops</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
                                     <thead>
                                         <tr>
                                             <th>Depth (m)</th>
                                             <th>Time (min)</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {% set deco_levels = plan.deco_levels.split(',') %}
-                                        {% set deco_times = plan.deco_times.split(',') %}
-                                        {% for i in range(deco_levels|length) %}
-                                            <tr>
-                                                <td>{{ deco_levels[i] }}</td>
-                                                <td>{{ deco_times[i] }}</td>
-                                            </tr>
-                                        {% endfor %}
+                                    <tbody id="sharedDecoStopsList">
+                                        <!-- Deco stops will be displayed here -->
                                     </tbody>
                                 </table>
-                            {% else %}
-                                <div class="alert alert-success">
-                                    <i class="fas fa-check me-2"></i>
-                                    No decompression stops required for this dive.
-                                </div>
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <h5>Tank Information</h5>
-                            {% if plan.tanks|length > 0 %}
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Size</th>
-                                            <th>Pressure</th>
-                                            <th>Gas Type</th>
-                                            <th>O₂ %</th>
-                                            <th>He %</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for tank in plan.tanks %}
-                                            <tr>
-                                                <td>{{ loop.index }}</td>
-                                                <td>{{ tank.size }} L</td>
-                                                <td>{{ tank.pressure }} bar</td>
-                                                <td>{{ tank.gas_type|capitalize }}</td>
-                                                <td>{{ tank.o2_percentage }}%</td>
-                                                <td>{{ tank.he_percentage }}%</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    No tank information specified for this dive.
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h5 class="mb-3">Tanks</h5>
+                            <div id="sharedTanksContainer">
+                                <div class="alert alert-info" id="noSharedTanksMessage">
+                                    <i class="fas fa-info-circle me-2"></i>No tanks specified in this plan.
                                 </div>
-                            {% endif %}
+                                <!-- Tank details will be displayed here -->
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <h5>Buddy Information</h5>
-                            {% if plan.buddies|length > 0 %}
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Certification</th>
-                                            <th>Skill Level</th>
-                                            <th>Specialty</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for buddy in plan.buddies %}
-                                            <tr>
-                                                <td>{{ buddy.name }}</td>
-                                                <td>{{ buddy.certification }}</td>
-                                                <td>{{ buddy.skill_level }}</td>
-                                                <td>{{ buddy.specialty or 'None' }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <div class="alert alert-warning">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    No buddy information specified for this dive.
+                        
+                        <div class="col-md-6 mb-4">
+                            <h5 class="mb-3">Buddies</h5>
+                            <div id="sharedBuddiesContainer">
+                                <div class="alert alert-info" id="noSharedBuddiesMessage">
+                                    <i class="fas fa-info-circle me-2"></i>No buddies specified in this plan.
                                 </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-12 text-center">
-                            <p>This dive plan was created using <a href="{{ url_for('index') }}">ScuPlan</a>.</p>
-                            <a href="{{ url_for('index') }}" class="btn btn-primary">
-                                <i class="fas fa-calculator me-2"></i> Create Your Own Dive Plan
-                            </a>
+                                <!-- Buddy details will be displayed here -->
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6 mb-2 mb-md-0">
+                        <button type="button" class="btn btn-outline-primary w-100" id="saveToPlannerBtn">
+                            <i class="fas fa-edit me-1"></i>Edit in Dive Planner
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-outline-secondary w-100" id="printSharedPlanBtn">
+                            <i class="fas fa-print me-1"></i>Print Dive Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pre-Dive Checklist Quick Access -->
+        <div class="card checklist-card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-clipboard-check me-2"></i>Pre-Dive Checklist</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="printPreDiveBtn">
+                        <i class="fas fa-print me-1"></i>Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="sharedPreDiveChecklist">
+                    <!-- Pre-dive checklist will be displayed here -->
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading checklist...</p>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('checklist') }}" class="btn btn-outline-secondary btn-sm mt-3 w-100">
+                    <i class="fas fa-tasks me-1"></i>View All Checklists
+                </a>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            // Initialize the shared plan view with error handling
+            if (typeof initSharedPlanView === 'function') {
+                initSharedPlanView();
+            } else {
+                console.error('initSharedPlanView function not found');
+                // Hide loading container
+                var loadingContainer = document.getElementById('loadingContainer');
+                if (loadingContainer) loadingContainer.style.display = 'none';
+                
+                // Show JavaScript error message
+                var jsNotFound = document.getElementById('jsNotFound');
+                if (jsNotFound) {
+                    jsNotFound.textContent = 'JavaScript error: Required functions not loaded correctly. Please try refreshing the page.';
+                    jsNotFound.style.display = 'block';
+                }
+                
+                // Show the plan container but hide plan content
+                var planDetailsContainer = document.getElementById('planDetailsContainer');
+                if (planDetailsContainer) planDetailsContainer.style.display = 'block';
+                
+                var planContent = document.getElementById('planContent');
+                if (planContent) planContent.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error initializing shared plan view:', error);
+            // Hide loading container
+            var loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) loadingContainer.style.display = 'none';
+            
+            // Show JavaScript error message
+            var jsNotFound = document.getElementById('jsNotFound');
+            if (jsNotFound) {
+                jsNotFound.textContent = 'JavaScript error: ' + error.message;
+                jsNotFound.style.display = 'block';
+            }
+            
+            // Show the plan container but hide plan content
+            var planDetailsContainer = document.getElementById('planDetailsContainer');
+            if (planDetailsContainer) planDetailsContainer.style.display = 'block';
+            
+            var planContent = document.getElementById('planContent');
+            if (planContent) planContent.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}
