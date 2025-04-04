@@ -600,3 +600,46 @@ document.addEventListener('DOMContentLoaded', function() {
         checkForImportedPlan();
     }
 });
+/**
+ * Initialize dive planner functionality
+ */
+function initializeDivePlanner() {
+    console.log('Initializing dive planner...');
+    
+    // Set up event listeners
+    const calculateButton = document.getElementById('calculateButton');
+    if (calculateButton) {
+        calculateButton.addEventListener('click', calculateDivePlan);
+    }
+    
+    // Initialize date picker for dive date
+    const diveDateInput = document.getElementById('diveDate');
+    if (diveDateInput) {
+        initializeDatePicker(diveDateInput);
+    }
+    
+    // Initialize time input for dive time
+    const diveTimeInput = document.getElementById('diveTime');
+    if (diveTimeInput) {
+        diveTimeInput.addEventListener('blur', function() {
+            formatTimeInput(this);
+        });
+    }
+    
+    // Initialize depth and time inputs with validation
+    const depthInput = document.getElementById('depth');
+    if (depthInput) {
+        depthInput.addEventListener('blur', function() {
+            validateDepthInput(this);
+        });
+    }
+    
+    const bottomTimeInput = document.getElementById('bottomTime');
+    if (bottomTimeInput) {
+        bottomTimeInput.addEventListener('blur', function() {
+            validateTimeInput(this);
+        });
+    }
+    
+    console.log('Dive planner initialized');
+}
