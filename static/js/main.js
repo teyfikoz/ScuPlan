@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
     
     // Check for any stored dive plans
-    initializeLocalStorage();
+    initOfflineStorage();
 });
 
 /**

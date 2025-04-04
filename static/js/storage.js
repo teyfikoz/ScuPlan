@@ -247,3 +247,24 @@ function deleteOfflinePlan(planId) {
         showAlert('Dive plan deleted', 'success');
     }
 }
+/**
+ * Initialize offline storage functionality
+ */
+function initOfflineStorage() {
+    // Check if local storage is available
+    if (typeof localStorage === 'undefined') {
+        console.error('Local storage is not available');
+        return;
+    }
+    
+    // Initialize storage if needed
+    if (!localStorage.getItem('scuplan_initialized')) {
+        localStorage.setItem('scuplan_initialized', 'true');
+        localStorage.setItem('scuplan_plans', JSON.stringify([]));
+        localStorage.setItem('scuplan_tanks', JSON.stringify([]));
+        localStorage.setItem('scuplan_buddies', JSON.stringify([]));
+        localStorage.setItem('scuplan_checklists', JSON.stringify([]));
+    }
+    
+    console.log('Offline storage initialized');
+}
