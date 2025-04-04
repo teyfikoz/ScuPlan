@@ -2228,10 +2228,6 @@ function validateTimeInput(inputElement) {
 /**
  * Global variable to track application state
  */
-const app = {
-    tanks: [],
-    buddies: [],
-    currentPlan: null
 };
 
 /**
