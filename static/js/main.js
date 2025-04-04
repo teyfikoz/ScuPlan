@@ -1783,3 +1783,522 @@ function capitalizeFirstLetter(string) {
 /**
  * Initialize the application when the DOM is fully loaded
  */
+/**
+ * Calculate the dive plan based on form inputs
+ */
+function calculateDivePlan() {
+    console.log('Calculating dive plan...');
+    
+    // Show loading indicator
+    showLoading('Calculating dive plan...');
+    
+    // Get form values
+    const depth = parseFloat(document.getElementById('depth').value);
+    const bottomTime = parseFloat(document.getElementById('bottomTime').value);
+    const location = document.getElementById('location').value;
+    const diveDate = document.getElementById('diveDate').value;
+    const diveTime = document.getElementById('diveTime').value;
+    const diveType = document.getElementById('diveType').value;
+    
+    // Validate inputs
+    if (isNaN(depth) || isNaN(bottomTime)) {
+        hideLoading();
+        showAlert('Please enter valid depth and bottom time values', 'danger');
+        return;
+    }
+    
+    // Check if we have any tanks
+    if (app.tanks.length === 0) {
+        hideLoading();
+        showAlert('Please add at least one tank before calculating the dive plan', 'warning');
+        return;
+    }
+    
+    // Create plan data object
+    const planData = {
+        depth: depth,
+        bottomTime: bottomTime,
+        location: location,
+        diveDate: diveDate,
+        diveTime: diveTime,
+        diveType: diveType,
+        tanks: app.tanks,
+        buddies: app.buddies
+    };
+    
+    // Try to calculate online, fallback to offline
+    try {
+        fetch('/api/calculate-plan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(planData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            hideLoading();
+            if (data.error) {
+                showAlert(data.error, 'danger');
+            } else {
+                // Store current plan data
+                app.currentPlan = data;
+                
+                // Display the results
+                displayDivePlanResults(data);
+                
+                // Calculate gas consumption
+                calculateGasConsumption(planData);
+            }
+        })
+        .catch(error => {
+            console.warn('Online calculation failed, using offline mode:', error);
+            
+            // Fallback to offline calculation
+            const plan = calculateOfflineDivePlan(planData);
+            hideLoading();
+            
+            // Store current plan
+            app.currentPlan = plan;
+            
+            // Display results
+            displayDivePlanResults(plan);
+            
+            // Calculate gas consumption offline
+            const consumptionResults = calculateOfflineGasConsumption(planData);
+            displayGasConsumptionResults(consumptionResults);
+            
+            // Show offline notice
+            showAlert('Using offline calculation mode. Results may be less accurate.', 'info');
+        });
+    } catch (error) {
+        console.error('Error calculating dive plan:', error);
+        hideLoading();
+        showAlert('Error calculating dive plan. Please try again.', 'danger');
+    }
+}
+/**
+ * Display dive plan results in the UI
+ * @param {Object} plan - The calculated dive plan
+ */
+function displayDivePlanResults(plan) {
+    console.log('Displaying dive plan results:', plan);
+    
+    // Get the results container
+    const resultsContainer = document.getElementById('diveResults');
+    if (!resultsContainer) {
+        console.error('Results container not found');
+        return;
+    }
+    
+    // Get the profile section
+    const profileSection = document.getElementById('diveProfileSection');
+    
+    // Update heading with dive info
+    const resultsHeading = document.getElementById('resultsHeading');
+    if (resultsHeading) {
+        resultsHeading.innerHTML = `
+            <i class="fas fa-clipboard-check me-2"></i>
+            Dive Plan: ${plan.depth}m for ${plan.bottomTime} minutes
+            ${plan.location ? `at ${plan.location}` : ''}
+        `;
+    }
+    
+    // Display profile chart
+    drawDiveProfileChart(plan.profile);
+    
+    // Show decompression stops
+    displayDecompressionStops(plan.profile);
+    
+    // Show plan summary
+    const summaryDiv = document.getElementById('divePlanSummary');
+    if (summaryDiv) {
+        summaryDiv.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Maximum Depth</span>
+                            <span class="badge bg-primary rounded-pill">${plan.depth} m</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Bottom Time</span>
+                            <span class="badge bg-primary rounded-pill">${plan.bottomTime} min</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Total Dive Time</span>
+                            <span class="badge bg-primary rounded-pill">${Math.round(plan.profile.totalTime)} min</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Dive Type</span>
+                            <span class="badge bg-info rounded-pill">${capitalizeFirstLetter(plan.diveType || 'recreational')}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Date</span>
+                            <span class="badge bg-info rounded-pill">${plan.diveDate || 'Not specified'}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Time</span>
+                            <span class="badge bg-info rounded-pill">${plan.diveTime || 'Not specified'}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Display buddies if available
+    if (plan.buddies && plan.buddies.length > 0) {
+        const buddiesDiv = document.getElementById('buddiesSummary');
+        if (buddiesDiv) {
+            let buddiesHtml = '<div class="row row-cols-1 row-cols-md-2 g-4">';
+            
+            plan.buddies.forEach(buddy => {
+                buddiesHtml += `
+                    <div class="col">
+                        <div class="card h-100 buddy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-user-circle me-2"></i>${buddy.name}
+                                </h5>
+                                <p class="card-text">
+                                    <span class="badge bg-info">${buddy.certification || 'Not specified'}</span>
+                                    ${buddy.skill_level ? `<span class="badge bg-secondary ms-1">${buddy.skill_level}</span>` : ''}
+                                </p>
+                                ${buddy.specialty ? `<p class="card-text small text-muted">${buddy.specialty}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            buddiesHtml += '</div>';
+            buddiesDiv.innerHTML = buddiesHtml;
+        }
+    }
+    
+    // Show tanks info if available
+    if (plan.tanks && plan.tanks.length > 0) {
+        const tanksDiv = document.getElementById('tanksSummary');
+        if (tanksDiv) {
+            let tanksHtml = '<div class="row row-cols-1 row-cols-md-2 g-4">';
+            
+            plan.tanks.forEach(tank => {
+                const gasLabel = tank.gasType === 'air' 
+                    ? 'Air' 
+                    : tank.gasType === 'nitrox' 
+                        ? `Nitrox ${tank.o2}%` 
+                        : `Trimix ${tank.o2}/${tank.he}`;
+                
+                tanksHtml += `
+                    <div class="col">
+                        <div class="card h-100 tank-summary-card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-flask me-2"></i>${tank.size}L Tank
+                                </h5>
+                                <p class="card-text">
+                                    <span class="badge bg-info">${gasLabel}</span>
+                                    <span class="badge bg-secondary ms-1">${tank.pressure} bar</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            tanksHtml += '</div>';
+            tanksDiv.innerHTML = tanksHtml;
+        }
+    }
+    
+    // Show the results section
+    resultsContainer.classList.remove('d-none');
+    profileSection.classList.remove('d-none');
+    
+    // Scroll to the results section
+    resultsContainer.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Display decompression stops in the table
+ * @param {Object} profile - The dive profile including deco stops
+ */
+function displayDecompressionStops(profile) {
+    const decoTable = document.getElementById('decoStopsTable');
+    const decoContainer = document.getElementById('decompressionSection');
+    
+    if (!decoTable || !decoContainer) {
+        return;
+    }
+    
+    // Clear existing data
+    const tableBody = decoTable.querySelector('tbody');
+    tableBody.innerHTML = '';
+    
+    // Check if there are any deco stops
+    if (profile.decoStops && profile.decoStops.length > 0) {
+        // Add each stop to the table
+        profile.decoStops.forEach(stop => {
+            const row = document.createElement('tr');
+            
+            const depthCell = document.createElement('td');
+            depthCell.textContent = `${stop.depth} m`;
+            
+            const timeCell = document.createElement('td');
+            timeCell.textContent = `${stop.time} min`;
+            
+            const gasCell = document.createElement('td');
+            // Default to air/previous gas for safety stops
+            gasCell.textContent = 'Air/EAN';
+            
+            row.appendChild(depthCell);
+            row.appendChild(timeCell);
+            row.appendChild(gasCell);
+            
+            tableBody.appendChild(row);
+        });
+        
+        // Update section title to indicate deco stops
+        const sectionTitle = decoContainer.querySelector('.card-header span');
+        if (sectionTitle) {
+            if (profile.decoStops.length === 1 && profile.decoStops[0].depth <= 5) {
+                sectionTitle.innerHTML = '<i class="fas fa-hourglass-half me-2"></i>Safety Stop';
+            } else {
+                sectionTitle.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Decompression Stops Required';
+            }
+        }
+        
+        // Show the deco section
+        decoContainer.classList.remove('d-none');
+    } else {
+        // Show safety stop for dives deeper than 10m
+        if (profile.points && profile.points.length > 0) {
+            const maxDepth = profile.points.reduce((max, point) => Math.max(max, point.depth), 0);
+            
+            if (maxDepth > 10) {
+                // Add safety stop
+                const row = document.createElement('tr');
+                
+                const depthCell = document.createElement('td');
+                depthCell.textContent = '5 m';
+                
+                const timeCell = document.createElement('td');
+                timeCell.textContent = '3 min';
+                
+                const gasCell = document.createElement('td');
+                gasCell.textContent = 'Air/EAN';
+                
+                row.appendChild(depthCell);
+                row.appendChild(timeCell);
+                row.appendChild(gasCell);
+                
+                tableBody.appendChild(row);
+                
+                // Update section title for safety stop
+                const sectionTitle = decoContainer.querySelector('.card-header span');
+                if (sectionTitle) {
+                    sectionTitle.innerHTML = '<i class="fas fa-hourglass-half me-2"></i>Safety Stop Recommended';
+                }
+                
+                // Show the section
+                decoContainer.classList.remove('d-none');
+            } else {
+                // Hide the section for shallow dives
+                decoContainer.classList.add('d-none');
+            }
+        } else {
+            // Hide the section if no profile data
+            decoContainer.classList.add('d-none');
+        }
+    }
+}
+
+/**
+ * Add user-friendly calendar and date picker
+ * @param {HTMLElement} inputElement - The date input element
+ */
+function initializeDatePicker(inputElement) {
+    if (!inputElement) return;
+    
+    // Set default date to today
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    inputElement.value = `${year}-${month}-${day}`;
+    
+    // Make sure the type is date for better user experience
+    inputElement.type = 'date';
+}
+
+/**
+ * Format time input in hh:mm format
+ * @param {HTMLElement} inputElement - The time input element
+ */
+function formatTimeInput(inputElement) {
+    if (!inputElement) return;
+    
+    let value = inputElement.value;
+    
+    // If empty, set current time
+    if (!value) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        inputElement.value = `${hours}:${minutes}`;
+        return;
+    }
+    
+    // Format as hh:mm
+    if (value.includes(':')) {
+        const [hours, minutes] = value.split(':');
+        const formattedHours = String(parseInt(hours, 10) % 24).padStart(2, '0');
+        const formattedMinutes = String(parseInt(minutes, 10) % 60).padStart(2, '0');
+        inputElement.value = `${formattedHours}:${formattedMinutes}`;
+    } else {
+        // Try to parse as number of minutes
+        const totalMinutes = parseInt(value, 10);
+        if (!isNaN(totalMinutes)) {
+            const hours = Math.floor(totalMinutes / 60) % 24;
+            const minutes = totalMinutes % 60;
+            inputElement.value = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        } else {
+            // Invalid format, set to current time
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            inputElement.value = `${hours}:${minutes}`;
+        }
+    }
+}
+
+/**
+ * Validate depth input
+ * @param {HTMLElement} inputElement - The depth input element
+ */
+function validateDepthInput(inputElement) {
+    if (!inputElement) return;
+    
+    let value = parseFloat(inputElement.value);
+    
+    if (isNaN(value) || value <= 0) {
+        showAlert('Depth must be a positive number', 'warning');
+        inputElement.value = '';
+        return;
+    }
+    
+    // Warn about deep dives
+    if (value > 40) {
+        showAlert('Depths greater than 40m are considered technical diving and require special training and equipment', 'warning');
+    }
+    
+    // Round to one decimal place
+    inputElement.value = Math.round(value * 10) / 10;
+}
+
+/**
+ * Validate time input
+ * @param {HTMLElement} inputElement - The time input element
+ */
+function validateTimeInput(inputElement) {
+    if (!inputElement) return;
+    
+    let value = parseFloat(inputElement.value);
+    
+    if (isNaN(value) || value <= 0) {
+        showAlert('Bottom time must be a positive number', 'warning');
+        inputElement.value = '';
+        return;
+    }
+    
+    // Round to nearest minute
+    inputElement.value = Math.round(value);
+}
+/**
+ * Global variable to track application state
+ */
+const app = {
+    tanks: [],
+    buddies: [],
+    currentPlan: null
+};
+
+/**
+ * Show loading indicator with message
+ */
+function showLoading(message = 'Loading...') {
+    const loadingElement = document.getElementById('loadingIndicator');
+    const messageElement = document.getElementById('loadingMessage');
+    
+    if (loadingElement && messageElement) {
+        messageElement.textContent = message;
+        loadingElement.classList.remove('d-none');
+    }
+}
+
+/**
+ * Hide loading indicator
+ */
+function hideLoading() {
+    const loadingElement = document.getElementById('loadingIndicator');
+    
+    if (loadingElement) {
+        loadingElement.classList.add('d-none');
+    }
+}
+
+/**
+ * Show alert message
+ */
+function showAlert(message, type = 'info', timeout = 5000) {
+    // Get alert container
+    let alertContainer = document.getElementById('alertContainer');
+    
+    // Create container if it doesn't exist
+    if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'alertContainer';
+        alertContainer.className = 'alert-container position-fixed top-0 start-50 translate-middle-x p-3';
+        document.body.appendChild(alertContainer);
+    }
+    
+    // Create alert element
+    const alertElement = document.createElement('div');
+    alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+    alertElement.role = 'alert';
+    
+    // Add message
+    alertElement.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    // Add to container
+    alertContainer.appendChild(alertElement);
+    
+    // Create Bootstrap alert instance
+    const bsAlert = new bootstrap.Alert(alertElement);
+    
+    // Auto-dismiss after timeout
+    if (timeout > 0) {
+        setTimeout(() => {
+            bsAlert.close();
+        }, timeout);
+    }
+    
+    // Remove from DOM after animation completes
+    alertElement.addEventListener('closed.bs.alert', () => {
+        alertElement.remove();
+    });
+}
