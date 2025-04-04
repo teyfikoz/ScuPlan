@@ -156,8 +156,13 @@ function generateQRCode(url) {
  * @returns {string} - The complete share URL
  */
 function getShareUrl(shareToken) {
-    // Create base URL from current location
-    const baseUrl = window.location.origin;
+    // Create base URL from current location (ensuring it doesn't end with /)
+    let baseUrl = window.location.origin;
+    if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.slice(0, -1);
+    }
+    
+    // Add the route for the share feature
     return `${baseUrl}/share/${shareToken}`;
 }
 

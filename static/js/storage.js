@@ -22,6 +22,24 @@ function initOfflineStorage() {
             checklists: []
         }));
     }
+    
+    // Add event listener for offline storage button
+    const offlineStorageBtn = document.getElementById('offlineStorageButton');
+    if (offlineStorageBtn) {
+        offlineStorageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showOfflineStorageModal();
+        });
+    }
+    
+    // Also add for footer saved plans link
+    const footerSavedPlansLink = document.getElementById('footerSavedPlans');
+    if (footerSavedPlansLink) {
+        footerSavedPlansLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showOfflineStorageModal();
+        });
+    }
 }
 
 /**

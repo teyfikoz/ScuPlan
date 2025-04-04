@@ -266,19 +266,6 @@ function createLanguageSelector() {
         if (navbarNav) {
             // Create language dropdown
             const langItem = document.createElement('li');
-            langItem.className = 'nav-item dropdown';
-            langItem.innerHTML = `
-                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" 
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-globe me-1"></i>
-                    <span class="d-none d-sm-inline-block">${languages.find(l => l.code === currentLanguage)?.name || 'Language'}</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown" id="languageMenu">
-                    <!-- Filled by JavaScript -->
-                </ul>
-            `;
-            
-            navbarNav.appendChild(langItem);
             
             // Fill language options
             populateLanguageMenu();

@@ -327,3 +327,45 @@ function showBuddyCompatibilityWarnings(plan) {
         showAlert(`<strong>Buddy Compatibility Warning:</strong><br>${warnings.join('<br>')}`, 'warning', 7000);
     }
 }
+
+/**
+ * Update the buddies display in the dive plan results section
+ * @param {Array} buddies - Array of buddy objects
+ */
+function updateResultBuddiesDisplay(buddies) {
+    const buddiesSection = document.getElementById('diveBuddies');
+    if (!buddiesSection) return;
+    
+    // If no buddies, show a message
+    if (!buddies || buddies.length === 0) {
+        buddiesSection.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No dive buddies added to this plan.
+            </div>
+        `;
+        return;
+    }
+    
+    // Display buddies
+    let buddiesHtml = '';
+    
+    buddies.forEach(buddy => {
+        const certification = buddy.certification || 'Not specified';
+        const skillLevel = buddy.skillLevel || 'Not specified';
+        const specialty = buddy.specialty || 'None';
+        
+        buddiesHtml += `
+            <div class="buddy-item mb-2">
+                <div class="fw-bold">${buddy.name}</div>
+                <div class="small">
+                    <div>Certification: ${certification}</div>
+                    <div>Skill Level: ${skillLevel}</div>
+                    <div>Specialty: ${specialty}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    buddiesSection.innerHTML = buddiesHtml;
+}
