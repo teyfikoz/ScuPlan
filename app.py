@@ -813,15 +813,6 @@ def calculate_gas_consumption():
             safe_remaining = remaining_gas - safety_reserve
             safe_remaining_pressure = safe_remaining / tank_size if tank_size > 0 else 0
             
-            # 12L tank ve sığ dalışlar için koruma (negatif değerleri önle)
-            if remaining_pressure < 0:
-                remaining_pressure = 0
-                remaining_gas = 0
-                
-            if safe_remaining_pressure < 0:
-                safe_remaining_pressure = 0
-                safe_remaining = 0
-            
             # Tank sonuçlarını ekle
             tank_result = {
                 'tankIndex': tanks.index(tank),
