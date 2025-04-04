@@ -182,8 +182,18 @@ function showOfflineStorageModal() {
     }
     
     // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('offlineStorageModal'));
+    const modalEl = document.getElementById('offlineStorageModal');
+    const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    
+    // Handle modal hidden event to clean up URL fragment
+    modalEl.addEventListener('hidden.bs.modal', function() {
+        // Remove the # from URL without refreshing page
+        if (window.history && window.history.replaceState) {
+            const url = window.location.href.split('#')[0];
+            window.history.replaceState('', document.title, url);
+        }
+    }, { once: true });
 }
 
 /**
@@ -246,4 +256,12 @@ function deleteOfflinePlan(planId) {
         
         showAlert('Dive plan deleted', 'success');
     }
+}
+
+/**
+ * Helper function to capitalize first letter
+ */
+function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
