@@ -1,293 +1,355 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
-{% block title %}ScuPlan - Dive Planning Made Easy{% endblock %}
+{% block title %}ScuPlan - Advanced Dive Planning, Safety Tools, and Community Features{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h2 class="mb-4"><i class="fas fa-water me-2"></i>Dive Plan Calculator</h2>
-        
-        <!-- Dive Plan Form -->
-        <div class="card mb-4">
-            <div class="card-header">Dive Parameters</div>
-            <div class="card-body">
-                <form id="divePlanForm">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="diveLocation" class="form-label">Dive Location</label>
-                            <input type="text" class="form-control" id="diveLocation" placeholder="e.g., Great Barrier Reef">
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="diveType" class="form-label">Dive Type</label>
-                            <select class="form-select" id="diveType">
-                                <option value="recreational">Recreational</option>
-                                <option value="technical">Technical</option>
-                                <option value="cave">Cave</option>
-                                <option value="wreck">Wreck</option>
-                                <option value="reef">Reef</option>
-                                <option value="drift">Drift</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="diveDepth" class="form-label">Maximum Depth</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="diveDepth" min="1" max="150" step="0.5" value="18">
-                                <span class="input-group-text">meters</span>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="bottomTime" class="form-label">Bottom Time</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="bottomTime" min="1" max="180" step="1" value="40">
-                                <span class="input-group-text">minutes</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="diveDate" class="form-label">Dive Date</label>
-                            <input type="date" class="form-control" id="diveDate">
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="diveTime" class="form-label">Dive Time</label>
-                            <input type="time" class="form-control" id="diveTime">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="sacRate" class="form-label">SAC Rate</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="sacRate" min="10" max="50" step="1" value="20">
-                                <span class="input-group-text">L/min</span>
-                            </div>
-                            <small class="text-muted">Surface Air Consumption</small>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2 mt-3">
-                        <button type="button" class="btn btn-primary btn-lg py-2" id="calculateButton">
-                            <i class="fas fa-calculator me-2"></i>Calculate Dive Plan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Tanks Section -->
-        <div class="card tank-card mb-4">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-flask me-2"></i>Tanks</span>
-                    <button type="button" class="btn btn-sm btn-accent" id="addTankButton">
-                        <i class="fas fa-plus me-1"></i>Add Tank
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div id="tanksContainer">
-                    <!-- Tank items will be inserted here dynamically -->
-                    <div class="alert alert-info" id="noTanksMessage">
-                        <i class="fas fa-info-circle me-2"></i>No tanks added yet. Add a tank to start.
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Buddies Section -->
-        <div class="card buddy-card mb-4">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-users me-2"></i>Dive Buddies</span>
-                    <button type="button" class="btn btn-sm btn-accent" id="addBuddyButton">
-                        <i class="fas fa-plus me-1"></i>Add Buddy
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div id="buddiesContainer">
-                    <!-- Buddy items will be inserted here dynamically -->
-                    <div class="alert alert-info" id="noBuddiesMessage">
-                        <i class="fas fa-info-circle me-2"></i>No buddies added yet. Add your dive buddies for better planning.
-                    </div>
-                </div>
-            </div>
+<div class="container">
+    <div class="row py-4">
+        <div class="col-md-8 mx-auto text-center">
+            <h1 class="page-title">ScuPlan Dive Planner</h1>
+            <p class="lead">Plan your dive, dive your plan. Create, save, and share detailed dive plans with our comprehensive tools.</p>
         </div>
     </div>
     
-    <!-- Right Panel: Results -->
-    <div class="col-md-4">
-        <div class="sticky-md-top" style="top: 80px;">
-            <!-- Dive Plan Results -->
-            <div class="card dive-plan-card mb-4" id="diveResultsCard" style="display: none;">
-                <div class="card-header">Dive Plan Results</div>
+    <div class="row">
+        <!-- Left Column: Dive Planning Form -->
+        <div class="col-lg-5">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Dive Parameters</h5>
+                </div>
                 <div class="card-body">
-                    <div class="dive-stats mb-3">
-                        <div class="row">
-                            <div class="col-4 stat-item">
-                                <div class="stat-value" id="maxDepthResult">--</div>
-                                <div class="stat-label">Depth (m)</div>
+                    <form id="divePlanForm">
+                        <div class="mb-3">
+                            <label for="diveType" class="form-label">Dive Type</label>
+                            <select class="form-select" id="diveType" name="diveType">
+                                <option value="recreational">Recreational</option>
+                                <option value="technical">Technical</option>
+                                <option value="training">Training</option>
+                                <option value="photography">Photography</option>
+                                <option value="research">Research</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label for="depth" class="form-label">Depth (meters)</label>
+                                <input type="number" class="form-control" id="depth" name="depth" min="1" max="100" value="18" required>
+                                <div class="form-text" id="depthHelp">Enter planned maximum depth</div>
                             </div>
-                            <div class="col-4 stat-item">
-                                <div class="stat-value" id="bottomTimeResult">--</div>
-                                <div class="stat-label">Bottom (min)</div>
-                            </div>
-                            <div class="col-4 stat-item">
-                                <div class="stat-value" id="totalTimeResult">--</div>
-                                <div class="stat-label">Total (min)</div>
+                            <div class="col-6">
+                                <label for="bottomTime" class="form-label">Bottom Time (min)</label>
+                                <input type="number" class="form-control" id="bottomTime" name="bottomTime" min="1" max="180" value="40" required>
+                                <div class="form-text" id="timeHelp">Enter planned bottom time</div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div id="decoStopsContainer" class="mb-3" style="display: none;">
-                        <h6><i class="fas fa-hourglass-half me-2"></i>Decompression Stops</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Depth (m)</th>
-                                        <th>Time (min)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="decoStopsList">
-                                    <!-- Deco stops will be inserted here -->
-                                </tbody>
-                            </table>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Dive Location</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="e.g. Blue Lagoon, Fethiye">
                         </div>
-                    </div>
-                    
-                    <div id="gasResultsContainer" class="mb-3">
-                        <h6><i class="fas fa-lungs me-2"></i>Gas Consumption</h6>
-                        <div id="gasConsumptionResults">
-                            <!-- Gas consumption results will be inserted here -->
-                            <div class="text-center text-muted">
-                                <small>Add tanks to see gas consumption</small>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label for="diveDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="diveDate" name="diveDate">
+                            </div>
+                            <div class="col-6">
+                                <label for="diveTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="diveTime" name="diveTime">
                             </div>
                         </div>
-                    </div>
-
-                    <div id="buddyResultsContainer" class="mb-3">
-                        <h6><i class="fas fa-users me-2"></i>Dive Buddies</h6>
-                        <div id="buddyConsumptionResults">
-                            <!-- Buddy information will be inserted here -->
-                            <div class="text-center text-muted">
-                                <small>Add buddies to see them here</small>
-                            </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tank Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Tanks & Gas</h5>
+                    <button type="button" class="btn btn-sm btn-primary" id="addTankButton">
+                        <i class="fas fa-plus me-1"></i> Add Tank
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="tanksContainer">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Click "Add Tank" to configure your scuba tanks and gas mixtures.
                         </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-success btn-sm" id="saveOfflineButton">
-                            <i class="fas fa-save me-1"></i>Save Offline
-                        </button>
-                        <button class="btn btn-secondary btn-sm" id="sharePlanButton">
-                            <i class="fas fa-share-alt me-1"></i>Share Plan
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" id="printPlanButton">
-                            <i class="fas fa-print me-1"></i>Print Plan
-                        </button>
                     </div>
                 </div>
             </div>
             
-            <!-- Basic Dive Plan Checklist -->
-            <div class="card checklist-card" id="quickChecklistCard">
-                <div class="card-header">Pre-Dive Quick Checklist</div>
+            <!-- Buddy Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Dive Buddies</h5>
+                    <button type="button" class="btn btn-sm btn-primary" id="addBuddyButton">
+                        <i class="fas fa-user-plus me-1"></i> Add Buddy
+                    </button>
+                </div>
                 <div class="card-body">
-                    <div class="form-check checklist-item">
-                        <input class="form-check-input" type="checkbox" id="quickCheck1">
-                        <label class="form-check-label" for="quickCheck1">Check all equipment</label>
-                    </div>
-                    <div class="form-check checklist-item">
-                        <input class="form-check-input" type="checkbox" id="quickCheck2">
-                        <label class="form-check-label" for="quickCheck2">Test regulator</label>
-                    </div>
-                    <div class="form-check checklist-item">
-                        <input class="form-check-input" type="checkbox" id="quickCheck3">
-                        <label class="form-check-label" for="quickCheck3">Check BCD operation</label>
-                    </div>
-                    <div class="form-check checklist-item">
-                        <input class="form-check-input" type="checkbox" id="quickCheck4">
-                        <label class="form-check-label" for="quickCheck4">Verify weights</label>
-                    </div>
-                    <div class="form-check checklist-item">
-                        <input class="form-check-input" type="checkbox" id="quickCheck5">
-                        <label class="form-check-label" for="quickCheck5">Check air supply</label>
-                    </div>
-                    
-                    <a href="{{ url_for('checklist') }}" class="btn btn-outline-secondary btn-sm mt-3 w-100">
-                        <i class="fas fa-tasks me-1"></i>Full Checklists
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Profile Visualization -->
-<div class="row mt-4" id="profileVisualizationSection" style="display: none;">
-    <div class="col-12">
-        <div class="dive-profile-container">
-            <h4 class="mb-3"><i class="fas fa-chart-area me-2"></i>Dive Profile</h4>
-            <div class="profile-chart-container">
-                <canvas id="diveProfileChart"></canvas>
-            </div>
-            <div class="row text-center">
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-label">Descent Time</div>
-                    <div class="stat-value text-primary" id="descentTimeResult">--</div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-label">Bottom Time</div>
-                    <div class="stat-value text-primary" id="bottomTimeDisplay">--</div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-label">Ascent Time</div>
-                    <div class="stat-value text-primary" id="ascentTimeResult">--</div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-label">Total Time</div>
-                    <div class="stat-value text-primary" id="totalTimeDisplay">--</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Share Modal -->
-<div class="modal fade" id="sharePlanModal" tabindex="-1" aria-labelledby="sharePlanModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="sharePlanModalLabel">Share Dive Plan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Use the link below to share your dive plan with buddies:</p>
-                <div class="sharing-container">
-                    <div class="share-link" id="shareLinkContainer">
-                        <div class="text-center text-muted">
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            Generating share link...
+                    <div id="buddiesContainer">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Add your dive buddies to include them in your dive plan.
                         </div>
                     </div>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" id="copyShareLinkBtn">
-                            <i class="fas fa-copy me-1"></i>Copy Link
-                        </button>
-                        <button class="btn btn-outline-secondary" id="emailShareLinkBtn">
-                            <i class="fas fa-envelope me-1"></i>Email Link
-                        </button>
+                </div>
+            </div>
+            
+            <!-- Quick Checklist -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Pre-Dive Checklist</h5>
+                </div>
+                <div class="card-body">
+                    <div id="quickChecklistContainer">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkTanks">
+                            <label class="form-check-label" for="checkTanks">Tank pressure checked</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkBCD">
+                            <label class="form-check-label" for="checkBCD">BCD functioning</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkRegulator">
+                            <label class="form-check-label" for="checkRegulator">Regulator working properly</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkWeights">
+                            <label class="form-check-label" for="checkWeights">Weights appropriate</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="checkComputer">
+                            <label class="form-check-label" for="checkComputer">Dive computer/gauge ready</label>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{{ url_for('checklist') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-clipboard-list me-1"></i> Full Checklists
+                            </a>
+                        </div>
                     </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 mb-4">
+                <button type="button" class="btn btn-lg btn-primary" id="calculateButton">
+                    <i class="fas fa-calculator me-2"></i> Calculate Dive Plan
+                </button>
+            </div>
+        </div>
+        
+        <!-- Right Column: Results and Data Visualization -->
+        <div class="col-lg-7">
+            <!-- Results Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Dive Plan Results</h5>
+                </div>
+                <div class="card-body">
+                    <div id="resultsContainer" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="result-item">
+                                    <div class="result-label">Total Dive Time:</div>
+                                    <div class="result-value" id="totalDiveTime">--</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="result-item">
+                                    <div class="result-label">Maximum Depth:</div>
+                                    <div class="result-value" id="maxDepth">--</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="result-item">
+                                    <div class="result-label">Decompression:</div>
+                                    <div class="result-value" id="decompressionStatus">--</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Buddy Information -->
+                        <div id="plannedBuddiesInfo" class="mb-3" style="display: none;">
+                            <h6 class="mb-2">Dive Buddies:</h6>
+                            <div id="buddiesList" class="small"></div>
+                        </div>
+                        
+                        <!-- Profile Chart -->
+                        <div class="mb-3">
+                            <h6 class="mb-2">Dive Profile:</h6>
+                            <div class="profile-chart-container">
+                                <canvas id="diveProfileChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Gas Consumption Chart and Data -->
+                        <div id="gasConsumptionSection">
+                            <h6 class="mb-2">Gas Consumption:</h6>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover" id="gasConsumptionTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tank</th>
+                                                    <th>Size</th>
+                                                    <th>Start</th>
+                                                    <th>End</th>
+                                                    <th>Used</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Gas consumption data will be inserted here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="consumption-chart-container">
+                                        <canvas id="gasConsumptionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Decompression Stops Table -->
+                        <div id="decompressionStopsSection" class="mt-3" style="display: none;">
+                            <h6 class="mb-2">Decompression Stops:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover" id="decoStopsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Depth (m)</th>
+                                            <th>Time (min)</th>
+                                            <th>Gas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Deco stops will be inserted here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Safety Notes -->
+                        <div id="safetyNotesSection" class="mt-3">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Safety Notes:</h6>
+                                <ul class="mb-0" id="safetyNotesList">
+                                    <!-- Safety notes will be inserted here -->
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-3 flex-wrap">
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-outline-primary me-2" id="saveOfflineButton">
+                                    <i class="fas fa-save me-1"></i> Save Offline
+                                </button>
+                                <button type="button" class="btn btn-outline-primary me-2" id="printButton">
+                                    <i class="fas fa-print me-1"></i> Print
+                                </button>
+                            </div>
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-outline-info me-2" id="shareButton">
+                                    <i class="fas fa-share-alt me-1"></i> Share
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="newPlanButton">
+                                    <i class="fas fa-plus me-1"></i> New Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Initial State -->
+                    <div id="initialStateContainer">
+                        <div class="text-center py-5">
+                            <img src="{{ url_for('static', filename='img/dive_illustration.svg') }}" alt="Dive Planning" class="img-fluid mb-4" style="max-width: 200px;">
+                            <h5>Ready to plan your dive?</h5>
+                            <p class="text-muted">Enter your dive parameters and click "Calculate Dive Plan" to get started.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="loadingStateContainer" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Calculating your dive plan...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weather and Additional Info Section (Optional) -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Additional Resources</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="mb-2"><i class="fas fa-flask me-2"></i>Technical Tools</h6>
+                                <p class="small mb-2">Access advanced calculations for technical diving:</p>
+                                <a href="{{ url_for('technical') }}" class="btn btn-sm btn-outline-primary">
+                                    Technical Diving Tools
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <h6 class="mb-2"><i class="fas fa-clipboard-list me-2"></i>Safety Checklists</h6>
+                                <p class="small mb-2">Comprehensive pre-dive and emergency checklists:</p>
+                                <a href="{{ url_for('checklist') }}" class="btn btn-sm btn-outline-primary">
+                                    View Checklists
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Donation Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Support ScuPlan</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small">If you find this tool helpful, please consider supporting its development and maintenance.</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center crypto-address-box">
+                                <i class="fab fa-ethereum crypto-icon me-2"></i>
+                                <div>
+                                    <small class="d-block crypto-label">XRP Address</small>
+                                    <span class="crypto-address" id="xrpAddress">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</span>
+                                    <button class="btn btn-sm btn-link copy-address-btn p-0 ms-2" data-address="rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center crypto-address-box">
+                                <i class="fas fa-dollar-sign crypto-icon me-2"></i>
+                                <div>
+                                    <small class="d-block crypto-label">USDT TRC20 Address</small>
+                                    <span class="crypto-address" id="usdtAddress">TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ</span>
+                                    <button class="btn btn-sm btn-link copy-address-btn p-0 ms-2" data-address="TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="small text-muted mt-2">Thank you for your support! Your contributions help keep this project alive.</p>
                 </div>
             </div>
         </div>
@@ -304,45 +366,62 @@
             </div>
             <div class="modal-body">
                 <form id="tankForm">
+                    <input type="hidden" id="tankIndex" value="-1">
                     <div class="mb-3">
-                        <label for="tankSize" class="form-label">Tank Size</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="tankSize" min="1" max="30" step="0.1" value="12">
-                            <span class="input-group-text">Liters</span>
-                        </div>
+                        <label for="tankSize" class="form-label">Tank Size (Liters)</label>
+                        <input type="number" class="form-control" id="tankSize" min="1" max="50" value="12">
                     </div>
-                    
                     <div class="mb-3">
-                        <label for="tankPressure" class="form-label">Tank Pressure</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="tankPressure" min="1" max="400" step="1" value="200">
-                            <span class="input-group-text">Bar</span>
-                        </div>
+                        <label for="tankPressure" class="form-label">Starting Pressure (Bar)</label>
+                        <input type="number" class="form-control" id="tankPressure" min="50" max="300" value="200">
                     </div>
-                    
                     <div class="mb-3">
                         <label for="gasType" class="form-label">Gas Type</label>
                         <select class="form-select" id="gasType">
                             <option value="air">Air</option>
                             <option value="nitrox">Nitrox</option>
                             <option value="trimix">Trimix</option>
-                            <option value="oxygen">Oxygen</option>
+                            <option value="heliox">Heliox</option>
                         </select>
                     </div>
-                    
-                    <div class="row mb-3" id="gasPercentagesContainer">
-                        <div class="col-md-6 mb-2 mb-md-0">
-                            <label for="oxygenPercentage" class="form-label">O2 %</label>
-                            <input type="number" class="form-control" id="oxygenPercentage" min="21" max="100" step="1" value="21">
+                    <div id="nitroxSettings" style="display: none;">
+                        <div class="mb-3">
+                            <label for="o2Percentage" class="form-label">Oxygen (%)</label>
+                            <input type="number" class="form-control" id="o2Percentage" min="21" max="100" value="32">
+                            <div class="form-text">Standard values: EAN32 (32%), EAN36 (36%)</div>
                         </div>
-                        
-                        <div class="col-md-6" id="heliumContainer" style="display: none;">
-                            <label for="heliumPercentage" class="form-label">He %</label>
-                            <input type="number" class="form-control" id="heliumPercentage" min="0" max="80" step="1" value="0">
+                    </div>
+                    <div id="trimixSettings" style="display: none;">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="o2PercentageTrimix" class="form-label">Oxygen (%)</label>
+                                    <input type="number" class="form-control" id="o2PercentageTrimix" min="5" max="50" value="18">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="hePercentage" class="form-label">Helium (%)</label>
+                                    <input type="number" class="form-control" id="hePercentage" min="5" max="85" value="35">
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="col-12 mt-2" id="gasTypeHelper">
-                            <!-- Gas type help text will be injected here by JavaScript -->
+                        <div class="form-text mb-3">Common trimix: 18/35 (18% O2, 35% He) for 40-50m dives</div>
+                    </div>
+                    <div id="helioxSettings" style="display: none;">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="o2PercentageHeliox" class="form-label">Oxygen (%)</label>
+                                    <input type="number" class="form-control" id="o2PercentageHeliox" min="5" max="50" value="10">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label for="hePercentageHeliox" class="form-label">Helium (%)</label>
+                                    <input type="number" class="form-control" id="hePercentageHeliox" min="50" max="95" value="90">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -365,36 +444,47 @@
             </div>
             <div class="modal-body">
                 <form id="buddyForm">
+                    <input type="hidden" id="buddyIndex" value="-1">
                     <div class="mb-3">
                         <label for="buddyName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="buddyName" placeholder="Buddy's name">
+                        <input type="text" class="form-control" id="buddyName" placeholder="Enter buddy's name">
                     </div>
-                    
                     <div class="mb-3">
-                        <label for="buddyCertification" class="form-label">Certification</label>
-                        <input type="text" class="form-control" id="buddyCertification" placeholder="e.g., PADI Advanced Open Water">
+                        <label for="buddyCertification" class="form-label">Certification Level</label>
+                        <select class="form-select" id="buddyCertification">
+                            <option value="OW">Open Water</option>
+                            <option value="AOW">Advanced Open Water</option>
+                            <option value="Rescue">Rescue Diver</option>
+                            <option value="DM">Divemaster</option>
+                            <option value="Instructor">Instructor</option>
+                            <option value="TecBasic">Technical Basic</option>
+                            <option value="TecAdv">Technical Advanced</option>
+                            <option value="TecInstructor">Technical Instructor</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
-                    
                     <div class="mb-3">
                         <label for="buddySkillLevel" class="form-label">Skill Level</label>
                         <select class="form-select" id="buddySkillLevel">
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
-                            <option value="professional">Professional</option>
+                            <option value="beginner">Beginner (< 20 dives)</option>
+                            <option value="intermediate" selected>Intermediate (20-100 dives)</option>
+                            <option value="experienced">Experienced (100-500 dives)</option>
+                            <option value="expert">Expert (> 500 dives)</option>
                         </select>
                     </div>
-                    
                     <div class="mb-3">
-                        <label for="buddySpecialty" class="form-label">Specialty</label>
+                        <label for="buddySpecialty" class="form-label">Specialty (Optional)</label>
                         <select class="form-select" id="buddySpecialty">
                             <option value="none">None</option>
-                            <option value="night">Night Diving</option>
-                            <option value="wreck">Wreck Diving</option>
-                            <option value="deep">Deep Diving</option>
-                            <option value="photography">Underwater Photography</option>
-                            <option value="rescue">Rescue Diving</option>
-                            <option value="technical">Technical Diving</option>
+                            <option value="photography">Photography</option>
+                            <option value="deepDiving">Deep Diving</option>
+                            <option value="wreckDiving">Wreck Diving</option>
+                            <option value="caveDiving">Cave Diving</option>
+                            <option value="drysuit">Drysuit</option>
+                            <option value="scientific">Scientific Diving</option>
+                            <option value="sidemount">Sidemount</option>
+                            <option value="rebreather">Rebreather</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                 </form>
@@ -407,37 +497,49 @@
     </div>
 </div>
 
-<!-- Storage Modal -->
-<div class="modal fade" id="storageModal" tabindex="-1" aria-labelledby="storageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Share Plan Modal -->
+<div class="modal fade" id="sharePlanModal" tabindex="-1" aria-labelledby="sharePlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="storageModalLabel">Saved Dive Plans</h5>
+                <h5 class="modal-title" id="sharePlanModalLabel">Share Dive Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-info" id="noSavedPlansMessage">
-                    <i class="fas fa-info-circle me-2"></i>You don't have any saved dive plans.
+                <p>Share your dive plan with other divers:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="shareLinkInput" readonly>
+                    <button class="btn btn-outline-primary" type="button" id="copyShareLinkBtn">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
                 </div>
-                <div id="savedPlansList" class="list-group">
-                    <!-- Saved plans will be listed here -->
+                <div class="d-flex justify-content-center my-4">
+                    <div id="shareQRCode" class="text-center"></div>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Anyone with this link can view your dive plan details.
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="shareEmailBtn">
+                    <i class="fas fa-envelope me-1"></i> Email Plan
+                </button>
             </div>
         </div>
     </div>
 </div>
-
-
 {% endblock %}
 
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the dive planner when page loads
-        initDivePlanner();
+        // Check if initDivePlanner function exists (only needed on index page)
+        if (typeof initDivePlanner === 'function') {
+            // Initialize the dive planner when page loads
+            initDivePlanner();
+        }
     });
 </script>
 {% endblock %}
