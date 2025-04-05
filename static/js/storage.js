@@ -60,47 +60,44 @@ function saveCurrentPlanOffline() {
  * Show offline storage modal with saved plans
  */
 function showOfflineStorageModal() {
+    // Remove any existing modal first to avoid memory leaks and references
+    const existingModal = document.getElementById('offlineStorageModal');
+    if (existingModal) {
+        // If there's a Bootstrap modal instance, dispose it properly
+        const bsModal = bootstrap.Modal.getInstance(existingModal);
+        if (bsModal) bsModal.dispose();
+        
+        // Remove the element from DOM
+        existingModal.parentNode.removeChild(existingModal);
+    }
+
     const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
     const savedPlans = storageData.plans;
     
-    // Create the modal if it doesn't exist
-    if (!document.getElementById('offlineStorageModal')) {
-        const modalHtml = `
-            <div class="modal fade" id="offlineStorageModal" tabindex="-1" aria-labelledby="offlineStorageModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="offlineStorageModalLabel">Saved Dive Plans</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="savedPlansContainer"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-danger" id="clearStorageBtn">Clear All Saved Data</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
+    // Create a new modal
+    const modalHtml = `
+        <div class="modal fade" id="offlineStorageModal" tabindex="-1" aria-labelledby="offlineStorageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="offlineStorageModalLabel">Saved Dive Plans</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="savedPlansContainer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" id="clearStorageBtn">Clear All Saved Data</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-        `;
-        
-        const modalContainer = document.createElement('div');
-        modalContainer.innerHTML = modalHtml;
-        document.body.appendChild(modalContainer);
-        
-        // Add event listener for the clear button
-        document.getElementById('clearStorageBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear all saved dive plans and checklists? This cannot be undone.')) {
-                localStorage.setItem('scuplan_data', JSON.stringify({
-                    plans: [],
-                    checklists: []
-                }));
-                showOfflineStorageModal(); // Refresh the modal
-                showAlert('All saved data has been cleared', 'success');
-            }
-        });
-    }
+        </div>
+    `;
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer);
     
     // Update the modal content
     const container = document.getElementById('savedPlansContainer');
@@ -160,40 +157,84 @@ function showOfflineStorageModal() {
             
             container.appendChild(planCard);
         });
-        
-        // Add event listeners for the buttons
-        document.querySelectorAll('.load-plan-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const planId = this.getAttribute('data-plan-id');
-                loadOfflinePlan(planId);
-                
-                // Close the modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
-                if (modal) modal.hide();
-            });
-        });
-        
-        document.querySelectorAll('.delete-plan-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const planId = this.getAttribute('data-plan-id');
-                deleteOfflinePlan(planId);
-            });
-        });
     }
     
-    // Show the modal
+    // Add event listener for the clear button (after creating the new modal)
+    document.getElementById('clearStorageBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear all saved dive plans and checklists? This cannot be undone.')) {
+            localStorage.setItem('scuplan_data', JSON.stringify({
+                plans: [],
+                checklists: []
+            }));
+            // Close current modal
+            const currentModal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
+            if (currentModal) {
+                currentModal.hide();
+                // Give some time for the current modal to close before showing a new one
+                setTimeout(() => {
+                    showOfflineStorageModal(); // Refresh with a new modal
+                    showAlert('All saved data has been cleared', 'success');
+                }, 500);
+            }
+        }
+    });
+    
+    // Add event listeners for the buttons (after they've been created in the DOM)
+    document.querySelectorAll('.load-plan-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const planId = this.getAttribute('data-plan-id');
+            
+            // Close the modal first
+            const modal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
+            if (modal) {
+                modal.hide();
+                // Only load the plan after modal is hidden to prevent state conflicts
+                modal._element.addEventListener('hidden.bs.modal', function() {
+                    loadOfflinePlan(planId);
+                }, { once: true });
+            } else {
+                loadOfflinePlan(planId);
+            }
+        });
+    });
+    
+    document.querySelectorAll('.delete-plan-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const planId = this.getAttribute('data-plan-id');
+            deleteOfflinePlan(planId);
+        });
+    });
+    
+    // Show the modal with proper cleanup on close
     const modalEl = document.getElementById('offlineStorageModal');
     const modal = new bootstrap.Modal(modalEl);
-    modal.show();
     
-    // Handle modal hidden event to clean up URL fragment
+    // Handle modal hidden event
     modalEl.addEventListener('hidden.bs.modal', function() {
-        // Remove the # from URL without refreshing page
+        // Clean up URL fragment
         if (window.history && window.history.replaceState) {
             const url = window.location.href.split('#')[0];
             window.history.replaceState('', document.title, url);
         }
+        
+        // Give time for event handlers to complete, then remove modal completely
+        setTimeout(() => {
+            // Only remove if not already removed
+            if (document.body.contains(modalEl)) {
+                try {
+                    // Dispose modal properly if it still exists
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.dispose();
+                    // Remove from DOM
+                    modalEl.parentNode.removeChild(modalEl);
+                } catch (e) {
+                    console.error("Error cleaning up modal:", e);
+                }
+            }
+        }, 500);
     }, { once: true });
+    
+    modal.show();
 }
 
 /**
