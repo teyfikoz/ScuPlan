@@ -1,329 +1,308 @@
 /**
- * ScuPlan - Storage Management Module
- * Handles local storage for offline functionality, including dive plans and checklists
+ * ScuPlan - Storage Module
+ * Handles offline storage functionality
  */
 
 /**
- * Save a dive plan for offline use
- * @param {Object} planData - The dive plan data to save
- * @returns {Object} The saved plan object with ID
+ * Initialize offline storage functionality
  */
-function saveDivePlanOffline(planData) {
-    // Get existing data or initialize empty structure
+function initOfflineStorage() {
+    console.log('Initializing offline storage module');
+    
+    // Check for localStorage support
+    if (typeof(Storage) === "undefined") {
+        console.error("localStorage is not supported by your browser. Offline functionality will not work.");
+        return;
+    }
+    
+    // Initialize storage if not already done
+    if (!localStorage.getItem('scuplan_data')) {
+        localStorage.setItem('scuplan_data', JSON.stringify({
+            plans: [],
+            checklists: []
+        }));
+    }
+}
+
+/**
+ * Save the current dive plan offline
+ */
+function saveCurrentPlanOffline() {
+    // Check if we have a current plan
+    if (!app.currentPlan) {
+        showAlert('No dive plan to save. Please calculate a plan first.', 'warning');
+        return;
+    }
+    
+    // Get existing data
     const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
     
-    // Create a new plan object
-    const plan = {
-        id: generateUniqueId(),
-        planData: planData,
-        savedAt: new Date().toISOString()
+    // Create a unique ID for the plan
+    const planId = 'plan_' + Date.now();
+    
+    // Create a plan object for storage
+    const planToSave = {
+        id: planId,
+        savedAt: new Date().toISOString(),
+        planData: app.currentPlan
     };
     
-    // Add the plan to storage
-    storageData.plans.push(plan);
+    // Add to storage
+    storageData.plans.push(planToSave);
+    
+    // Save back to storage
     localStorage.setItem('scuplan_data', JSON.stringify(storageData));
     
-    return plan;
+    showAlert('Dive plan saved for offline use', 'success');
 }
 
 /**
- * Delete a saved dive plan
- * @param {string} planId - ID of the plan to delete
- * @returns {boolean} True if successful
- */
-function deleteSavedPlan(planId) {
-    // Get existing data
-    const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
-    
-    // Find the plan index
-    const planIndex = storageData.plans.findIndex(plan => plan.id === planId);
-    
-    if (planIndex !== -1) {
-        // Remove the plan
-        storageData.plans.splice(planIndex, 1);
-        localStorage.setItem('scuplan_data', JSON.stringify(storageData));
-        
-        // If we're on the saved plans page, update the display
-        if (window.location.pathname === '/saved-plans') {
-            loadAndDisplaySavedPlans();
-        } else {
-            // Update the modal if it's open
-            const modalEl = document.getElementById('offlineStorageModal');
-            if (modalEl) {
-                showOfflineStorageModal();
-            }
-        }
-        
-        return true;
-    }
-    
-    return false;
-}
-
-/**
- * Load a saved dive plan
- * @param {string} planId - ID of the plan to load
- * @returns {Object|null} The plan data or null if not found
- */
-function loadSavedPlan(planId) {
-    // Get existing data
-    const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
-    
-    // Find the plan
-    const plan = storageData.plans.find(plan => plan.id === planId);
-    
-    if (plan) {
-        // If not on main page, redirect
-        if (window.location.pathname !== '/') {
-            // Save the plan ID to session storage to load after redirect
-            sessionStorage.setItem('load_plan_id', planId);
-            window.location.href = '/';
-            return null;
-        }
-        
-        // Load the plan data into the form
-        loadPlanIntoForm(plan.planData);
-        
-        // Calculate the plan (this will update all displays)
-        calculateDivePlan();
-        
-        return plan.planData;
-    }
-    
-    return null;
-}
-
-/**
- * This function has been replaced by a dedicated saved-plans page.
- * Keeping this function as an empty stub for backward compatibility.
+ * Show offline storage modal with saved plans
  */
 function showOfflineStorageModal() {
-    // Redirect to the saved plans page
-    window.location.href = '/saved-plans';
-}
+    // Remove any existing modal first to avoid memory leaks and references
+    const existingModal = document.getElementById('offlineStorageModal');
+    if (existingModal) {
+        // If there's a Bootstrap modal instance, dispose it properly
+        const bsModal = bootstrap.Modal.getInstance(existingModal);
+        if (bsModal) bsModal.dispose();
+        
+        // Remove the element from DOM
+        existingModal.parentNode.removeChild(existingModal);
+    }
 
-/**
- * Load and display saved dive plans on the saved-plans page
- */
-function loadAndDisplaySavedPlans() {
-    // Get saved plans from storage
     const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
     const savedPlans = storageData.plans;
     
-    // Get the container
+    // Create a new modal
+    const modalHtml = `
+        <div class="modal fade" id="offlineStorageModal" tabindex="-1" aria-labelledby="offlineStorageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="offlineStorageModalLabel">Saved Dive Plans</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="savedPlansContainer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" id="clearStorageBtn">Clear All Saved Data</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHtml;
+    document.body.appendChild(modalContainer);
+    
+    // Update the modal content
     const container = document.getElementById('savedPlansContainer');
-    if (!container) return; // If not on the saved plans page
     
-    // Clear the container first
-    container.innerHTML = '';
-    
-    // If no plans, show a message
     if (savedPlans.length === 0) {
         container.innerHTML = `
             <div class="alert alert-info">
                 <i class="fas fa-info-circle me-2"></i>
                 You haven't saved any dive plans for offline use yet.
             </div>
-            <div class="text-center mt-4">
-                <p>To save a dive plan, create a plan in the Dive Planner and click "Save Offline".</p>
-                <a href="/" class="btn btn-primary mt-3">
-                    <i class="fas fa-file-medical me-1"></i> Create New Dive Plan
-                </a>
-            </div>
         `;
-        return;
+    } else {
+        container.innerHTML = '';
+        
+        savedPlans.forEach(plan => {
+            const planDate = new Date(plan.savedAt).toLocaleString();
+            const planData = plan.planData;
+            
+            const planCard = document.createElement('div');
+            planCard.className = 'card mb-3';
+            planCard.innerHTML = `
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        ${planData.location ? planData.location : 'Unnamed dive'} 
+                        (${planData.depth}m, ${planData.bottomTime}min)
+                    </span>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-primary load-plan-btn" data-plan-id="${plan.id}">
+                            <i class="fas fa-edit me-1"></i>Load
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger delete-plan-btn" data-plan-id="${plan.id}">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="small text-muted">Saved on: ${planDate}</div>
+                    <div class="small text-muted">Dive type: ${capitalizeFirstLetter(planData.diveType)}</div>
+                    <div class="mt-2">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="small">Depth</div>
+                                <div class="fw-bold">${planData.depth}m</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small">Bottom Time</div>
+                                <div class="fw-bold">${planData.bottomTime}min</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small">Total Time</div>
+                                <div class="fw-bold">${planData.totalDiveTime}min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(planCard);
+        });
     }
     
-    // Sort plans by date (newest first)
-    savedPlans.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
-    
-    // Add each plan
-    savedPlans.forEach(plan => {
-        const planDate = new Date(plan.savedAt).toLocaleString();
-        const planData = plan.planData;
-        
-        // Create the plan card
-        const planCard = document.createElement('div');
-        planCard.className = 'card mb-4';
-        planCard.innerHTML = `
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>
-                    ${planData.location ? planData.location : 'Unnamed dive'} 
-                    (${planData.depth}m, ${planData.bottomTime}min)
-                </span>
-                <div>
-                    <button type="button" class="btn btn-sm btn-outline-primary load-plan-btn" data-plan-id="${plan.id}">
-                        <i class="fas fa-edit me-1"></i>Load
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger delete-plan-btn" data-plan-id="${plan.id}">
-                        <i class="fas fa-trash me-1"></i>Delete
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="small text-muted mb-3">Saved on: ${planDate}</div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="small text-muted">Dive type</div>
-                        <div>${capitalizeFirstLetter(planData.diveType)}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="small text-muted">Location</div>
-                        <div>${planData.location || 'Not specified'}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="small text-muted">Date</div>
-                        <div>${planData.diveDate || 'Not specified'}</div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="small text-muted">Depth</div>
-                        <div class="fs-5 fw-bold">${planData.depth}m</div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="small text-muted">Bottom Time</div>
-                        <div class="fs-5 fw-bold">${planData.bottomTime}min</div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="small text-muted">Total Time</div>
-                        <div class="fs-5 fw-bold">${planData.totalDiveTime || '?'}min</div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="small text-muted">Decompression</div>
-                        <div class="fs-5 fw-bold">${planData.decoLevels && planData.decoLevels.length > 0 ? 'Required' : 'No-Stop'}</div>
-                    </div>
-                </div>
-                ${planData.tanks && planData.tanks.length > 0 ? `
-                <hr>
-                <div class="mt-3">
-                    <div class="small text-muted mb-2">Tanks</div>
-                    <div class="row">
-                        ${planData.tanks.map(tank => `
-                            <div class="col-md-4 mb-2">
-                                <div class="small tank-block">
-                                    <div><strong>${tank.size}L</strong> at ${tank.pressure} bar</div>
-                                    <div>${getGasLabel(tank)}</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
-                ${planData.buddies && planData.buddies.length > 0 ? `
-                <hr>
-                <div class="mt-3">
-                    <div class="small text-muted mb-2">Buddies</div>
-                    <div class="row">
-                        ${planData.buddies.map(buddy => `
-                            <div class="col-md-4 mb-2">
-                                <div class="small buddy-block">
-                                    <div><strong>${buddy.name}</strong></div>
-                                    <div>${buddy.certification} (${buddy.skillLevel})</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ` : ''}
-            </div>
-        `;
-        
-        container.appendChild(planCard);
+    // Add event listener for the clear button (after creating the new modal)
+    document.getElementById('clearStorageBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear all saved dive plans and checklists? This cannot be undone.')) {
+            localStorage.setItem('scuplan_data', JSON.stringify({
+                plans: [],
+                checklists: []
+            }));
+            // Close current modal
+            const currentModal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
+            if (currentModal) {
+                currentModal.hide();
+                // Give some time for the current modal to close before showing a new one
+                setTimeout(() => {
+                    showOfflineStorageModal(); // Refresh with a new modal
+                    showAlert('All saved data has been cleared', 'success');
+                }, 500);
+            }
+        }
     });
     
-    // Add event listeners for the buttons
+    // Add event listeners for the buttons (after they've been created in the DOM)
     document.querySelectorAll('.load-plan-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const planId = this.getAttribute('data-plan-id');
-            loadSavedPlan(planId);
+            
+            // Close the modal first
+            const modal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
+            if (modal) {
+                modal.hide();
+                // Only load the plan after modal is hidden to prevent state conflicts
+                modal._element.addEventListener('hidden.bs.modal', function() {
+                    loadOfflinePlan(planId);
+                }, { once: true });
+            } else {
+                loadOfflinePlan(planId);
+            }
         });
     });
     
     document.querySelectorAll('.delete-plan-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const planId = this.getAttribute('data-plan-id');
-            if (confirm('Are you sure you want to delete this dive plan?')) {
-                deleteSavedPlan(planId);
-                showAlert('Dive plan deleted', 'success');
-            }
+            deleteOfflinePlan(planId);
         });
     });
     
-    // Add clear all button event
-    const clearAllBtn = document.getElementById('clearAllPlansBtn');
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to clear all saved dive plans? This cannot be undone.')) {
-                const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
-                storageData.plans = [];
-                localStorage.setItem('scuplan_data', JSON.stringify(storageData));
-                loadAndDisplaySavedPlans();
-                showAlert('All dive plans deleted', 'success');
-            }
-        });
-    }
-}
-
-/**
- * Helper function to create a gas label
- * @param {Object} tank - Tank data
- * @returns {string} Formatted gas label
- */
-function getGasLabel(tank) {
-    if (tank.gasType === 'air') {
-        return 'Air';
-    } else if (tank.gasType === 'nitrox') {
-        return `Nitrox ${tank.o2_percentage}%`;
-    } else if (tank.gasType === 'trimix') {
-        return `Trimix ${tank.o2_percentage}/${tank.he_percentage}`;
-    } else if (tank.gasType === 'heliox') {
-        return `Heliox ${tank.o2_percentage}/${tank.he_percentage}`;
-    }
-    return tank.gasType;
-}
-
-/**
- * Initialize saved plans on page load
- */
-function initSavedPlans() {
-    if (window.location.pathname === '/saved-plans') {
-        loadAndDisplaySavedPlans();
-    }
-}
-
-/**
- * Check for any plans to load from session storage (after redirect)
- */
-function checkPendingPlanLoad() {
-    const planId = sessionStorage.getItem('load_plan_id');
-    if (planId) {
-        // Clear it immediately to prevent repeated loads
-        sessionStorage.removeItem('load_plan_id');
+    // Show the modal with proper cleanup on close
+    const modalEl = document.getElementById('offlineStorageModal');
+    const modal = new bootstrap.Modal(modalEl);
+    
+    // Handle modal hidden event
+    modalEl.addEventListener('hidden.bs.modal', function() {
+        // Clean up URL fragment
+        if (window.history && window.history.replaceState) {
+            const url = window.location.href.split('#')[0];
+            window.history.replaceState('', document.title, url);
+        }
         
-        // Load the plan
+        // Give time for event handlers to complete, then remove modal completely
         setTimeout(() => {
-            loadSavedPlan(planId);
-        }, 500);  // Small delay to ensure page is fully loaded
+            // Only remove if not already removed
+            if (document.body.contains(modalEl)) {
+                try {
+                    // Dispose modal properly if it still exists
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.dispose();
+                    // Remove from DOM
+                    modalEl.parentNode.removeChild(modalEl);
+                } catch (e) {
+                    console.error("Error cleaning up modal:", e);
+                }
+            }
+        }, 500);
+    }, { once: true });
+    
+    modal.show();
+}
+
+/**
+ * Load an offline plan by ID
+ * @param {string} planId - ID of the plan to load
+ */
+function loadOfflinePlan(planId) {
+    const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
+    const plan = storageData.plans.find(p => p.id === planId);
+    
+    if (!plan) {
+        showAlert('Failed to load plan: Plan not found', 'danger');
+        return;
+    }
+    
+    try {
+        // Load the plan data into the app
+        app.currentPlan = plan.planData;
+        
+        // Update the form with the plan data
+        document.getElementById('diveDepth').value = plan.planData.depth;
+        document.getElementById('bottomTime').value = plan.planData.bottomTime;
+        document.getElementById('diveLocation').value = plan.planData.location || '';
+        document.getElementById('diveType').value = plan.planData.diveType || 'recreational';
+        
+        // Load tanks and buddies
+        app.tanks = plan.planData.tanks || [];
+        app.buddies = plan.planData.buddies || [];
+        
+        // Update displays
+        updateTanksDisplay();
+        updateBuddiesDisplay();
+        
+        // Display results
+        displayDivePlanResults(plan.planData);
+        
+        showAlert('Dive plan loaded successfully', 'success');
+    } catch (error) {
+        console.error('Error loading plan:', error);
+        showAlert('Failed to load plan: ' + error.message, 'danger');
     }
 }
 
 /**
- * Generate a unique ID for storage items
- * @returns {string} Unique ID
+ * Delete an offline plan by ID
+ * @param {string} planId - ID of the plan to delete
  */
-function generateUniqueId() {
-    return 'plan_' + Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+function deleteOfflinePlan(planId) {
+    if (confirm('Are you sure you want to delete this saved plan?')) {
+        const storageData = JSON.parse(localStorage.getItem('scuplan_data') || '{"plans":[],"checklists":[]}');
+        
+        // Filter out the plan with the given ID
+        storageData.plans = storageData.plans.filter(p => p.id !== planId);
+        
+        // Save back to storage
+        localStorage.setItem('scuplan_data', JSON.stringify(storageData));
+        
+        // Refresh the modal
+        showOfflineStorageModal();
+        
+        showAlert('Dive plan deleted', 'success');
+    }
 }
 
 /**
- * Helper function to capitalize the first letter of a string
- * @param {string} str - Input string
- * @returns {string} Capitalized string
+ * Helper function to capitalize first letter
  */
-function capitalizeFirstLetter(str) {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
+function capitalizeFirstLetter(string) {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
