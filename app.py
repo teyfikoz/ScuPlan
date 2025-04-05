@@ -97,6 +97,12 @@ def share():
         return redirect(url_for('index'))
     return render_template('share.html')
 
+# Kaydedilmiş planlar sayfası
+@app.route('/saved-plans')
+def saved_plans():
+    """Kaydedilmiş planlar sayfası"""
+    return render_template('saved_plans.html')
+
 # API: Dalış planı hesaplama
 @app.route('/api/calculate', methods=['POST'])
 def calculate_plan():

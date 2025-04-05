@@ -43,7 +43,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="javascript:void(0);" id="offlineStorageButton">
+                        <a class="nav-link {% if request.path == '/saved-plans' %}active{% endif %}" href="{{ url_for('saved_plans') }}">
                             <i class="fas fa-save me-1"></i> Saved Plans
                         </a>
                     </li>
@@ -119,7 +119,7 @@
                         <li><a href="{{ url_for('index') }}">Dive Calculator</a></li>
                         <li><a href="{{ url_for('checklist') }}">Dive Checklists</a></li>
                         <li><a href="{{ url_for('technical') }}">Technical Diving</a></li>
-                        <li><a href="#" id="footerSavedPlans">Saved Plans</a></li>
+                        <li><a href="{{ url_for("saved_plans") }}">Saved Plans</a></li>
                     </ul>
                 </div>
                 

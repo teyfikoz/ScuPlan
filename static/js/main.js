@@ -154,25 +154,6 @@ function setupEventListeners() {
     window.addEventListener('online', updateConnectionStatus);
     window.addEventListener('offline', updateConnectionStatus);
     
-    // Setup event listeners for offline storage dialog
-    const offlineStorageButton = document.getElementById('offlineStorageButton');
-    if (offlineStorageButton) {
-        offlineStorageButton.addEventListener('click', function() {
-            if (typeof showOfflineStorageModal === 'function') {
-                showOfflineStorageModal();
-            } else {
-                showAlert('Offline storage functionality is not available', 'warning');
-            }
-        });
-    }
-    
-    const footerSavedPlans = document.getElementById('footerSavedPlans');
-    if (footerSavedPlans) {
-        footerSavedPlans.addEventListener('click', function() {
-            if (typeof showOfflineStorageModal === 'function') {
-                showOfflineStorageModal();
-            } else {
-                showAlert('Offline storage functionality is not available', 'warning');
             }
         });
     }
