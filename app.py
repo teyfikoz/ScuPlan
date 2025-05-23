@@ -27,52 +27,62 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 }
 db.init_app(app)
 
-# İçe aktarmalar
+# Global flag to track database connectivity
+db_available = True
+
+# Import models
+try:
+    from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
+except ImportError:
+    app.logger.error("Could not import models")
+
+# Initialize database
 with app.app_context():
     try:
+        # Import models within the app context
         from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
         db.create_all()
+        
+        # Create default checklists if they don't exist
+        default_checklists = [
+            {"name": "Pre-Dive Checklist", "type": "pre-dive", "items": [
+                "Check equipment", "Test regulator", "Check BCD", "Check weights", "Check air supply",
+                "Partner check", "Safety plan", "Emergency plan"
+            ]},
+            {"name": "Post-Dive Checklist", "type": "post-dive", "items": [
+                "Rinse equipment", "Hang to dry", "Log dive", "Check remaining air", "Maintenance needs"
+            ]},
+            {"name": "Emergency Checklist", "type": "emergency", "items": [
+                "Signal distress", "Maintain buoyancy", "Establish communication", "Assess situation",
+                "First aid if needed", "Controlled ascent"
+            ]}
+        ]
+        
+        if Checklist.query.count() == 0:
+            for checklist_data in default_checklists:
+                checklist = Checklist(
+                    name=checklist_data["name"],
+                    checklist_type=checklist_data["type"],
+                    is_default=True
+                )
+                db.session.add(checklist)
+                db.session.flush()  # Get the checklist ID
+                
+                for i, item_text in enumerate(checklist_data["items"]):
+                    item = ChecklistItem(
+                        checklist_id=checklist.id,
+                        text=item_text,
+                        order=i+1
+                    )
+                    db.session.add(item)
+            
+            db.session.commit()
+            logging.debug("Default checklists created")
+            
     except Exception as e:
         app.logger.error(f"Database initialization error: {e}")
-        # Continue without database until connection is restored
-        pass
-    
-    # Create default checklists if they don't exist
-    default_checklists = [
-        {"name": "Pre-Dive Checklist", "type": "pre-dive", "items": [
-            "Check equipment", "Test regulator", "Check BCD", "Check weights", "Check air supply",
-            "Partner check", "Safety plan", "Emergency plan"
-        ]},
-        {"name": "Post-Dive Checklist", "type": "post-dive", "items": [
-            "Rinse equipment", "Hang to dry", "Log dive", "Check remaining air", "Maintenance needs"
-        ]},
-        {"name": "Emergency Checklist", "type": "emergency", "items": [
-            "Signal distress", "Maintain buoyancy", "Establish communication", "Assess situation",
-            "First aid if needed", "Controlled ascent"
-        ]}
-    ]
-    
-    if Checklist.query.count() == 0:
-        for checklist_data in default_checklists:
-            checklist = Checklist(
-                name=checklist_data["name"],
-                checklist_type=checklist_data["type"],
-                is_default=True
-            )
-            db.session.add(checklist)
-            db.session.flush()  # Get the checklist ID
-            
-            for i, item_text in enumerate(checklist_data["items"]):
-                item = ChecklistItem(
-                    checklist_id=checklist.id,
-                    text=item_text,
-                    order=i+1
-                )
-                db.session.add(item)
-        
-        db.session.commit()
-        
-        logging.debug("Default checklists created")
+        db_available = False
+        app.logger.warning("Application will run without database functionality")
 
 
 # Ana sayfa rotası
@@ -102,10 +112,10 @@ def share():
         return redirect(url_for('index'))
     return render_template('share.html')
 
-# API: Dalış planı hesaplama
+# API: Dive plan calculation
 @app.route('/api/calculate', methods=['POST'])
 def calculate_plan():
-    """Dalış planı hesaplama API'si"""
+    """API for calculating dive plan"""
     try:
         logger.debug("Received dive plan calculation request")
         data = request.get_json()
@@ -113,7 +123,7 @@ def calculate_plan():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
         
-        # Parametreleri al ve doğrula
+        # Get and validate parameters
         try:
             depth = float(data.get('depth', 0))
             bottom_time = float(data.get('bottomTime', 0))
@@ -123,7 +133,7 @@ def calculate_plan():
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
-        # Gaz verileri
+        # Gas data
         tanks_data = data.get('tanks', [])
         gas_data = None
         if tanks_data and len(tanks_data) > 0:
@@ -134,24 +144,24 @@ def calculate_plan():
                 'he_percentage': float(primary_tank.get('he', primary_tank.get('he_percentage', 0.0)))
             }
         
-        # Dalış profili oluştur
+        # Generate dive profile
         profile_data = generate_dive_profile(depth, bottom_time, gas_data)
         
-        # Tarih ve saat bilgilerini işle
+        # Process date and time
         dive_date = data.get('diveDate', '')
         dive_time = data.get('diveTime', '')
         
-        # Tarih bilgisi boşsa bugünü kullan
+        # Use today's date if empty
         if not dive_date:
             formatted_date = datetime.now().date()
         else:
             try:
                 formatted_date = datetime.strptime(dive_date, '%Y-%m-%d').date()
             except ValueError:
-                # Geçersiz tarih formatı durumunda bugünü kullan
+                # Use today's date if invalid format
                 formatted_date = datetime.now().date()
         
-        # Yanıt verisi
+        # Response data
         dive_plan = {
             'depth': depth,
             'bottomTime': bottom_time,
@@ -165,66 +175,85 @@ def calculate_plan():
             'totalDiveTime': profile_data['totalTime']
         }
         
-        # Veritabanına kaydet (opsiyonel)
-        if data.get('save', True):  # Default olarak kaydet
-            # Eğer tarih gönderildiyse kullan, aksi takdirde bugünü kullan
-            db_dive_plan = DivePlan(
-                dive_type=dive_plan['diveType'],
-                depth=depth,
-                bottom_time=bottom_time,
-                location=dive_plan['location'],
-                dive_date=formatted_date,
-                dive_time=dive_time if dive_time else None,
-                total_dive_time=profile_data['totalTime'],
-                share_token=secrets.token_urlsafe(16)  # Paylaşım için benzersiz token
-            )
-            
-            # Dekompresyon seviyelerini kaydet
-            if profile_data['decoStops']:
-                db_dive_plan.deco_levels = ','.join(str(stop['depth']) for stop in profile_data['decoStops'])
-                db_dive_plan.deco_times = ','.join(str(stop['time']) for stop in profile_data['decoStops'])
-            
-            # Tankları kaydet
-            for tank_data in tanks_data:
-                tank = Tank(
-                    size=float(tank_data.get('size', 0)),
-                    pressure=float(tank_data.get('pressure', 0)),
-                    gas_type=tank_data.get('gasType', 'air').lower(),
-                    o2_percentage=float(tank_data.get('o2', 21.0)),
-                    he_percentage=float(tank_data.get('he', 0.0))
+        # Save to database (optional) - only if database is available
+        if data.get('save', True) and db_available:  # Default is to save
+            try:
+                # Use date if provided, otherwise use today
+                db_dive_plan = DivePlan(
+                    dive_type=dive_plan['diveType'],
+                    depth=depth,
+                    bottom_time=bottom_time,
+                    location=dive_plan['location'],
+                    dive_date=formatted_date,
+                    dive_time=dive_time if dive_time else None,
+                    total_dive_time=profile_data['totalTime'],
+                    share_token=secrets.token_urlsafe(16)  # Unique token for sharing
                 )
-                db_dive_plan.tanks.append(tank)
-            
-            # Buddy'leri kaydet
-            for buddy_data in data.get('buddies', []):
-                buddy = Buddy(
-                    name=buddy_data.get('name', ''),
-                    certification=buddy_data.get('certification', ''),
-                    skill_level=buddy_data.get('skillLevel', ''),
-                    specialty=buddy_data.get('specialty', 'none')
-                )
-                db_dive_plan.buddies.append(buddy)
-            
-            db.session.add(db_dive_plan)
-            db.session.commit()
-            
-            # Kayıtlı planın ID'sini ve paylaşım jetonunu ekle
-            dive_plan['id'] = db_dive_plan.id
-            dive_plan['shareToken'] = db_dive_plan.share_token
+                
+                # Save decompression levels
+                if profile_data['decoStops']:
+                    db_dive_plan.deco_levels = ','.join(str(stop['depth']) for stop in profile_data['decoStops'])
+                    db_dive_plan.deco_times = ','.join(str(stop['time']) for stop in profile_data['decoStops'])
+                
+                # Save tanks
+                for tank_data in tanks_data:
+                    tank = Tank(
+                        size=float(tank_data.get('size', 0)),
+                        pressure=float(tank_data.get('pressure', 0)),
+                        gas_type=tank_data.get('gasType', 'air').lower(),
+                        o2_percentage=float(tank_data.get('o2', 21.0)),
+                        he_percentage=float(tank_data.get('he', 0.0))
+                    )
+                    db_dive_plan.tanks.append(tank)
+                
+                # Save buddies
+                for buddy_data in data.get('buddies', []):
+                    buddy = Buddy(
+                        name=buddy_data.get('name', ''),
+                        certification=buddy_data.get('certification', ''),
+                        skill_level=buddy_data.get('skillLevel', ''),
+                        specialty=buddy_data.get('specialty', 'none')
+                    )
+                    db_dive_plan.buddies.append(buddy)
+                
+                db.session.add(db_dive_plan)
+                db.session.commit()
+                
+                # Add saved plan ID and share token
+                dive_plan['id'] = db_dive_plan.id
+                dive_plan['shareToken'] = db_dive_plan.share_token
+            except Exception as e:
+                logger.error(f"Error saving dive plan to database: {str(e)}")
+                # We'll still return the calculated plan even if database save fails
+                dive_plan['saveError'] = 'Plan calculated successfully but could not be saved to database'
+        elif not db_available and data.get('save', True):
+            # Database is unavailable but user wanted to save
+            dive_plan['saveError'] = 'Database is currently unavailable, plan could not be saved'
+            # Generate a temporary token for the session
+            dive_plan['shareToken'] = f"temp-{secrets.token_urlsafe(16)}"
         
         return jsonify(dive_plan)
     except Exception as e:
         logger.error(f"Error calculating dive plan: {str(e)}")
         return jsonify({'error': f'Failed to calculate dive plan: {str(e)}'}), 500
 
-# API: Dalış planı getirme
+# API: Get dive plan
 @app.route('/api/plan/<token>')
 def get_plan(token):
-    """Dalış planını token ile getir"""
+    """Get dive plan by token"""
     try:
         logger.debug(f"Attempting to load dive plan with token: {token}")
         
-        # Önce ID ile kontrol et
+        # Return error if database is not available
+        if not db_available:
+            logger.warning("Database is unavailable - cannot retrieve plan")
+            return jsonify({
+                'error': 'Database unavailable',
+                'message': 'The database service is currently unavailable. Please try again later.'
+            }), 503
+        
+        # First check by ID
+        plan = None
         try:
             plan_id = int(token)
             logger.debug(f"Treating token as ID: {plan_id}")
@@ -234,7 +263,7 @@ def get_plan(token):
             else:
                 logger.debug(f"No plan found with ID: {plan_id}")
         except ValueError:
-            # Sayısal ID değilse, token ile ara
+            # If not a numeric ID, search by token
             logger.debug(f"Treating token as share_token")
             plan = DivePlan.query.filter_by(share_token=token).first()
             if plan:
@@ -243,17 +272,25 @@ def get_plan(token):
                 logger.debug(f"No plan found with token: {token}")
         
         if not plan:
+            # Handle temporary tokens (for database-less mode)
+            if token.startswith("temp-"):
+                logger.warning(f"Temporary token requested, but cannot be retrieved without database: {token}")
+                return jsonify({
+                    'error': 'Temporary plan expired',
+                    'message': 'This plan was temporary and cannot be retrieved. Please create a new plan.'
+                }), 404
+                
             logger.warning(f"Dive plan not found for token: {token}")
             return jsonify({
                 'error': 'Dive plan not found',
                 'message': 'The plan may have been deleted or the link is invalid.'
             }), 404
         
-        # Plan verilerini JSON'a dönüştür
+        # Convert plan data to JSON
         logger.debug(f"Converting plan #{plan.id} to JSON")
         plan_data = plan.to_dict()
         
-        # Dalış profilini yeniden oluştur
+        # Regenerate dive profile
         logger.debug(f"Generating dive profile for plan")
         gas_info = None
         if plan.tanks:
@@ -285,11 +322,69 @@ def get_plan(token):
             'message': f'An unexpected error occurred: {str(e)}'
         }), 500
 
-# API: Kontrol listeleri getirme
+# API: Get checklists
 @app.route('/api/checklists')
 def get_checklists():
-    """Tüm kontrol listelerini getir"""
+    """Get all checklists"""
     try:
+        # If database is not available, return default checklists
+        if not db_available:
+            # Return some default checklists when database is unavailable
+            default_checklists = [
+                {
+                    "id": "default-1",
+                    "name": "Pre-Dive Checklist",
+                    "checklist_type": "pre-dive",
+                    "is_default": True,
+                    "items": [
+                        {"id": "item-1", "text": "Check equipment", "order": 1},
+                        {"id": "item-2", "text": "Test regulator", "order": 2},
+                        {"id": "item-3", "text": "Check BCD", "order": 3},
+                        {"id": "item-4", "text": "Check weights", "order": 4},
+                        {"id": "item-5", "text": "Check air supply", "order": 5},
+                        {"id": "item-6", "text": "Partner check", "order": 6},
+                        {"id": "item-7", "text": "Safety plan", "order": 7},
+                        {"id": "item-8", "text": "Emergency plan", "order": 8}
+                    ]
+                },
+                {
+                    "id": "default-2",
+                    "name": "Post-Dive Checklist",
+                    "checklist_type": "post-dive",
+                    "is_default": True,
+                    "items": [
+                        {"id": "item-9", "text": "Rinse equipment", "order": 1},
+                        {"id": "item-10", "text": "Hang to dry", "order": 2},
+                        {"id": "item-11", "text": "Log dive", "order": 3},
+                        {"id": "item-12", "text": "Check remaining air", "order": 4},
+                        {"id": "item-13", "text": "Maintenance needs", "order": 5}
+                    ]
+                },
+                {
+                    "id": "default-3",
+                    "name": "Emergency Checklist",
+                    "checklist_type": "emergency",
+                    "is_default": True,
+                    "items": [
+                        {"id": "item-14", "text": "Signal distress", "order": 1},
+                        {"id": "item-15", "text": "Maintain buoyancy", "order": 2},
+                        {"id": "item-16", "text": "Establish communication", "order": 3},
+                        {"id": "item-17", "text": "Assess situation", "order": 4},
+                        {"id": "item-18", "text": "First aid if needed", "order": 5},
+                        {"id": "item-19", "text": "Controlled ascent", "order": 6}
+                    ]
+                }
+            ]
+            
+            # If type filter is provided, filter the defaults
+            checklist_type = request.args.get('type')
+            if checklist_type:
+                filtered_checklists = [c for c in default_checklists if c['checklist_type'] == checklist_type]
+                return jsonify(filtered_checklists)
+            
+            return jsonify(default_checklists)
+        
+        # Normal database flow when database is available
         checklist_type = request.args.get('type')
         
         if checklist_type:
@@ -302,11 +397,18 @@ def get_checklists():
         logger.error(f"Error retrieving checklists: {str(e)}")
         return jsonify({'error': f'Failed to retrieve checklists: {str(e)}'}), 500
 
-# API: Yeni kontrol listesi oluşturma
+# API: Create new checklist
 @app.route('/api/checklists', methods=['POST'])
 def create_checklist():
-    """Yeni kontrol listesi oluştur"""
+    """Create a new checklist"""
     try:
+        # Check if database is available
+        if not db_available:
+            return jsonify({
+                'error': 'Database unavailable',
+                'message': 'Cannot create custom checklists while database is unavailable.'
+            }), 503
+            
         data = request.get_json()
         
         if not data or 'name' not in data:
@@ -334,7 +436,8 @@ def create_checklist():
         
         return jsonify(checklist.to_dict()), 201
     except Exception as e:
-        db.session.rollback()
+        if db_available:
+            db.session.rollback()
         logger.error(f"Error creating checklist: {str(e)}")
         return jsonify({'error': f'Failed to create checklist: {str(e)}'}), 500
 
