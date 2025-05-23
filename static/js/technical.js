@@ -422,13 +422,13 @@ function initCNSCalculator() {
             
             if (data.total_cns < 50) {
                 alertBox.className = 'alert alert-success mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Güvenli CNS seviyesi.';
+                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Safe CNS level.';
             } else if (data.total_cns < 80) {
                 alertBox.className = 'alert alert-warning mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Yükselen CNS seviyesi. Dikkatli olun ve ek dalışlar için recovery time bırakın.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Elevated CNS level. Be careful and allow recovery time for additional dives.';
             } else {
                 alertBox.className = 'alert alert-danger mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Tehlikeli CNS seviyesi! Bu dalışı gerçekleştirmek güvenli değil.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Dangerous CNS level! This dive is not safe to perform.';
             }
             
             resultBox.style.display = 'block';
@@ -449,7 +449,61 @@ function initMultiLevelCalculator() {
     
     if (!multiLevelForm) return;
     
-    if (!calculateBtn || !addGasBtn || !addSegmentBtn) return;
+    // Handle form submission
+    multiLevelForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const segments = [];
+        const gases = [];
+        
+        // Collect segment data
+        document.querySelectorAll('.segment-group').forEach((segmentDiv, index) => {
+            const depth = parseFloat(segmentDiv.querySelector('.segment-depth').value);
+            const time = parseFloat(segmentDiv.querySelector('.segment-time').value);
+            const o2 = parseFloat(segmentDiv.querySelector('.segment-o2').value);
+            const he = parseFloat(segmentDiv.querySelector('.segment-he').value);
+            
+            if (!isNaN(depth) && !isNaN(time) && !isNaN(o2) && !isNaN(he)) {
+                segments.push({ depth, time, gas_index: index });
+                gases.push({ o2, he });
+            }
+        });
+        
+        if (segments.length === 0) {
+            showError('multiLevelResult', 'multiLevelAlert', 'Please enter at least one valid segment.');
+            return;
+        }
+        
+        // Call API for calculation
+        fetch('/api/tech/multi-level', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                segments: segments,
+                gases: gases
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error calculating multi-level profile.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Display results
+            document.getElementById('multiLevelTotalTime').textContent = data.total_time || '--';
+            document.getElementById('multiLevelMaxDepth').textContent = data.max_depth || '--';
+            document.getElementById('multiLevelTotalCNS').textContent = data.total_cns || '--';
+            
+            // Show results
+            document.getElementById('multiLevelResult').style.display = 'block';
+        })
+        .catch(error => {
+            showError('multiLevelResult', 'multiLevelAlert', error.message);
+        });
+    });
     
     // Add new gas
     addGasBtn.addEventListener('click', function() {
