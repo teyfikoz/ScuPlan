@@ -221,13 +221,13 @@ function initBestMixCalculator() {
             
             if (depth <= 30) {
                 alertBox.className = 'alert alert-info mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Bu derinlik için Nitrox karışımı yeterli olabilir.';
+                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> For this depth, Nitrox mixture may be sufficient.';
             } else if (depth <= 60) {
                 alertBox.className = 'alert alert-info mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Bu derinlikte Trimix kullanımı önerilir. En az Advanced Trimix sertifikasına sahip olmalısınız.';
+                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Trimix usage is recommended for this depth. You must have at least Advanced Trimix certification.';
             } else {
                 alertBox.className = 'alert alert-warning mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Teknik dalış sınırları. Full Trimix sertifikası ve ileri ekipman gerektirir.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Technical diving limits. Full Trimix certification and advanced equipment required.';
             }
             
             resultBox.style.display = 'block';
@@ -243,8 +243,69 @@ function initBestMixCalculator() {
  */
 function initCNSCalculator() {
     const cnsForm = document.getElementById('cnsForm');
-    const addSegmentBtn = document.getElementById('addCnsSegment');
-    if (!cnsForm || !addSegmentBtn) return;
+    if (!cnsForm) return;
+    
+    // Handle form submission for single calculation
+    cnsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const depth = parseFloat(document.getElementById('cnsDepth').value);
+        const o2 = parseFloat(document.getElementById('cnsO2').value);
+        const time = parseFloat(document.getElementById('cnsTime').value);
+        
+        if (isNaN(depth) || isNaN(o2) || isNaN(time)) {
+            showError('cnsResult', 'cnsAlert', 'Please enter valid values.');
+            return;
+        }
+        
+        // Calculate single segment CNS
+        const segments = [{
+            depth: depth,
+            time: time,
+            o2: o2
+        }];
+        
+        fetch('/api/tech/cns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ segments: segments })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error calculating CNS loading.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Display results
+            document.getElementById('cnsValue').textContent = data.total_cns;
+            document.getElementById('cnsPO2').textContent = data.segments[0].po2;
+            document.getElementById('cnsExposureTime').textContent = time;
+            
+            // Set alert based on CNS level
+            const alertBox = document.getElementById('cnsAlert');
+            const resultBox = document.getElementById('cnsResult');
+            
+            if (data.total_cns < 80) {
+                alertBox.className = 'alert alert-success mt-3';
+                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> CNS loading is within safe limits.';
+            } else if (data.total_cns < 100) {
+                alertBox.className = 'alert alert-warning mt-3';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Approaching CNS limit. Consider reducing exposure time.';
+            } else {
+                alertBox.className = 'alert alert-danger mt-3';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> CNS limit exceeded! Dangerous oxygen exposure.';
+            }
+            
+            alertBox.style.display = 'block';
+            resultBox.style.display = 'block';
+        })
+        .catch(error => {
+            showError('cnsResult', 'cnsAlert', error.message);
+        });
+    });
     
     // Add new segment
     addSegmentBtn.addEventListener('click', function() {
@@ -300,7 +361,7 @@ function initCNSCalculator() {
         });
         
         if (segments.length === 0) {
-            showError('cnsResult', 'cnsAlert', 'En az bir geçerli segment girin.');
+            showError('cnsResult', 'cnsAlert', 'Please enter at least one valid segment.');
             return;
         }
         
@@ -316,7 +377,7 @@ function initCNSCalculator() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('CNS hesaplanırken bir hata oluştu.');
+                throw new Error('Error calculating CNS loading.');
             }
             return response.json();
         })
