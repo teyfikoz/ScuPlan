@@ -126,7 +126,7 @@ function initENDCalculator() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('END hesaplanırken bir hata oluştu.');
+                throw new Error('Error occurred while calculating END.');
             }
             return response.json();
         })
@@ -148,16 +148,16 @@ function initENDCalculator() {
             
             if (data.end <= 18) {
                 alertBox.className = 'alert alert-success mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Düşük narkoz riski, rekreasyonel dalış sınırları içinde.';
+                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Low narcosis risk, within recreational diving limits.';
             } else if (data.end <= 30) {
                 alertBox.className = 'alert alert-info mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Orta seviye narkoz riski. Teknik dalıcılar için kabul edilebilir.';
+                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Medium narcosis risk. Acceptable for technical divers.';
             } else if (data.end <= 40) {
                 alertBox.className = 'alert alert-warning mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Yüksek narkoz riski. İleri teknik dalış eğitimi gerektirir.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> High narcosis risk. Advanced technical diving training required.';
             } else {
                 alertBox.className = 'alert alert-danger mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Çok yüksek narkoz riski. 40m üzerinde END değerleri önerilmez.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Very high narcosis risk. END values over 40m are not recommended.';
             }
             
             resultBox.style.display = 'block';
@@ -185,7 +185,7 @@ function initBestMixCalculator() {
         // Validate inputs
         if (isNaN(depth) || isNaN(maxPO2) || isNaN(maxEND) || 
             depth <= 0 || maxPO2 <= 0 || maxEND <= 0) {
-            showError('bestMixResult', 'bestMixAlert', 'Lütfen geçerli değerler girin.');
+            showError('bestMixResult', 'bestMixAlert', 'Please enter valid values.');
             return;
         }
         
@@ -203,7 +203,7 @@ function initBestMixCalculator() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('En iyi karışım hesaplanırken bir hata oluştu.');
+                throw new Error('Error occurred while calculating best mix.');
             }
             return response.json();
         })
