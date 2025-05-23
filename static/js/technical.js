@@ -36,7 +36,7 @@ function initMODCalculator() {
         
         // Validate inputs
         if (isNaN(o2Percentage) || isNaN(maxPO2) || o2Percentage <= 0 || o2Percentage > 100 || maxPO2 <= 0) {
-            showError('modResult', 'modAlert', 'Lütfen geçerli değerler girin.');
+            showError('modResult', 'modAlert', 'Please enter valid values.');
             return;
         }
         
