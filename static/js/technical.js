@@ -53,7 +53,7 @@ function initMODCalculator() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('MOD hesaplanırken bir hata oluştu.');
+                throw new Error('Error occurred while calculating MOD.');
             }
             return response.json();
         })
@@ -69,16 +69,16 @@ function initMODCalculator() {
             
             if (data.mod <= 0) {
                 alertBox.className = 'alert alert-danger mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Bu gaz karışımı ile dalış yapmak güvenli değil.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> This gas mixture is not safe for diving.';
             } else if (data.mod <= 18) {
                 alertBox.className = 'alert alert-success mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Rekreasyonel dalış sınırları içinde güvenli.';
+                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Safe within recreational diving limits.';
             } else if (data.mod <= 40) {
                 alertBox.className = 'alert alert-warning mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Teknik dalış sınırları içinde. Uygun sertifikasyona sahip olduğunuzdan emin olun.';
+                alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Within technical diving limits. Ensure you have proper certification.';
             } else {
                 alertBox.className = 'alert alert-danger mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Çok derin dalış. İleri teknik dalış eğitimi ve deneyimi gerektirir.';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Very deep dive. Advanced technical diving training and experience required.';
             }
             
             resultBox.style.display = 'block';
@@ -108,7 +108,7 @@ function initENDCalculator() {
             depth < 0 || o2Percentage <= 0 || o2Percentage > 100 || 
             hePercentage < 0 || hePercentage >= 100 || 
             (o2Percentage + hePercentage) > 100) {
-            showError('endResult', 'endAlert', 'Lütfen geçerli değerler girin. O₂ ve He toplamı 100\'den büyük olamaz.');
+            showError('endResult', 'endAlert', 'Please enter valid values. O₂ and He total cannot exceed 100%.');
             return;
         }
         

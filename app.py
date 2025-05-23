@@ -811,9 +811,10 @@ def calculate_multi_level_api():
         logger.error(f"Error calculating multi-level profile: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/api/gas-consumption', methods=['POST'])
 def calculate_gas_consumption():
-    """Gaz tüketim hesaplama API'si"""
+    """Gas consumption calculation API"""
     try:
         data = request.get_json()
         
