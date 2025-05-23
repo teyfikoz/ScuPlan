@@ -443,10 +443,11 @@ function initCNSCalculator() {
  * Initialize Multi-Level Dive Planning calculator
  */
 function initMultiLevelCalculator() {
-    // Get elements
-    const calculateBtn = document.getElementById('calculateMultiLevel');
-    const addGasBtn = document.getElementById('addMultiLevelGas');
-    const addSegmentBtn = document.getElementById('addMultiLevelSegment');
+    const multiLevelForm = document.getElementById('multiLevelForm');
+    const addSegmentBtn = document.getElementById('addSegmentBtn');
+    const removeSegmentBtn = document.getElementById('removeSegmentBtn');
+    
+    if (!multiLevelForm) return;
     
     if (!calculateBtn || !addGasBtn || !addSegmentBtn) return;
     
