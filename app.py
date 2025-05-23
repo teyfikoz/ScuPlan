@@ -29,8 +29,13 @@ db.init_app(app)
 
 # İçe aktarmalar
 with app.app_context():
-    from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
-    db.create_all()
+    try:
+        from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
+        db.create_all()
+    except Exception as e:
+        app.logger.error(f"Database initialization error: {e}")
+        # Continue without database until connection is restored
+        pass
     
     # Create default checklists if they don't exist
     default_checklists = [
