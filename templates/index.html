@@ -36,7 +36,7 @@
                             <label for="diveDepth" class="form-label">Maximum Depth</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" id="diveDepth" min="1" max="150" step="0.5" value="18">
-                                <span class="input-group-text">meters</span>
+                                <span class="input-group-text" data-unit="depth">meters</span>
                             </div>
                         </div>
                         
@@ -66,7 +66,7 @@
                             <label for="sacRate" class="form-label">SAC Rate</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" id="sacRate" min="10" max="50" step="1" value="20">
-                                <span class="input-group-text">L/min</span>
+                                <span class="input-group-text" data-unit="volume">L/min</span>
                             </div>
                             <small class="text-muted">Surface Air Consumption</small>
                         </div>
@@ -133,7 +133,7 @@
                         <div class="row">
                             <div class="col-4 stat-item">
                                 <div class="stat-value" id="maxDepthResult">--</div>
-                                <div class="stat-label">Depth (m)</div>
+                                <div class="stat-label">Depth (<span data-unit="depth">m</span>)</div>
                             </div>
                             <div class="col-4 stat-item">
                                 <div class="stat-value" id="bottomTimeResult">--</div>
@@ -152,7 +152,7 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Depth (m)</th>
+                                        <th>Depth (<span data-unit="depth">m</span>)</th>
                                         <th>Time (min)</th>
                                     </tr>
                                 </thead>

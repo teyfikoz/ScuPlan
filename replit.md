@@ -53,6 +53,10 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ Translated all Turkish messages to English in calculators
 ✓ Fixed JavaScript errors causing Technical Diving issues
 ✓ Database fallback mechanism working properly
+✓ **FIXED: Imperial unit conversion in Dive Plan Results and Dive Profile Chart**
+✓ **FIXED: Date field initialization with English format (dd.mm.yyyy)**
+✓ **UPDATED: Comprehensive 29 world-famous dive locations dataset**
+✓ **ENHANCED: Interactive map with all new dive sites and proper clustering**
 
 ## Planned New Features (Current Development)
 

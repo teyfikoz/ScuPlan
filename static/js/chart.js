@@ -23,9 +23,17 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
         chartInstance.destroy();
     }
     
-    // Extract time and depth data from profile points
+    // Extract time and depth data from profile points with unit conversion
     const timeData = profile.points.map(point => point.time);
-    const depthData = profile.points.map(point => -point.depth); // Negative for proper display
+    let depthData, depthUnit;
+    
+    if (window.unitsManager) {
+        depthData = profile.points.map(point => -window.unitsManager.convertDepth(point.depth, 'metric'));
+        depthUnit = window.unitsManager.getDepthUnit();
+    } else {
+        depthData = profile.points.map(point => -point.depth); // Negative for proper display
+        depthUnit = 'm';
+    }
     
     // Get the phases for coloring
     const phases = profile.points.map(point => point.phase);
@@ -116,7 +124,7 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                 y: {
                     title: {
                         display: true,
-                        text: 'Depth (meters)'
+                        text: `Depth (${depthUnit})`
                     },
                     reverse: true, // Invert the scale
                     ticks: {
@@ -133,7 +141,7 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                             return `Time: ${tooltipItems[0].parsed.x.toFixed(1)} minutes`;
                         },
                         label: function(context) {
-                            return `Depth: ${Math.abs(context.parsed.y).toFixed(1)} meters`;
+                            return `Depth: ${Math.abs(context.parsed.y).toFixed(1)} ${depthUnit}`;
                         },
                         afterLabel: function(context) {
                             const index = context.dataIndex;

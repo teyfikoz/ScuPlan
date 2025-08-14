@@ -15,8 +15,7 @@
       "Diverse marine life",
       "Coral formations",
       "Tropical climate"
-    ],
-    "link": "/?site=Great%20Barrier%20Reef&depth=40"
+    ]
   },
   {
     "name": "Great Blue Hole",
@@ -34,8 +33,7 @@
       "Circular sinkhole",
       "Stalactites",
       "Deep wall diving"
-    ],
-    "link": "/?site=Great%20Blue%20Hole&depth=124"
+    ]
   },
   {
     "name": "Silfra Fissure",
@@ -53,8 +51,7 @@
       "Tectonic plates",
       "Ultra-clear water",
       "Unique geological formations"
-    ],
-    "link": "/?site=Silfra%20Fissure&depth=18"
+    ]
   },
   {
     "name": "Ras Mohammed",
@@ -72,8 +69,7 @@
       "Colorful corals",
       "Large schools of fish",
       "Clear waters"
-    ],
-    "link": "/?site=Ras%20Mohammed&depth=40"
+    ]
   },
   {
     "name": "SS Thistlegorm Wreck",
@@ -91,8 +87,7 @@
       "WWII artifacts",
       "Motorcycles and trucks",
       "Historical significance"
-    ],
-    "link": "/?site=SS%20Thistlegorm%20Wreck&depth=30"
+    ]
   },
   {
     "name": "Barracuda Point",
@@ -110,8 +105,7 @@
       "Barracuda tornadoes",
       "Hammerhead sharks",
       "Rich coral life"
-    ],
-    "link": "/?site=Barracuda%20Point&depth=40"
+    ]
   },
   {
     "name": "Cenote Dos Ojos",
@@ -130,8 +124,7 @@
       "Stalactites",
       "Haloclines",
       "Cave formations"
-    ],
-    "link": "/?site=Cenote%20Dos%20Ojos&depth=10"
+    ]
   },
   {
     "name": "Molokini Crater",
@@ -150,8 +143,7 @@
       "Coral gardens",
       "Clear water",
       "Protected marine sanctuary"
-    ],
-    "link": "/?site=Molokini%20Crater&depth=18"
+    ]
   },
   {
     "name": "Blue Corner",
@@ -170,8 +162,7 @@
       "Barracuda schools",
       "Napoleon wrasse",
       "Strong currents"
-    ],
-    "link": "/?site=Blue%20Corner&depth=40"
+    ]
   },
   {
     "name": "Poor Knights Islands",
@@ -190,8 +181,7 @@
       "Stingray city",
       "Archways",
       "Subtropical marine life"
-    ],
-    "link": "/?site=Poor%20Knights%20Islands&depth=40"
+    ]
   },
   {
     "name": "Raja Ampat",
@@ -209,8 +199,7 @@
       "Soft corals",
       "Manta rays",
       "Wobbegong sharks"
-    ],
-    "link": "/?site=Raja%20Ampat&depth=40"
+    ]
   },
   {
     "name": "Komodo National Park",
@@ -228,8 +217,7 @@
       "Manta rays",
       "Coral reefs",
       "Pelagic species"
-    ],
-    "link": "/?site=Komodo%20National%20Park&depth=30"
+    ]
   },
   {
     "name": "Tubbataha Reefs",
@@ -247,8 +235,7 @@
       "Sharks",
       "Eagle rays",
       "Unspoiled reefs"
-    ],
-    "link": "/?site=Tubbataha%20Reefs&depth=30"
+    ]
   },
   {
     "name": "Cocos Island",
@@ -266,8 +253,7 @@
       "Hammerhead sharks",
       "Schooling fish",
       "Pelagic species"
-    ],
-    "link": "/?site=Cocos%20Island&depth=40"
+    ]
   },
   {
     "name": "Galapagos (Darwin & Wolf Islands)",
@@ -285,8 +271,7 @@
       "Whale sharks",
       "Hammerhead schools",
       "Sea lions"
-    ],
-    "link": "/?site=Galapagos%20(Darwin%20%26%20Wolf%20Islands)&depth=30"
+    ]
   },
   {
     "name": "Socorro Island",
@@ -304,8 +289,7 @@
       "Giant manta rays",
       "Humpback whales",
       "Dolphins"
-    ],
-    "link": "/?site=Socorro%20Island&depth=30"
+    ]
   },
   {
     "name": "Tiger Beach",
@@ -323,8 +307,7 @@
       "Tiger sharks",
       "Lemon sharks",
       "Clear water"
-    ],
-    "link": "/?site=Tiger%20Beach&depth=12"
+    ]
   },
   {
     "name": "Yongala Wreck",
@@ -342,8 +325,7 @@
       "Large fish schools",
       "Sea turtles",
       "Occasional bull sharks"
-    ],
-    "link": "/?site=Yongala%20Wreck&depth=30"
+    ]
   },
   {
     "name": "Richelieu Rock",
@@ -361,8 +343,7 @@
       "Whale sharks",
       "Seahorses",
       "Colorful soft corals"
-    ],
-    "link": "/?site=Richelieu%20Rock&depth=35"
+    ]
   },
   {
     "name": "USAT Liberty Wreck",
@@ -380,8 +361,7 @@
       "Wreck exploration",
       "Sea fans",
       "Sunken guns"
-    ],
-    "link": "/?site=USAT%20Liberty%20Wreck&depth=30"
+    ]
   },
   {
     "name": "Elphinstone Reef",
@@ -399,8 +379,7 @@
       "Oceanic whitetip sharks",
       "Soft corals",
       "Strong currents"
-    ],
-    "link": "/?site=Elphinstone%20Reef&depth=40"
+    ]
   },
   {
     "name": "Bloody Bay Wall",
@@ -418,8 +397,7 @@
       "Vertical wall",
       "Sponges and corals",
       "Clear visibility"
-    ],
-    "link": "/?site=Bloody%20Bay%20Wall&depth=40"
+    ]
   },
   {
     "name": "Salt Pier (Bonaire)",
@@ -437,8 +415,7 @@
       "Coral-encrusted pillars",
       "Schooling tarpon",
       "Easy shore access"
-    ],
-    "link": "/?site=Salt%20Pier%20(Bonaire)&depth=20"
+    ]
   },
   {
     "name": "Palancar Reef",
@@ -456,8 +433,7 @@
       "Swim-through tunnels",
       "Giant sponges",
       "Turtles"
-    ],
-    "link": "/?site=Palancar%20Reef&depth=40"
+    ]
   },
   {
     "name": "Maaya Thila",
@@ -475,8 +451,7 @@
       "Grey reef sharks",
       "White-tip sharks",
       "Turtle encounters"
-    ],
-    "link": "/?site=Maaya%20Thila&depth=30"
+    ]
   },
   {
     "name": "Turtle Cavern",
@@ -494,8 +469,7 @@
       "Turtle skeletons",
       "Cave diving",
       "Limestone formations"
-    ],
-    "link": "/?site=Turtle%20Cavern&depth=30"
+    ]
   },
   {
     "name": "Manta Ray Night Dive (Kona)",
@@ -513,8 +487,7 @@
       "Giant manta rays",
       "Night diving",
       "Plankton feeding show"
-    ],
-    "link": "/?site=Manta%20Ray%20Night%20Dive%20(Kona)&depth=12"
+    ]
   },
   {
     "name": "Devil's Den",
@@ -532,8 +505,7 @@
       "Cavern diving",
       "Fossils",
       "Constant water temperature"
-    ],
-    "link": "/?site=Devil's%20Den&depth=16"
+    ]
   },
   {
     "name": "Beqa Lagoon",
@@ -551,7 +523,6 @@
       "Shark encounters",
       "Soft coral reefs",
       "Warm waters"
-    ],
-    "link": "/?site=Beqa%20Lagoon&depth=30"
+    ]
   }
 ]

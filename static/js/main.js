@@ -491,12 +491,18 @@ function displayDivePlanResults(data) {
         resultsCard.style.display = 'block';
     }
     
-    // Update the stat values
+    // Update the stat values with proper unit conversion
     const maxDepthResult = document.getElementById('maxDepthResult');
     const bottomTimeResult = document.getElementById('bottomTimeResult');
     const totalTimeResult = document.getElementById('totalTimeResult');
     
-    if (maxDepthResult) maxDepthResult.textContent = data.depth.toFixed(1);
+    if (maxDepthResult && window.unitsManager) {
+        const convertedDepth = window.unitsManager.convertDepth(data.depth, 'metric');
+        maxDepthResult.textContent = convertedDepth.toFixed(1);
+    } else if (maxDepthResult) {
+        maxDepthResult.textContent = data.depth.toFixed(1);
+    }
+    
     if (bottomTimeResult) bottomTimeResult.textContent = data.bottomTime.toFixed(0);
     if (totalTimeResult) totalTimeResult.textContent = data.totalDiveTime.toFixed(0);
     
@@ -720,22 +726,53 @@ function displayGasConsumptionResults(results) {
         const gasInfo = result.gasType === 'air' ? 'Air' : 
                        `${gasType} (${result.o2}% O₂${result.he > 0 ? ', ' + result.he + '% He' : ''})`;
         
-        const tankDiv = document.createElement('div');
-        tankDiv.className = 'mb-3 p-3 bg-light rounded';
-        tankDiv.innerHTML = `
-            <h6 class="mb-2">Tank ${result.tankIndex + 1}: ${result.tankSize}L @ ${result.initialPressure} bar (${gasInfo})</h6>
-            <div class="row">
-                <div class="col-6">
-                    <div class="small text-muted">Consumption:</div>
-                    <div class="fw-bold">${result.totalConsumption} L</div>
+        // Apply unit conversions
+        let tankSize, pressure, consumption, volumeUnit, pressureUnit;
+        
+        if (window.unitsManager) {
+            tankSize = window.unitsManager.convertVolume(result.tankSize, 'metric');
+            pressure = window.unitsManager.convertPressure(result.initialPressure, 'metric');
+            consumption = window.unitsManager.convertVolume(result.totalConsumption, 'metric');
+            const safePressure = window.unitsManager.convertPressure(result.safeRemainingPressure, 'metric');
+            
+            volumeUnit = window.unitsManager.getVolumeUnit();
+            pressureUnit = window.unitsManager.getPressureUnit();
+            
+            const tankDiv = document.createElement('div');
+            tankDiv.className = 'mb-3 p-3 bg-light rounded';
+            tankDiv.innerHTML = `
+                <h6 class="mb-2">Tank ${result.tankIndex + 1}: ${tankSize.toFixed(1)}${volumeUnit} @ ${pressure.toFixed(0)} ${pressureUnit} (${gasInfo})</h6>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="small text-muted">Consumption:</div>
+                        <div class="fw-bold">${consumption.toFixed(0)} ${volumeUnit}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Remaining (with reserve):</div>
+                        <div class="fw-bold">${safePressure < (window.unitsManager.currentSystem === 'imperial' ? 435 : 30) ? '<span class="text-danger">' : ''}${safePressure.toFixed(0)} ${pressureUnit}${safePressure < (window.unitsManager.currentSystem === 'imperial' ? 435 : 30) ? '</span>' : ''}</div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <div class="small text-muted">Remaining (with reserve):</div>
-                    <div class="fw-bold">${result.safeRemainingPressure < 30 ? '<span class="text-danger">' : ''}${result.safeRemainingPressure.toFixed(0)} bar${result.safeRemainingPressure < 30 ? '</span>' : ''}</div>
+            `;
+            container.appendChild(tankDiv);
+        } else {
+            // Fallback without unit conversion
+            const tankDiv = document.createElement('div');
+            tankDiv.className = 'mb-3 p-3 bg-light rounded';
+            tankDiv.innerHTML = `
+                <h6 class="mb-2">Tank ${result.tankIndex + 1}: ${result.tankSize}L @ ${result.initialPressure} bar (${gasInfo})</h6>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="small text-muted">Consumption:</div>
+                        <div class="fw-bold">${result.totalConsumption} L</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Remaining (with reserve):</div>
+                        <div class="fw-bold">${result.safeRemainingPressure < 30 ? '<span class="text-danger">' : ''}${result.safeRemainingPressure.toFixed(0)} bar${result.safeRemainingPressure < 30 ? '</span>' : ''}</div>
+                    </div>
                 </div>
-            </div>
-        `;
-        container.appendChild(tankDiv);
+            `;
+            container.appendChild(tankDiv);
+        }
     });
 }
 
@@ -2213,6 +2250,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check which page we're on
     if (document.getElementById('divePlanForm')) {
         initDivePlanner();
+        
+        // Initialize date field with proper format (dd.mm.yyyy style)
+        const dateInput = document.getElementById('diveDate');
+        if (dateInput && !dateInput.value) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            dateInput.value = `${year}-${month}-${day}`;
+        }
+        
+        // Initialize time field
+        const timeInput = document.getElementById('diveTime');
+        if (timeInput && !timeInput.value) {
+            timeInput.value = '10:00';
+        }
         
         // Check for imported plan
         if (typeof checkForImportedPlan === 'function') {
