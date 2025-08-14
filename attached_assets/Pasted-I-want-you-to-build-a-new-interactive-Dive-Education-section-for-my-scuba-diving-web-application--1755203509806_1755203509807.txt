@@ -1,0 +1,70 @@
+I want you to build a new interactive “Dive Education” section for my scuba diving web application.
+It must meet ALL the following constraints:
+
+⸻
+
+1. 🌐 Platform & Cost Requirements:
+	•	Everything must run entirely in the browser.
+	•	No API usage or paid models allowed.
+	•	No backend, server, database, or external AI needed.
+	•	No local LLM installation.
+	•	AI chatbot must be browser-based and work without cost, using rules, if/else, or fine-tuned prompts.
+
+⸻
+
+2. 📚 Dive Education Section Content
+
+Theory Modules (in English only):
+	•	Boyle’s Law & pressure-depth relationship
+	•	Dive table basics (US Navy & PADI tables)
+	•	Partial pressure of oxygen (O₂)
+	•	Nitrogen absorption and decompression
+	•	Barotrauma, narcosis and safety margins
+	•	Emergency ascent protocols
+	•	Buoyancy control & tank volume calculations
+
+Add tooltips, animations, or illustrations wherever possible.
+
+⸻
+
+3. 🧮 Interactive Calculators:
+	•	Max Dive Time Calculator
+	•	Surface Interval Calculator
+	•	Nitrox MOD Calculator
+	•	Air Consumption Calculator (SAC Rate)
+	•	Buoyancy Calculator (fresh vs salt water)
+
+Each calculator must support Metric (meters, bar, L/min) and Imperial (feet, psi, cu ft/min) systems with a toggle switch.
+
+⸻
+
+4. 🤿 Dive Simulator:
+	•	Build a minimal visual dive simulation interface:
+	•	User can input dive profile (depth, time, surface interval)
+	•	Show Nitrogen loading (bars or graphs)
+	•	Trigger warning if dive exceeds NDL (No-Decompression Limit)
+	•	Animate ascent with color-coded safety indicators
+
+No backend logic needed—simulate data based on formulas.
+
+⸻
+
+5. 🤖 Zero-Cost AI Chatbot:
+	•	Implement a simple rule-based or prompt-based AI assistant.
+	•	It must run entirely in-browser (no API or LLM call).
+	•	Capabilities:
+	•	Answer diving questions
+	•	Explain formulas
+	•	Offer safety tips
+	•	React to common keywords (e.g., “NDL”, “MOD”, “boyle”)
+
+If needed, use simple JavaScript logic with predefined intents.
+
+⸻
+
+6. 📊 Visual Aids & Interactive Tools:
+	•	Dynamic graphs for nitrogen loading
+	•	Simulated emotional weather conditions (icons or colors)
+	•	Achievements / gamified badges (optional)
+	•	Eco-awareness storytelling map (optional)
+	•	Photo journal of marine life (offline images or sample dataset)

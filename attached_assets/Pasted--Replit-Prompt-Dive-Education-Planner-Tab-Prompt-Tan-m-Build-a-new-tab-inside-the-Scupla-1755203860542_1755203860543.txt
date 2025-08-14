@@ -1,0 +1,140 @@
+
+✅ Replit Prompt: Dive Education & Planner Tab
+
+📌 Prompt Tanımı:
+
+Build a new tab inside the Scuplan web application named Dive Education. This tab should include:
+	1.	A visually structured dive theory education module (in English),
+	2.	An interactive visual dive planning simulation tool,
+	3.	A simple client-side AI Chatbot that answers user FAQs based on hardcoded context (not connected to external APIs or LLMs),
+	4.	All dive tables, calculations, and theory explained step-by-step with formulas, and available in both metric and imperial units.
+
+⸻
+
+🧩 Prompt Yapısı
+
+1. Dive Education (Theory) Module
+	•	Display content with collapsible sections.
+	•	Use interactive graphs (e.g., with Chart.js or pure SVG).
+	•	Add illustrations (you can use royalty-free static images or SVG drawings).
+	•	Include tabs or dropdowns for language (EN only now) and units (Metric vs Imperial).
+	•	Sample sections:
+	•	Introduction to Scuba Diving
+	•	Understanding Pressure and Depth
+	•	Air Consumption & SAC Rate
+	•	No-Decompression Limits (NDL)
+	•	Decompression Sickness
+	•	Dive Tables and Dive Computers
+	•	Nitrogen Absorption Curves
+	•	Surface Interval Planning
+	•	Altitude Diving
+	•	Dive Safety & Emergency Procedures
+
+2. Dive Planning Calculator (Interactive Simulation)
+
+Allow user inputs such as:
+	•	Max depth (in ft/m),
+	•	Bottom time (min),
+	•	Surface interval (min),
+	•	Second dive depth/time.
+
+Perform calculations:
+	•	NDL time (based on PADI or NAUI tables),
+	•	Residual nitrogen time,
+	•	Adjusted no-deco time for repetitive dives.
+
+Use formulas like:
+
+// Metric example
+Pressure = Depth / 10 + 1;
+AirConsumption = SAC_Rate * Pressure * Time;
+
+Show results visually:
+	•	Graphs (NDL vs Time),
+	•	Color-coded alerts (e.g., red = unsafe).
+
+3. AI Chatbot (Zero-Cost, No LLM or API)
+	•	Use a simple JavaScript chatbot.
+	•	Include a predefined Q&A knowledge base embedded in code.
+	•	Bot logic should include:
+	•	Simple keyword matching (includes("safety stop"), etc.)
+	•	Response templates with guidance
+	•	E.g., "What is NDL?" → "NDL stands for No-Decompression Limit. It means..."
+
+Add an expandable chatbot window in the corner.
+
+// Example structure
+const botKnowledge = {
+  "ndl": "NDL stands for No-Decompression Limit...",
+  "safety stop": "A safety stop is a 3-minute stop at 5 meters...",
+  ...
+}
+
+4. Metric / Imperial Toggle
+	•	Let user switch units.
+	•	Adjust all calculations and visualizations accordingly.
+
+// Toggle function
+if (unit === 'imperial') {
+  depth = feetToMeters(depth);
+}
+
+
+⸻
+
+🎓 Eğitim İçeriği Örnek (English Only)
+
+### 🫧 Introduction to Scuba Diving
+
+Scuba diving is an underwater activity that allows you to explore the ocean using specialized equipment. It requires knowledge of pressure physics, gas management, and decompression theory.
+
+### ⬇️ Pressure and Depth
+
+Water pressure increases by 1 atmosphere every 10 meters (33 feet). At 30m, the pressure is 4 atm.
+
+### 🫁 Air Consumption Rate (SAC)
+
+Your Surface Air Consumption (SAC) is how much air you consume per minute at the surface:
+
+**Formula (Metric):**
+
+SAC Rate (L/min) = (Tank Pressure Used × Tank Volume) / (Dive Time × Ambient Pressure)
+
+### 🕒 No Decompression Limits (NDL)
+
+Each depth has a maximum time before decompression is needed. For example:
+
+- 18m (60ft): 56 minutes
+- 30m (100ft): 20 minutes
+
+Use dive tables or dive computers to plan accordingly.
+
+### ⬆️ Surface Intervals
+
+Surface intervals allow your body to release nitrogen. More time = more flexibility on next dive.
+
+### 🛟 Safety Stops
+
+Always perform a 3-minute stop at 5m (15ft) after any dive deeper than 10m.
+
+
+⸻
+
+💬 Bonus: Responsive Chat Interface Prompt
+	•	Add collapsible chat icon on bottom right.
+	•	When clicked, expands into chatbot interface.
+	•	Should work entirely on the frontend without external calls.
+
+⸻
+
+✅ Ek Notlar
+	•	No backend server needed.
+	•	No external API calls or paid LLM usage.
+	•	Use pure HTML/CSS/JS or React + Chart.js.
+	•	Store calculations and education material in local JSON or JS files.
+
+⸻
+
+🚀 Kapanış
+
+Bu prompt, Replit’te sıfır maliyetli bir Dive Education & Planner sekmesi oluşturmak için tam uyumludur. 

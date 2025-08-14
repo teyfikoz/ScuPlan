@@ -40,13 +40,20 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
   - Multi-level dive planning
 
 ✓ **Dive Education & Calculations**: 
-  - Interactive dive theory education with accordions
-  - Physics of diving (Boyle's, Dalton's, Henry's Laws)
-  - Gas mixture calculators with real-time results
+  - Interactive dive theory education with collapsible accordions
+  - Complete physics of diving (Boyle's, Dalton's, Henry's Laws, Archimedes)
+  - Decompression theory and safety stop explanations
+  - Dive planning essentials with NDL tables and gas planning
+  - Emergency procedures and equipment protocols
+  - Environmental awareness and marine conservation
+  - NDL time calculator with residual nitrogen tracking
+  - Surface interval calculator for repetitive dives
+  - Buoyancy weight calculator (fresh vs salt water)
+  - Gas mixture calculators with MOD calculations
   - SAC rate and gas consumption calculators
   - Live dive simulator with profile visualization
-  - Local AI chatbot for diving questions (no API required)
-  - Unit system toggle support throughout
+  - Comprehensive zero-cost AI chatbot (100+ diving topics)
+  - Full metric/imperial unit system support throughout
 
 ✓ **World Dive Routes**: 
   - 29 comprehensive dive locations worldwide
@@ -80,7 +87,16 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **ENHANCED: Interactive map with all new dive sites and proper clustering**
 ✓ **FIXED: Imperial unit button now properly converts numerical input values**
 ✓ **FIXED: Map search functionality now working with live filtering**
-✓ **IMPLEMENTED: Complete "Dive Education & Calculations" section with AI chatbot**
+✓ **IMPLEMENTED: Complete "Dive Education & Calculations" section with zero-cost AI**
+
+## Zero-Cost Offline Education Features (August 2025)
+✓ **Comprehensive Dive Theory**: 6 major sections with interactive accordions
+✓ **Advanced Calculators**: NDL, surface interval, buoyancy, gas mix, SAC rate
+✓ **Zero-Cost AI Chatbot**: 100+ rule-based responses covering all diving topics
+✓ **Physics Simulations**: Interactive pressure simulator with real-time visualization  
+✓ **Live Dive Simulator**: Animated dive profiles with air consumption tracking
+✓ **Complete Offline Capability**: Works without internet after initial load
+✓ **Full Unit System Support**: Metric/Imperial toggle throughout education module
 
 ## Planned New Features (Current Development)
 

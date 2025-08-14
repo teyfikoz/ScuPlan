@@ -199,8 +199,213 @@
                             </div>
                         </div>
 
-                        <!-- Continue with other sections... -->
-                        <!-- Decompression Theory, Dive Planning, Emergency Scenarios, Environmental Awareness -->
+                        <!-- Decompression Theory -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="decoHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#decoContent">
+                                    <i class="fas fa-hourglass-half me-2"></i>Decompression Theory
+                                </button>
+                            </h2>
+                            <div id="decoContent" class="accordion-collapse collapse" data-bs-parent="#theoryAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h5><i class="fas fa-lungs me-2"></i>What Causes Decompression Sickness?</h5>
+                                            <p>During diving, nitrogen dissolves into body tissues under pressure. Ascending too quickly causes nitrogen to form bubbles, leading to decompression sickness (DCS).</p>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-pause-circle me-2"></i>Safety Stops & Deep Stops</h5>
+                                            <ul>
+                                                <li><strong>Safety Stop:</strong> 3-5 minutes at 5m (15ft) - recommended for all dives</li>
+                                                <li><strong>Deep Stop:</strong> Half maximum depth for 1-2 minutes - technical diving practice</li>
+                                                <li><strong>Mandatory Stops:</strong> Required when exceeding No Decompression Limits</li>
+                                            </ul>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-arrow-up me-2"></i>Ascent Rates</h5>
+                                            <p><strong>Maximum:</strong> 18m/min (60ft/min) | <strong>Recommended:</strong> 9m/min (30ft/min) | <strong>Final 6m:</strong> 3m/min (10ft/min)</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-warning text-dark">
+                                                <div class="card-body">
+                                                    <h6><i class="fas fa-exclamation-triangle me-2"></i>DCS Symptoms</h6>
+                                                    <ul class="list-unstyled small mb-0">
+                                                        <li>• Joint pain ("bends")</li>
+                                                        <li>• Skin rash/itching</li>
+                                                        <li>• Fatigue/weakness</li>
+                                                        <li>• Neurological symptoms</li>
+                                                        <li>• Breathing difficulties</li>
+                                                    </ul>
+                                                    <small class="fw-bold">Seek immediate medical attention!</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dive Planning Essentials -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="planningHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#planningContent">
+                                    <i class="fas fa-route me-2"></i>Dive Planning Essentials
+                                </button>
+                            </h2>
+                            <div id="planningContent" class="accordion-collapse collapse" data-bs-parent="#theoryAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-bullseye me-2"></i>Setting Dive Objectives</h5>
+                                            <ul>
+                                                <li>Maximum depth and bottom time</li>
+                                                <li>Entry and exit points</li>
+                                                <li>Underwater navigation plan</li>
+                                                <li>Emergency procedures</li>
+                                            </ul>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-gas-pump me-2"></i>Gas Planning</h5>
+                                            <p><strong>Rule of Thirds:</strong></p>
+                                            <ul>
+                                                <li>1/3 for outbound journey</li>
+                                                <li>1/3 for return journey</li>
+                                                <li>1/3 for emergency reserve</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-calculator me-2"></i>Turn Pressure Calculation</h5>
+                                            <div class="alert alert-info">
+                                                <p class="mb-1"><strong>Formula:</strong></p>
+                                                <p class="mb-1">Turn Pressure = Starting Pressure - (Starting Pressure ÷ 3)</p>
+                                                <p class="mb-0"><strong>Example:</strong> 200 bar - (200 ÷ 3) = 133 bar turn pressure</p>
+                                            </div>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-clock me-2"></i>NDL Time Limits</h5>
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Depth</th>
+                                                        <th>NDL Time</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr><td>18m (60ft)</td><td>56 min</td></tr>
+                                                    <tr><td>24m (80ft)</td><td>29 min</td></tr>
+                                                    <tr><td>30m (100ft)</td><td>20 min</td></tr>
+                                                    <tr><td>36m (120ft)</td><td>14 min</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Scenarios -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="emergencyHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emergencyContent">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Emergency Scenarios
+                                </button>
+                            </h2>
+                            <div id="emergencyContent" class="accordion-collapse collapse" data-bs-parent="#theoryAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-lungs-virus me-2"></i>Out-of-Air Protocols</h5>
+                                            <ol>
+                                                <li><strong>Stay Calm</strong> - Don't panic</li>
+                                                <li><strong>Signal Buddy</strong> - Cut throat signal</li>
+                                                <li><strong>Share Air</strong> - Use alternate air source</li>
+                                                <li><strong>Ascend Together</strong> - Maintain contact</li>
+                                                <li><strong>Safety Stop</strong> - If air permits</li>
+                                            </ol>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-arrow-up me-2"></i>Emergency Swimming Ascent (CESA)</h5>
+                                            <p><strong>Last Resort Only:</strong></p>
+                                            <ul>
+                                                <li>Exhale continuously while ascending</li>
+                                                <li>Look up and swim toward surface</li>
+                                                <li>Ascend no faster than your smallest bubbles</li>
+                                                <li>Keep airway open (say "Ahhhh")</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5><i class="fas fa-first-aid me-2"></i>Equipment Emergencies</h5>
+                                            <ul>
+                                                <li><strong>Mask Flood:</strong> Look up, press top, exhale through nose</li>
+                                                <li><strong>Regulator Loss:</strong> Retrieve, clear, or use backup</li>
+                                                <li><strong>BCD Inflation:</strong> Disconnect inflator, vent manually</li>
+                                                <li><strong>Weight Loss:</strong> Use buoyancy control, ascend slowly</li>
+                                            </ul>
+                                            
+                                            <div class="alert alert-danger mt-4">
+                                                <h6><i class="fas fa-phone me-2"></i>Emergency Numbers</h6>
+                                                <ul class="list-unstyled mb-0">
+                                                    <li><strong>DAN Emergency:</strong> +1-919-684-9111</li>
+                                                    <li><strong>Local Emergency:</strong> 911/112</li>
+                                                    <li><strong>Coast Guard:</strong> Channel 16 VHF</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Environmental Awareness -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="environmentHeader">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#environmentContent">
+                                    <i class="fas fa-fish me-2"></i>Environmental Awareness
+                                </button>
+                            </h2>
+                            <div id="environmentContent" class="accordion-collapse collapse" data-bs-parent="#theoryAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h5><i class="fas fa-coral me-2"></i>Marine Ecosystem Protection</h5>
+                                            <p>Coral reefs support 25% of marine life despite covering less than 1% of ocean floor. They're extremely fragile and take decades to recover from damage.</p>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-balance-scale me-2"></i>Buoyancy Control for Conservation</h5>
+                                            <ul>
+                                                <li>Never touch, kick, or stand on coral</li>
+                                                <li>Maintain neutral buoyancy at all times</li>
+                                                <li>Keep fins well above the reef</li>
+                                                <li>Control your movements and equipment</li>
+                                            </ul>
+                                            
+                                            <h5 class="mt-4"><i class="fas fa-leaf me-2"></i>Leave No Trace Principles</h5>
+                                            <ul>
+                                                <li>Take only pictures, leave only bubbles</li>
+                                                <li>Don't collect marine life or artifacts</li>
+                                                <li>Properly dispose of all waste</li>
+                                                <li>Use reef-safe sunscreen</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-success text-white">
+                                                <div class="card-body">
+                                                    <h6><i class="fas fa-shield-alt me-2"></i>Protected Areas</h6>
+                                                    <ul class="list-unstyled small mb-0">
+                                                        <li>• Marine Protected Areas (MPAs)</li>
+                                                        <li>• No-take zones</li>
+                                                        <li>• Seasonal restrictions</li>
+                                                        <li>• Species protection laws</li>
+                                                        <li>• Cultural heritage sites</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card bg-info text-white mt-3">
+                                                <div class="card-body">
+                                                    <h6><i class="fas fa-thermometer-half me-2"></i>Climate Impact</h6>
+                                                    <p class="small mb-0">Ocean temperatures rising 0.6°C since 1970. Help by reducing carbon footprint and supporting conservation efforts.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                     </div>
                 </div>
@@ -210,6 +415,132 @@
         <!-- Calculator Tab -->
         <div class="tab-pane fade" id="calculator" role="tabpanel">
             <div class="row">
+                <!-- Surface Interval Calculator -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-stopwatch me-2"></i>Surface Interval Calculator</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">First Dive Depth</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="firstDiveDepth" value="18" step="1" min="5" max="50">
+                                    <span class="input-group-text" data-unit="depth">m</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">First Dive Time (minutes)</label>
+                                <input type="number" class="form-control" id="firstDiveTime" value="35" step="5" min="5" max="120">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Second Dive Depth</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="secondDiveDepth" value="15" step="1" min="5" max="50">
+                                    <span class="input-group-text" data-unit="depth">m</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Desired Second Dive Time</label>
+                                <input type="number" class="form-control" id="desiredSecondTime" value="40" step="5" min="5" max="120">
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="calculateSurfaceInterval()">Calculate Required Surface Interval</button>
+                            
+                            <div id="surfaceResults" class="mt-3" style="display: none;">
+                                <div class="alert alert-warning">
+                                    <h6>Surface Interval Required:</h6>
+                                    <p class="mb-1"><strong>Minimum Interval:</strong> <span id="minSurfaceTime"></span> minutes</p>
+                                    <p class="mb-1"><strong>Recommended:</strong> <span id="recSurfaceTime"></span> minutes</p>
+                                    <p class="mb-0"><strong>Nitrogen Group:</strong> <span id="nitrogenGroup"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buoyancy Calculator -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-balance-scale me-2"></i>Buoyancy Calculator</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Water Type</label>
+                                <select class="form-select" id="waterType">
+                                    <option value="fresh">Fresh Water</option>
+                                    <option value="salt">Salt Water</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Body Weight</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="bodyWeight" value="70" step="1" min="30" max="150">
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Wetsuit Type</label>
+                                <select class="form-select" id="wetsuitType">
+                                    <option value="none">No Wetsuit</option>
+                                    <option value="thin">3mm Wetsuit</option>
+                                    <option value="medium">5mm Wetsuit</option>
+                                    <option value="thick">7mm Wetsuit</option>
+                                    <option value="drysuit">Dry Suit</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="calculateBuoyancy()">Calculate Weight Needed</button>
+                            
+                            <div id="buoyancyResults" class="mt-3" style="display: none;">
+                                <div class="alert alert-success">
+                                    <h6>Weight Calculation:</h6>
+                                    <p class="mb-1"><strong>Recommended Weight:</strong> <span id="recommendedWeight"></span> kg</p>
+                                    <p class="mb-1"><strong>Weight Belt:</strong> <span id="beltWeight"></span> kg</p>
+                                    <p class="mb-0"><strong>BCD Pockets:</strong> <span id="pocketWeight"></span> kg</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5><i class="fas fa-clock me-2"></i>NDL Time Calculator</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Dive Depth</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="ndlDepth" value="18" step="1" min="5" max="50">
+                                    <span class="input-group-text" data-unit="depth">m</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Previous Dive (optional)</label>
+                                <select class="form-select" id="previousDive">
+                                    <option value="none">No previous dive</option>
+                                    <option value="short">Short dive (&lt;30min)</option>
+                                    <option value="medium">Medium dive (30-50min)</option>
+                                    <option value="long">Long dive (&gt;50min)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Surface Interval (hours)</label>
+                                <input type="number" class="form-control" id="surfaceInterval" value="1" step="0.5" min="0" max="24">
+                            </div>
+                            <button class="btn btn-primary w-100" onclick="calculateNDL()">Calculate NDL Time</button>
+                            
+                            <div id="ndlResults" class="mt-3" style="display: none;">
+                                <div class="alert alert-info">
+                                    <h6>NDL Calculation:</h6>
+                                    <p class="mb-1"><strong>No Decompression Limit:</strong> <span id="ndlTime"></span> minutes</p>
+                                    <p class="mb-1"><strong>Residual Nitrogen:</strong> <span id="residualNitrogen"></span></p>
+                                    <p class="mb-0"><strong>Safety Recommendation:</strong> <span id="safetyAdvice"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Gas Mix Calculator -->
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">

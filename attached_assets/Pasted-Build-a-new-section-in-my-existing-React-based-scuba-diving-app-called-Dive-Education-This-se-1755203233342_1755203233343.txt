@@ -1,0 +1,41 @@
+Build a new section in my existing React-based scuba diving app called **“Dive Education”**. This section should include:
+
+### 🧠 1. Theoretical Training Modules (in English)
+- Display dive education theory using tabs or sections.
+- Topics: Pressure & Depth, Nitrogen Absorption, Decompression Theory, Air Consumption, Dive Planning, Safety Stops.
+- Use interactive graphics and visual examples (like animated SVG, Chart.js, etc.).
+- Add metric ⇄ imperial unit switch (e.g. meters ⇄ feet, bar ⇄ psi).
+
+### 📊 2. Interactive Dive Calculators
+- Air consumption calculator: (SAC rate, depth, time, tank size)
+- NDL (No Decompression Limit) time estimator
+- Surface interval planner
+- Metric & Imperial units toggle
+- Display results in clear, user-friendly format (with icons or emojis if possible)
+
+### 🎮 3. Dive Simulator (Visual)
+- A simple animated interface to simulate:
+    - Depth profile over time
+    - Air consumption visualization
+    - Decompression stop warnings
+- Add sliders for adjusting depth and time
+- Display real-time impact (air use, tissue saturation)
+
+### 🤖 4. AI Chatbot Assistant (zero-cost only!)
+- Integrate a basic **free local chatbot** using rule-based or small JavaScript LLM like [`gpt4all-web`], `llama.cpp` or a free API like Hugging Face (if fully free).
+- Purpose: Answer basic dive theory questions, explain calculators, recommend safety tips
+- Style: Friendly diving instructor tone
+- Must run locally or via cost-free APIs only
+
+### 🌊 5. Additional Fun Features (Optional)
+- Add dive buddy scoring system (gamified badge system)
+- Health check animation for gear (SVG animation of items)
+- Photo journal gallery with AI-powered species naming (use public free APIs)
+- Eco-map with impact markers (dive site protection status)
+
+**Tech Stack Notes:**
+- Must remain in the current React + TailwindCSS project.
+- All visuals should be local (no premium image or animation APIs).
+- Calculators should be built using plain JS or open-source libs (no paid tools).
+- Simulations and charts via Chart.js or D3.js.
+- AI Bot should be cost-free, no OpenAI or Claude API use.

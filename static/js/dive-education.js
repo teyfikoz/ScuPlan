@@ -111,6 +111,129 @@ function calculateBestMix() {
 }
 
 /**
+ * NDL Calculator
+ */
+function calculateNDL() {
+    const depth = parseFloat(document.getElementById('ndlDepth').value);
+    const previousDive = document.getElementById('previousDive').value;
+    const surfaceInterval = parseFloat(document.getElementById('surfaceInterval').value);
+    const resultsDiv = document.getElementById('ndlResults');
+    
+    // Convert to metric if needed
+    const depthM = window.unitsManager && window.unitsManager.currentSystem === 'imperial' ? 
+        depth / 3.28084 : depth;
+    
+    // NDL table (PADI RDP simplified)
+    const ndlTable = {
+        12: 147, 15: 80, 18: 56, 21: 40, 24: 29, 27: 22, 30: 20, 33: 16, 36: 14, 39: 13, 42: 11
+    };
+    
+    // Find closest depth
+    let ndlTime = 20; // Default
+    for (let tableDepth in ndlTable) {
+        if (depthM <= parseFloat(tableDepth)) {
+            ndlTime = ndlTable[tableDepth];
+            break;
+        }
+    }
+    
+    // Adjust for previous dive and surface interval
+    let residualNitrogen = 'None';
+    let adjustedNDL = ndlTime;
+    
+    if (previousDive !== 'none' && surfaceInterval < 3) {
+        let reduction = 0;
+        switch(previousDive) {
+            case 'short': reduction = surfaceInterval < 1 ? 10 : 5; break;
+            case 'medium': reduction = surfaceInterval < 1 ? 15 : 8; break;
+            case 'long': reduction = surfaceInterval < 1 ? 20 : 12; break;
+        }
+        adjustedNDL = Math.max(5, ndlTime - reduction);
+        residualNitrogen = 'Low to Moderate';
+    }
+    
+    const safetyAdvice = adjustedNDL < ndlTime ? 
+        'Extended surface interval recommended' : 
+        'Normal safety stop at 5m for 3 minutes';
+    
+    document.getElementById('ndlTime').textContent = adjustedNDL;
+    document.getElementById('residualNitrogen').textContent = residualNitrogen;
+    document.getElementById('safetyAdvice').textContent = safetyAdvice;
+    
+    resultsDiv.style.display = 'block';
+}
+
+/**
+ * Surface Interval Calculator
+ */
+function calculateSurfaceInterval() {
+    const firstDepth = parseFloat(document.getElementById('firstDiveDepth').value);
+    const firstTime = parseFloat(document.getElementById('firstDiveTime').value);
+    const secondDepth = parseFloat(document.getElementById('secondDiveDepth').value);
+    const secondTime = parseFloat(document.getElementById('desiredSecondTime').value);
+    const resultsDiv = document.getElementById('surfaceResults');
+    
+    // Convert to metric if needed
+    const firstDepthM = window.unitsManager && window.unitsManager.currentSystem === 'imperial' ? 
+        firstDepth / 3.28084 : firstDepth;
+    const secondDepthM = window.unitsManager && window.unitsManager.currentSystem === 'imperial' ? 
+        secondDepth / 3.28084 : secondDepth;
+    
+    // Simplified nitrogen loading calculation
+    const nitrogenLoad = Math.min(firstDepthM * firstTime / 1000, 1.0);
+    const requiredOffgassing = nitrogenLoad * (secondDepthM * secondTime / 1000);
+    
+    // Calculate minimum surface interval (simplified)
+    const minInterval = Math.max(30, requiredOffgassing * 120);
+    const recInterval = minInterval * 1.5;
+    
+    // Nitrogen group estimation
+    const nitrogenGroup = nitrogenLoad > 0.7 ? 'D' : nitrogenLoad > 0.4 ? 'C' : nitrogenLoad > 0.2 ? 'B' : 'A';
+    
+    document.getElementById('minSurfaceTime').textContent = Math.round(minInterval);
+    document.getElementById('recSurfaceTime').textContent = Math.round(recInterval);
+    document.getElementById('nitrogenGroup').textContent = `Group ${nitrogenGroup}`;
+    
+    resultsDiv.style.display = 'block';
+}
+
+/**
+ * Buoyancy Calculator
+ */
+function calculateBuoyancy() {
+    const waterType = document.getElementById('waterType').value;
+    const bodyWeight = parseFloat(document.getElementById('bodyWeight').value);
+    const wetsuitType = document.getElementById('wetsuitType').value;
+    const resultsDiv = document.getElementById('buoyancyResults');
+    
+    // Base weight calculation (% of body weight)
+    let weightPercentage = waterType === 'salt' ? 0.025 : 0.05; // 2.5% salt, 5% fresh
+    
+    // Wetsuit adjustments
+    const wetsuitAdjustment = {
+        'none': 0,
+        'thin': 1.5,
+        'medium': 3,
+        'thick': 4.5,
+        'drysuit': 6
+    };
+    
+    const baseWeight = bodyWeight * weightPercentage;
+    const wetsuitWeight = wetsuitAdjustment[wetsuitType] || 0;
+    const totalWeight = baseWeight + wetsuitWeight;
+    
+    // Distribution (60% belt, 40% pockets for balanced diving)
+    const beltWeight = Math.round(totalWeight * 0.6 * 10) / 10;
+    const pocketWeight = Math.round(totalWeight * 0.4 * 10) / 10;
+    
+    document.getElementById('recommendedWeight').textContent = totalWeight.toFixed(1);
+    document.getElementById('beltWeight').textContent = beltWeight.toFixed(1);
+    document.getElementById('pocketWeight').textContent = pocketWeight.toFixed(1);
+    
+    resultsDiv.style.display = 'block';
+}
+
+/**
  * SAC Rate Calculator
  */
 function calculateSAC() {
@@ -368,51 +491,187 @@ function addChatMessage(message, sender) {
 }
 
 function generateAIResponse(message) {
-    // Simple rule-based responses (in real implementation, use local LLM)
+    // Comprehensive zero-cost rule-based AI chatbot
     const lowerMessage = message.toLowerCase();
     
+    // Physics and Theory
+    if (lowerMessage.includes('boyle') || lowerMessage.includes('pressure') || lowerMessage.includes('volume')) {
+        return "Boyle's Law: P1V1 = P2V2. At depth, increased pressure compresses air spaces in your body. At 10m (33ft), pressure doubles from 1 to 2 ATM. This affects ears, sinuses, lungs, and BCD. Essential for understanding equalization and buoyancy changes during descent/ascent.";
+    }
+    
+    if (lowerMessage.includes('dalton') || lowerMessage.includes('partial pressure')) {
+        return "Dalton's Law: Total pressure = sum of partial pressures. In air at 1 ATM: PPO₂ = 0.21 ATM, PPN₂ = 0.79 ATM. At 30m (4 ATM): PPO₂ = 0.84 ATM, PPN₂ = 3.16 ATM. Critical for understanding gas toxicity limits and narcosis onset.";
+    }
+    
+    if (lowerMessage.includes('henry') || lowerMessage.includes('absorption') || lowerMessage.includes('solubility')) {
+        return "Henry's Law: Gas dissolves into liquids proportionally to pressure. Higher pressure = more nitrogen absorbed into tissues. Rapid ascent causes supersaturation and bubble formation (DCS). This is why we need controlled ascent rates and safety stops.";
+    }
+    
+    // MOD and Gas Calculations
     if (lowerMessage.includes('mod') || lowerMessage.includes('maximum operating depth')) {
-        return "MOD (Maximum Operating Depth) is calculated using PPO₂ limits. For recreational diving, use 1.4 ATA: MOD = (PPO₂ / O₂%) × 10 - 10. For example, EAN32 at 1.4 PPO₂: MOD = (1.4 / 0.32) × 10 - 10 = 33.75m";
+        return "MOD = (PPO₂ ÷ O₂%) × 10 - 10 meters. For EAN32 at 1.4 PPO₂: MOD = (1.4 ÷ 0.32) × 10 - 10 = 33.75m. Use 1.4 PPO₂ for working dives, 1.6 PPO₂ maximum emergency exposure. Exceeding MOD risks oxygen toxicity seizures.";
     }
     
-    if (lowerMessage.includes('nitrox') || lowerMessage.includes('ean')) {
-        return "Nitrox (EANx) contains higher oxygen than air (21%). Common mixes are EAN32 (32% O₂) and EAN36 (36% O₂). Benefits: longer NDL, reduced nitrogen absorption, less fatigue. Risks: reduced MOD, oxygen toxicity if limits exceeded.";
+    if (lowerMessage.includes('best mix') || lowerMessage.includes('optimal mix')) {
+        return "Best Mix formula: O₂% = (desired PPO₂ ÷ absolute pressure) × 100. For 30m dive at 1.4 PPO₂: O₂% = (1.4 ÷ 4.0) × 100 = 35%. Always round down to nearest standard mix (32%, 36%) for safety margin.";
     }
     
-    if (lowerMessage.includes('decompression') || lowerMessage.includes('deco')) {
-        return "Decompression stops allow dissolved nitrogen to safely off-gas. Required when you exceed No Decompression Limits (NDL). Stop duration depends on depth, time, and gas mix. Safety stops (3-5min at 5m) are recommended even within NDL.";
+    if (lowerMessage.includes('ead') || lowerMessage.includes('equivalent air depth')) {
+        return "EAD calculates nitrogen narcosis for nitrox: EAD = ((depth + 10) × 0.79 ÷ N₂%) - 10. For EAN32 at 30m: EAD = ((30 + 10) × 0.79 ÷ 0.68) - 10 = 36.5m equivalent narcosis effect.";
     }
     
-    if (lowerMessage.includes('sac') || lowerMessage.includes('air consumption')) {
-        return "SAC Rate (Surface Air Consumption) measures breathing efficiency. Average: 15-25 L/min. Calculate: (Tank volume × pressure used) ÷ (dive time × average pressure). Lower SAC = longer dives and better gas planning.";
+    // NDL and Decompression
+    if (lowerMessage.includes('ndl') || lowerMessage.includes('no decompression limit')) {
+        return "NDL times (PADI RDP): 18m=56min, 21m=40min, 24m=29min, 27m=22min, 30m=20min. Based on M-values and tissue compartment loading. Conservative estimates assuming square profile and air breathing gas.";
     }
     
-    if (lowerMessage.includes('narcosis') || lowerMessage.includes('nitrogen narcosis')) {
-        return "Nitrogen narcosis affects judgment and coordination, typically starting at 30m (100ft). Symptoms: euphoria, overconfidence, impaired decision-making. Solutions: ascend to shallower depth, use trimix for deep dives, maintain training awareness.";
+    if (lowerMessage.includes('decompression') || lowerMessage.includes('deco') || lowerMessage.includes('stops')) {
+        return "Decompression allows nitrogen off-gassing to prevent DCS. Safety stop: 3-5min at 5m, recommended for all dives >10m. Mandatory stops required when exceeding NDL. Ascent rate: 9-18m/min maximum, slower in final 6m.";
     }
     
-    if (lowerMessage.includes('safety stop')) {
-        return "Safety stops (3-5 minutes at 5m/15ft) are precautionary decompression, even when within NDL. Benefits: additional off-gassing time, controlled ascent practice, safety margin. Mandatory after deep dives (>18m/60ft) or multiple dives.";
+    if (lowerMessage.includes('tissue compartment') || lowerMessage.includes('half-time')) {
+        return "Tissue compartments model nitrogen absorption/elimination. Fast tissues (5min half-time): blood, lungs. Medium (20-40min): muscle, skin. Slow (120-480min): joints, tendons. Each has different M-values for bubble formation limits.";
     }
     
-    if (lowerMessage.includes('trimix')) {
-        return "Trimix (oxygen/helium/nitrogen) is used for deep technical diving. Helium reduces narcosis and has faster decompression than nitrogen. Common mixes: 18/45 (18% O₂, 45% He) for 60m dives. Requires advanced training and precise planning.";
+    // Gas Management and SAC
+    if (lowerMessage.includes('sac') || lowerMessage.includes('air consumption') || lowerMessage.includes('breathing rate')) {
+        return "SAC = (tank pressure used × tank volume) ÷ (dive time × average pressure). Normal SAC: 15-25 L/min surface equivalent. Factors affecting SAC: fitness, anxiety, cold, current, workload. Lower SAC = longer dives, better gas planning.";
     }
     
-    if (lowerMessage.includes('gas planning') || lowerMessage.includes('rule of thirds')) {
-        return "Gas planning ensures adequate air supply. Rule of Thirds: 1/3 for going out, 1/3 for return, 1/3 for emergencies. For technical diving, calculate Minimum Gas: volume needed to ascend safely from maximum depth with stressed breathing rate.";
+    if (lowerMessage.includes('rule of thirds') || lowerMessage.includes('gas planning') || lowerMessage.includes('turn pressure')) {
+        return "Rule of Thirds: 1/3 outbound, 1/3 return, 1/3 emergency reserve. Turn pressure = starting pressure - (starting pressure ÷ 3). Example: 200 bar start → turn at 133 bar. For overhead environments or deep dives, use more conservative ratios.";
     }
     
-    if (lowerMessage.includes('emergency') || lowerMessage.includes('out of air')) {
-        return "Out-of-air emergencies: 1) Stay calm, 2) Signal buddy, 3) Share air using alternate air source, 4) Begin controlled ascent, 5) Maintain contact with buddy. If alone: CESA (Controlled Emergency Swimming Ascent) as last resort - exhale continuously while ascending.";
+    if (lowerMessage.includes('minimum gas') || lowerMessage.includes('rock bottom')) {
+        return "Minimum Gas = gas needed to ascend from maximum depth with stressed breathing (1.5-2× normal SAC). Include ascent time, safety stops, and buddy sharing. Formula: (depth/9 × ascent time × stressed SAC × 2 divers) + safety margin.";
     }
     
-    // Default responses
+    // Emergency Procedures
+    if (lowerMessage.includes('emergency') || lowerMessage.includes('out of air') || lowerMessage.includes('oom')) {
+        return "Out-of-Air Protocol: 1) Stay calm - don't panic, 2) Signal buddy (cut-throat), 3) Share air (donate primary, take alternate), 4) Establish positive contact, 5) Begin controlled ascent, 6) Make safety stop if gas permits. Practice regularly!";
+    }
+    
+    if (lowerMessage.includes('cesa') || lowerMessage.includes('emergency ascent')) {
+        return "CESA (Controlled Emergency Swimming Ascent) - LAST RESORT only: 1) Look up, 2) Start swimming up, 3) Exhale continuously (say 'Ahhh'), 4) Keep airway open, 5) Ascend with your smallest bubbles. High DCS risk - only if no other option.";
+    }
+    
+    if (lowerMessage.includes('dcs') || lowerMessage.includes('decompression sickness') || lowerMessage.includes('bends')) {
+        return "DCS symptoms: joint pain ('bends'), skin rash, fatigue, neurological problems, breathing difficulty. Treatment: 100% oxygen, maintain body temperature, evacuate to hyperbaric chamber ASAP. DAN Emergency: +1-919-684-9111. Never ignore symptoms!";
+    }
+    
+    // Environmental and Safety
+    if (lowerMessage.includes('narcosis') || lowerMessage.includes('nitrogen narcosis') || lowerMessage.includes('narked')) {
+        return "Nitrogen narcosis: impaired judgment starting ~30m (100ft). Symptoms: euphoria, overconfidence, poor decision-making, memory loss. 'Martini Law': every 15m = one martini effect. Solution: ascend to shallower depth or use trimix for deep diving.";
+    }
+    
+    if (lowerMessage.includes('oxygen toxicity') || lowerMessage.includes('oxtox') || lowerMessage.includes('convulsion')) {
+        return "CNS oxygen toxicity risk above 1.6 PPO₂. Symptoms (VENTID): Vision problems, Ears ringing, Nausea, Twitching, Irritability, Dizziness. Can cause underwater convulsions. Stay within MOD limits, monitor exposure time, use lower PPO₂ for longer dives.";
+    }
+    
+    if (lowerMessage.includes('buoyancy') || lowerMessage.includes('neutral') || lowerMessage.includes('weighting')) {
+        return "Neutral buoyancy = displaced water weight equals diver weight. Start with 10% body weight in salt water, 5% fresh water. Add for wetsuit thickness: 3mm +1.5kg, 5mm +3kg, 7mm +4.5kg. Check at surface with empty BCD, normal breathing.";
+    }
+    
+    // Equipment and Diving Procedures
+    if (lowerMessage.includes('ascent rate') || lowerMessage.includes('ascent speed')) {
+        return "Maximum ascent rate: 18m/min (60ft/min). Recommended: 9m/min (30ft/min). Final 6m (20ft): slow to 3m/min (10ft/min). Watch your depth gauge continuously. Follow your smallest bubbles as reference for safe ascent speed.";
+    }
+    
+    if (lowerMessage.includes('safety stop') || lowerMessage.includes('3 minute stop')) {
+        return "Safety stop: 3-5 minutes at 5m (15ft). Recommended for all dives deeper than 10m (30ft). Allows additional nitrogen off-gassing and establishes controlled ascent habit. Mandatory after multiple dives, deep dives, or computer recommendations.";
+    }
+    
+    if (lowerMessage.includes('surface interval') || lowerMessage.includes('repetitive dive')) {
+        return "Surface intervals allow nitrogen elimination between dives. Minimum 15 minutes, longer intervals = more bottom time on next dive. Use PADI RDP or dive computer. Popular intervals: 1 hour (good), 3+ hours (significant off-gassing).";
+    }
+    
+    // Dive Tables and Computers
+    if (lowerMessage.includes('dive table') || lowerMessage.includes('rdp') || lowerMessage.includes('padi table')) {
+        return "Dive tables (RDP) provide NDL times for square profiles using air. Conservative approach with safety margins. Advantages: no battery, reliable backup. Limitations: single gas, square profiles only. Modern computers offer real-time multilevel calculations.";
+    }
+    
+    if (lowerMessage.includes('dive computer') || lowerMessage.includes('computer algorithm')) {
+        return "Dive computers calculate real-time decompression using algorithms (Bühlmann, RGBM, VPM). Track actual dive profile, multiple gases, altitude, temperature. More liberal than tables for multilevel dives. Always have backup (tables, second computer).";
+    }
+    
+    // Training and Certification
+    if (lowerMessage.includes('training') || lowerMessage.includes('certification') || lowerMessage.includes('course')) {
+        return "Proper training is essential for safe diving. Progressive levels: Open Water → Advanced → Rescue → Specialty courses (Nitrox, Deep, Wreck). Never exceed your training limits. Regular skills practice and continuing education improve safety and enjoyment.";
+    }
+    
+    // Calculations and Formulas
+    if (lowerMessage.includes('calculate') || lowerMessage.includes('formula') || lowerMessage.includes('equation')) {
+        return "Key diving formulas: 1) Pressure = depth/10 + 1 ATM, 2) MOD = (PPO₂/O₂%) × 10 - 10, 3) SAC = (pressure used × tank volume)/(time × avg pressure), 4) Gas needed = SAC × pressure × time. Use calculators above for precise results!";
+    }
+    
+    // Weather and Conditions
+    if (lowerMessage.includes('weather') || lowerMessage.includes('current') || lowerMessage.includes('visibility')) {
+        return "Dive conditions affect safety and enjoyment. Check weather, sea state, currents, visibility before diving. Cancel dives in unsafe conditions. Strong currents increase air consumption and fatigue. Poor visibility increases disorientation risk.";
+    }
+    
+    // Marine Life and Environment
+    if (lowerMessage.includes('marine life') || lowerMessage.includes('coral') || lowerMessage.includes('fish')) {
+        return "Observe marine life respectfully: don't touch, chase, or feed animals. Maintain good buoyancy to avoid coral damage. Coral reefs are fragile ecosystems - one touch can kill decades of growth. Take only pictures, leave only bubbles!";
+    }
+    
+    // Equipment specific
+    if (lowerMessage.includes('regulator') || lowerMessage.includes('breathing') || lowerMessage.includes('second stage')) {
+        return "Regulators reduce high-pressure tank air to ambient pressure. First stage connects to tank, second stage to mouth. Always breathe continuously - never hold breath while scuba diving. Service annually, rinse after salt water use.";
+    }
+    
+    if (lowerMessage.includes('bcd') || lowerMessage.includes('buoyancy control') || lowerMessage.includes('jacket')) {
+        return "BCD (Buoyancy Control Device) allows neutral buoyancy adjustment. Add air when descending, release when ascending. Use small adjustments - breath control fine-tunes buoyancy. Inflate orally at surface if power inflator fails.";
+    }
+    
+    // Greetings and general
+    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('help')) {
+        return "Hello! I'm your ScuPlan diving assistant. I can help with dive physics, gas calculations, safety procedures, equipment questions, and dive planning. Ask me about MOD, SAC rates, decompression, emergencies, or any diving topic!";
+    }
+    
+    if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) {
+        return "You're welcome! Safe diving is my priority. Remember: plan your dive, dive your plan, and never exceed your training limits. If you have more diving questions, I'm here to help. Have a great dive!";
+    }
+    
+    // Pattern matching for numbers (depth/time questions)
+    const depthMatch = lowerMessage.match(/(\d+)\s*(m|meter|ft|foot|feet)/);
+    const timeMatch = lowerMessage.match(/(\d+)\s*(min|minute|hour)/);
+    
+    if (depthMatch && lowerMessage.includes('ndl')) {
+        const depth = parseInt(depthMatch[1]);
+        const unit = depthMatch[2];
+        const depthM = unit.startsWith('f') ? Math.round(depth * 0.3048) : depth;
+        
+        const ndlTable = {12: 147, 15: 80, 18: 56, 21: 40, 24: 29, 27: 22, 30: 20, 33: 16, 36: 14, 39: 13, 42: 11};
+        let ndl = 20;
+        for (let tableDepth in ndlTable) {
+            if (depthM <= parseInt(tableDepth)) {
+                ndl = ndlTable[tableDepth];
+                break;
+            }
+        }
+        return `At ${depth}${unit}, the NDL time is approximately ${ndl} minutes (using PADI RDP for air). This assumes a square profile and first dive of the day. Use dive computer or tables for precise planning.`;
+    }
+    
+    // Default responses based on question type
+    if (lowerMessage.includes('?')) {
+        const questionStarters = [
+            "That's a great diving question! ",
+            "Good question for dive safety! ",
+            "Important to understand this for safe diving! "
+        ];
+        const starter = questionStarters[Math.floor(Math.random() * questionStarters.length)];
+        
+        if (lowerMessage.includes('what') || lowerMessage.includes('how') || lowerMessage.includes('why')) {
+            return starter + "For specific calculations, try the calculators above. For detailed procedures, check the Dive Theory section. Can you be more specific about what aspect you'd like to know?";
+        }
+    }
+    
+    // Fallback responses
     const defaultResponses = [
-        "That's an interesting diving question! Can you be more specific about what aspect you'd like to know?",
-        "Based on standard diving practices, I'd recommend consulting your certification manual and dive tables for specific calculations. What particular scenario are you planning for?",
-        "Diving safety depends on proper training and equipment. Are you asking about a specific dive situation or general diving principles?",
-        "For detailed calculations and safety procedures, always refer to your diving certification and follow established protocols. What specific diving topic interests you most?"
+        "I can help with dive physics, gas calculations, safety procedures, and equipment questions. Try asking about MOD calculations, SAC rates, decompression theory, or emergency procedures.",
+        "For dive planning help, I can explain NDL limits, gas consumption, buoyancy calculations, and safety procedures. What specific diving topic interests you?",
+        "I'm knowledgeable about diving physics (Boyle's, Dalton's, Henry's laws), decompression theory, gas mixing, and safety protocols. What would you like to learn about?",
+        "Ask me about dive calculations, safety procedures, equipment usage, or diving theory. I can help with MOD, EAD, SAC rates, gas planning, and emergency protocols."
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
