@@ -28,10 +28,10 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
     let depthData, depthUnit;
     
     if (window.unitsManager) {
-        depthData = profile.points.map(point => -window.unitsManager.convertDepth(point.depth, 'metric'));
+        depthData = profile.points.map(point => window.unitsManager.convertDepth(point.depth, 'metric'));
         depthUnit = window.unitsManager.getDepthUnit();
     } else {
-        depthData = profile.points.map(point => -point.depth); // Negative for proper display
+        depthData = profile.points.map(point => point.depth); // Positive values with reversed Y-axis
         depthUnit = 'm';
     }
     
@@ -129,9 +129,11 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                     reverse: true, // Invert the scale
                     ticks: {
                         callback: function(value) {
-                            return Math.abs(value).toFixed(0);
+                            return value.toFixed(0);
                         }
-                    }
+                    },
+                    min: 0,
+                    max: Math.max(...depthData) + 2
                 }
             },
             plugins: {
@@ -141,7 +143,7 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                             return `Time: ${tooltipItems[0].parsed.x.toFixed(1)} minutes`;
                         },
                         label: function(context) {
-                            return `Depth: ${Math.abs(context.parsed.y).toFixed(1)} ${depthUnit}`;
+                            return `Depth: ${context.parsed.y.toFixed(1)} ${depthUnit}`;
                         },
                         afterLabel: function(context) {
                             const index = context.dataIndex;
@@ -201,8 +203,8 @@ function createDecoAnnotations(decoStops) {
     decoStops.forEach((stop, index) => {
         annotations[`decoLine${index}`] = {
             type: 'line',
-            yMin: -stop.depth,
-            yMax: -stop.depth,
+            yMin: stop.depth,
+            yMax: stop.depth,
             borderColor: 'rgba(220, 53, 69, 0.5)',
             borderWidth: 1,
             borderDash: [5, 5],
@@ -228,8 +230,8 @@ function createSafetyStopAnnotation() {
     return {
         safetyStop: {
             type: 'line',
-            yMin: -5,
-            yMax: -5,
+            yMin: 5,
+            yMax: 5,
             borderColor: 'rgba(40, 167, 69, 0.5)',
             borderWidth: 1,
             borderDash: [5, 5],

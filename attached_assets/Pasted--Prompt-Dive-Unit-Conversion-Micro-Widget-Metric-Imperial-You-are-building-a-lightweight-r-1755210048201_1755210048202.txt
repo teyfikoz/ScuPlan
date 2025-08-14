@@ -1,0 +1,66 @@
+
+🔧 Prompt: Dive Unit Conversion Micro Widget (Metric ↔ Imperial)
+
+You are building a lightweight, responsive, and multilingual micro-widget for scuba diving websites like **ScuPlan.com**, embedded directly into the “Dive Education” section.
+
+🧠 Purpose:
+Help scuba divers understand and convert basic units between **metric** (meters, bar) and **imperial** (feet, psi) systems instantly, while providing educational tips.
+
+---
+
+🛠️ Core Features:
+
+1. **Bidirectional Conversion:**
+   - [ ] Convert meters ↔ feet
+   - [ ] Convert bar ↔ psi
+   - [ ] Round results sensibly (2 decimal places)
+
+2. **Auto-Unit Suggestion:**
+   - [ ] Detect user location via browser IP
+   - [ ] Suggest default unit system (Metric for EU/TR/Asia/Africa, Imperial for US/UK)
+
+3. **"What Does This Mean?" Tooltips:**
+   - [ ] Add tooltips or hover icons explaining each unit in beginner-friendly language.
+   - [ ] Example: “1 bar ≈ pressure at 10m underwater. Used to track air tank pressure.”
+
+4. **UI/UX Design:**
+   - [ ] Mobile-first responsive layout
+   - [ ] Toggle switch (Metric / Imperial)
+   - [ ] Accessible design (large font, contrast, keyboard navigation)
+
+5. **Future-Ready (Optional / Placeholder):**
+   - [ ] Embed a micro-graph showing:  
+     “Dive Time (x) vs Air Consumption / Pressure (y)” – to be developed later.
+
+---
+
+🌐 Additional:
+- No external paid API required.
+- All functionality runs client-side using vanilla JS or React.
+- English-only version for now (localization-ready design).
+- No authentication needed.
+
+---
+
+🧪 Output:
+- A functional unit converter with instant results.
+- Optional JSON export of converted values (for use in dive planner modules).
+- Component should be plug-and-play for other apps via iframe or script embed.
+
+---
+
+🎯 Target User:
+- Beginner to intermediate recreational divers.
+- Users planning dives or completing certifications.
+
+
+⸻
+
+📌 Açıklamalar:
+
+Özellik	Gerekli mi?	Açıklama
+metre ↔ feet	✅	Derinlik için en kritik dönüşüm
+bar ↔ psi	✅	Basınç (tank ve ortam) için standart
+Celsius ↔ Fahrenheit	❌	Genelde gereksiz; dalış analizinde sıcaklık hassas değil
+IP bazlı öneri	✅	Kullanıcının bulunduğu ülkeye göre otomatik öneri (örn. ABD → Imperial)
+“Bu ne anlama gelir?” açıklamaları	✅	Eğitim değeri yüksek, özellikle yeni başlayanlar için
