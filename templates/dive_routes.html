@@ -116,6 +116,55 @@
 let worldDiveSites = [];
 let filteredSites = [];
 
+// Filter dive sites based on user selections and search
+function filterDiveSites() {
+    const regionFilter = document.getElementById('regionFilter').value.toLowerCase();
+    const difficultyFilter = document.getElementById('difficultyFilter').value.toLowerCase();
+    const typeFilter = document.getElementById('typeFilter').value.toLowerCase();
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    
+    filteredSites = worldDiveSites.filter(site => {
+        // Region filter
+        const regionMatch = !regionFilter || getRegionFromCountry(site.country).includes(regionFilter);
+        
+        // Difficulty filter
+        const difficultyMatch = !difficultyFilter || site.difficulty.toLowerCase().includes(difficultyFilter);
+        
+        // Type filter
+        const typeMatch = !typeFilter || site.type.toLowerCase().includes(typeFilter);
+        
+        // Search filter (searches in name, country, description)
+        const searchMatch = !searchInput || 
+            site.name.toLowerCase().includes(searchInput) ||
+            site.country.toLowerCase().includes(searchInput) ||
+            site.description.toLowerCase().includes(searchInput) ||
+            site.type.toLowerCase().includes(searchInput);
+            
+        return regionMatch && difficultyMatch && typeMatch && searchMatch;
+    });
+    
+    // Update the list view if it's currently active
+    if (document.getElementById('listViewContainer').style.display !== 'none') {
+        renderDiveSitesList();
+    }
+    
+    // Update map markers if map is active
+    if (map && markerClusterGroup) {
+        updateMapMarkers();
+    }
+}
+
+// Update map markers based on filtered results
+function updateMapMarkers() {
+    // Clear existing markers
+    markerClusterGroup.clearLayers();
+    
+    // Add filtered markers
+    filteredSites.forEach(location => {
+        addDiveLocationMarker(location);
+    });
+}
+
 function toggleView(view) {
     const mapView = document.getElementById('mapViewContainer');
     const listView = document.getElementById('listViewContainer');

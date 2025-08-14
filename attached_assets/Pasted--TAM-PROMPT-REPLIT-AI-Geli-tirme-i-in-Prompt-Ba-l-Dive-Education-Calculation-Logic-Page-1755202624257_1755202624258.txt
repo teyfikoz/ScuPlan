@@ -1,0 +1,100 @@
+✅ TAM PROMPT (REPLIT / AI Geliştirme için)
+
+Prompt Başlığı: “Dive Education & Calculation Logic Page with Interactive Tools & AI Chatbot”
+
+Create a new tab in the existing “Scuplan” web app titled:
+🔹 “Dive Education & Calculations”
+
+This section should serve as a comprehensive educational hub for beginner to intermediate scuba divers. It should provide:
+
+⸻
+
+🧠 Dive Theory & Education Section
+
+Use accordion layout or tabbed interface to display the following topics, each with explanations, visuals (illustrations, SVGs), and diagrams:
+	1.	Basic Physics of Diving
+	•	Pressure-Volume relationship (Boyle’s Law)
+	•	Dalton’s Law and Gas Mixing
+	•	Henry’s Law and Decompression
+	•	Buoyancy Control (Archimedes’ Principle)
+	2.	Dive Tables vs Dive Computers
+	•	Explanation of RDP (Recreational Dive Planner)
+	•	No Decompression Limits (NDL)
+	•	Why computers are more dynamic
+	3.	Breathing Gas Mixtures
+	•	Air vs Nitrox (EANx) vs Trimix
+	•	MOD (Maximum Operating Depth)
+	•	PPO₂ safety limits
+	4.	Decompression Theory
+	•	What causes decompression sickness
+	•	Safety stops & deep stops
+	•	Ascent rates
+	5.	Dive Planning Essentials
+	•	Dive objective setting
+	•	Turn pressure, minimum gas
+	•	Gas rule: Rule of Thirds
+	6.	Emergency Scenarios
+	•	Out-of-air protocols
+	•	Controlled Emergency Swimming Ascent (CESA)
+	•	Decompression illness symptoms
+	7.	Environmental Awareness
+	•	Fragile marine ecosystems
+	•	Buoyancy control to prevent damage
+	•	Local regulations and marine park rules
+
+⸻
+
+📐 Dive Plan Calculator
+
+Include interactive calculation tools with a switch for Metric / Imperial units.
+	1.	Dive Time & Surface Interval Planner
+	•	Input: depth, dive time, surface interval
+	•	Output: residual nitrogen, NDL, adjusted dive limits
+	•	Include visual dive profile chart
+	2.	Gas Mix Calculator
+	•	Input: desired PPO₂ and depth
+	•	Output: best mix suggestion
+	•	MOD calculator (in meters and feet)
+	3.	SAC Rate & Gas Consumption
+	•	Input: tank size, working pressure, average depth, dive time
+	•	Output: Surface Air Consumption, Total gas needed
+	•	Real-time gauge / chart simulation
+	4.	Decompression Stop Chart Generator
+	•	Calculates ideal stops based on depth and time
+	•	Option to export the profile
+
+⸻
+
+🤖 Free Local AI Chatbot (No API cost)
+	•	Add a 100% local, free AI Chatbot that helps users understand dive physics, suggest dive plans, and answer FAQs.
+	•	Use a pretrained, compact local LLM like LLama 3 Mini, Mistral 7B or OpenAssistant LLM (run in-browser with WebLLM or use LLM.js).
+	•	Chatbot can answer:
+	•	“What is the best mix for 30m?”
+	•	“Why do I need a safety stop?”
+	•	“What’s the NDL at 20m with Nitrox 32%?”
+
+⸻
+
+🎮 Simulation Mode (Optional but powerful)
+
+Enable a Dive Simulator where users can simulate a full dive:
+	•	Input: dive depth, time, gas type, ascent speed
+	•	See dynamic profile + stop recommendations
+	•	Calculate remaining gas based on SAC
+	•	Visual feedback on safety zone / danger zone
+
+⸻
+
+📤 Tech Notes
+	•	Education content stored as markdown or JSON
+	•	Charts via Recharts / Chart.js / d3.js
+	•	Toggle for metric vs imperial via state or context API
+	•	AI Chatbot and simulations load lazily to save resources
+	•	Offline support encouraged (PWA-friendly)
+
+⸻
+
+Bu yapı hem profesyonel hem de yeni başlayanlar için mükemmel bir kaynak oluşturur. Eğitim ve hesaplama bölümü sayesinde:
+	•	Dalış güvenliği artar
+	•	Kullanıcı sadakati sağlanır
+	•	AI destekli akıllı sistemle kullanıcı memnuniyeti zirveye çıkar

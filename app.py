@@ -118,6 +118,12 @@ def dive_routes():
     """World-famous dive routes and locations"""
     return render_template('dive_routes.html')
 
+# Dive education sayfası rotası
+@app.route('/dive-education')
+def dive_education():
+    """Dive education and calculations with AI assistant"""
+    return render_template('dive_education.html')
+
 # API: Dive plan calculation
 @app.route('/api/calculate', methods=['POST'])
 def calculate_plan():

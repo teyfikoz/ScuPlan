@@ -89,6 +89,12 @@ class UnitsManager {
         document.querySelectorAll('[data-unit="volume"]').forEach(element => {
             element.textContent = this.getVolumeUnit();
         });
+        
+        // Convert input field values
+        this.convertInputValues();
+        
+        // Update any existing results displays
+        this.updateAllUnits();
     }
 
     /**
@@ -187,6 +193,65 @@ class UnitsManager {
             pressure: this.currentSystem === 'imperial' ? 14.5038 : 1,
             volume: this.currentSystem === 'imperial' ? 1/28.3168 : 1
         };
+    }
+
+    /**
+     * Convert input field values when units change
+     */
+    convertInputValues() {
+        // Store current values before conversion
+        const previousSystem = this.currentSystem === 'metric' ? 'imperial' : 'metric';
+        
+        // Convert depth inputs
+        const depthInputs = document.querySelectorAll('input[id*="Depth"], input[id*="depth"]');
+        depthInputs.forEach(input => {
+            if (input.value && !isNaN(input.value)) {
+                const oldValue = parseFloat(input.value);
+                const newValue = this.convertDepth(oldValue, previousSystem);
+                input.value = Math.round(newValue * 10) / 10; // Round to 1 decimal
+            }
+        });
+        
+        // Convert pressure inputs  
+        const pressureInputs = document.querySelectorAll('input[id*="pressure"], input[id*="Pressure"]');
+        pressureInputs.forEach(input => {
+            if (input.value && !isNaN(input.value)) {
+                const oldValue = parseFloat(input.value);
+                const newValue = this.convertPressure(oldValue, previousSystem);
+                input.value = Math.round(newValue);
+            }
+        });
+        
+        // Convert SAC rate (volume-related)
+        const sacInput = document.getElementById('sacRate');
+        if (sacInput && sacInput.value && !isNaN(sacInput.value)) {
+            const oldValue = parseFloat(sacInput.value);
+            const newValue = this.convertVolume(oldValue, previousSystem);
+            sacInput.value = Math.round(newValue * 10) / 10;
+        }
+    }
+    
+    /**
+     * Update all unit displays in existing content
+     */
+    updateAllUnits() {
+        // Update any depth values displayed in results
+        document.querySelectorAll('[data-depth]').forEach(element => {
+            const depth = parseFloat(element.getAttribute('data-depth'));
+            if (!isNaN(depth)) {
+                const converted = this.currentSystem === 'metric' ? depth : depth * 3.28084;
+                element.textContent = Math.round(converted * 10) / 10 + this.getDepthUnit();
+            }
+        });
+        
+        // Update pressure displays
+        document.querySelectorAll('[data-pressure]').forEach(element => {
+            const pressure = parseFloat(element.getAttribute('data-pressure'));
+            if (!isNaN(pressure)) {
+                const converted = this.currentSystem === 'metric' ? pressure : pressure * 14.5038;
+                element.textContent = Math.round(converted) + this.getPressureUnit();
+            }
+        });
     }
 }
 

@@ -39,6 +39,27 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
   - Best Mix calculations for optimal gas mixtures
   - Multi-level dive planning
 
+✓ **Dive Education & Calculations**: 
+  - Interactive dive theory education with accordions
+  - Physics of diving (Boyle's, Dalton's, Henry's Laws)
+  - Gas mixture calculators with real-time results
+  - SAC rate and gas consumption calculators
+  - Live dive simulator with profile visualization
+  - Local AI chatbot for diving questions (no API required)
+  - Unit system toggle support throughout
+
+✓ **World Dive Routes**: 
+  - 29 comprehensive dive locations worldwide
+  - Interactive Leaflet.js map with clustering
+  - Advanced search and filtering system
+  - Detailed site information and planning integration
+
+✓ **Metric/Imperial Unit System**: 
+  - User-selectable toggle (persistent preference)
+  - Live conversion of input values when toggling
+  - Chart axis and result display updates
+  - Comprehensive depth, pressure, and volume conversions
+
 ✓ **Cryptocurrency Donations**: 
   - XRP and USDT TRC20 addresses displayed on all pages
   - Copy-to-clipboard functionality
@@ -57,6 +78,9 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **FIXED: Date field initialization with English format (dd.mm.yyyy)**
 ✓ **UPDATED: Comprehensive 29 world-famous dive locations dataset**
 ✓ **ENHANCED: Interactive map with all new dive sites and proper clustering**
+✓ **FIXED: Imperial unit button now properly converts numerical input values**
+✓ **FIXED: Map search functionality now working with live filtering**
+✓ **IMPLEMENTED: Complete "Dive Education & Calculations" section with AI chatbot**
 
 ## Planned New Features (Current Development)
 
