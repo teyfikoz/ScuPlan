@@ -1,0 +1,123 @@
+Harika! Aşağıda Replit’te çalışabilecek şekilde ScuPlan projesine yeni özellikleri mevcut yapıya zarar vermeden eklemek için kapsamlı bir geliştirici promptu oluşturdum.
+
+Bu prompt, bir frontend+backend geliştiricinin veya Claude/ChatGPT gibi bir kodlayıcı agent’ın projeni anlaması ve doğrudan güncellenmiş sürümünü yazabilmesi için detaylı şekilde yazıldı.
+
+⸻
+
+🧠 PROMPT: ScuPlan Dive Planner – Gelişmiş Özellik Güncelleme Talimatı (Replit için)
+
+Amaç:
+Gelişmiş bir dalış planlayıcısı olan ScuPlan adlı web uygulamasına aşağıdaki özellikleri mevcut özelliklere zarar vermeden entegre et.
+
+⸻
+
+✅ Mevcut Özellikler (KORUNACAK)
+
+Uygulamada zaten çalışan aşağıdaki bileşenlerin yapısı ve işlevi aynen korunmalı:
+	•	Dive Planner:
+	•	Deco hesaplamaları
+	•	Descent, bottom, ascent time
+	•	Dive Profile Chart (negatif derinlik grafiği)
+	•	Checklist Modülü (Pre, Post, Emergency, Custom)
+	•	Saved Dive Plans (local kayıt sistemi)
+	•	Gas Consumption tank bilgisi (Tank size, Pressure, O₂ %)
+	•	Technical Diving Modülü (MOD, END, CNS, Best Mix hesaplamaları)
+	•	Kripto ile destekleme bölümü
+	•	Print & Offline destekleri
+
+⸻
+
+🆕 Yeni Özellikler (Eklenecek)
+
+1. Deco Hesaplama Açıklaması (Dive Planner sayfasının en altına)
+	•	Dive Planner sayfasında, hesaplanan deco stopların altında küçük bir bilgi kutusu olarak eklenecek.
+	•	Açıklama şuna benzer olmalı:
+“Decompression stop times are calculated based on typical NDL and safety assumptions. No specific decompression algorithm (e.g. Bühlmann, VPM) is used yet.”
+
+⸻
+
+2. Metric / Imperial Sistem Seçimi
+	•	Kullanıcı üst kısımda bir toggle switch veya dropdown menü ile Metric (default) ve Imperial arasında seçim yapabilmeli.
+	•	Imperial birimler:
+	•	Derinlik: feet
+	•	Basınç: psi
+	•	Tank hacmi: cubic feet
+	•	Zaman: dakika (değişmez)
+	•	Bu dönüşümler otomatik yapılmalı ve grafik ekseni de değişmeli (örn. 30 m → 98.4 ft)
+
+⸻
+
+3. Tank Air Remaining Simulation
+	•	Kullanıcı:
+	•	Derinlik (m veya ft)
+	•	SAC Rate (L/min)
+	•	Zaman (bottom time)
+	•	Tank bilgilerini (size & pressure) girince
+	•	Uygulama otomatik hesaplamalı:
+	•	Air Used: (ör. 1440L)
+	•	Remaining Air: (ör. 960L veya 64 bar)
+	•	Bu hesap sonuçları “Dive Profile” grafiğinin altında küçük kutu olarak gösterilmeli
+
+⸻
+
+4. Run Time Table + Segment Consumption
+	•	Deco, bottom ve ascent bölümlerinin her biri için:
+	•	Tahmini hava tüketimi hesaplanmalı ve tablo olarak gösterilmeli.
+	•	Örn:
+
+Segment	Time (min)	Air Used (L)
+Bottom	40	1200
+Ascent	15.3	300
+Deco	12	240
+
+
+
+⸻
+
+5. Dalış Rotaları Sayfası
+	•	Yeni bir sekme: Dive Routes (üst menüye eklenmeli)
+	•	Sayfada şunlar gösterilmeli:
+	•	Önemli dünya dalış rotalarının listesi:
+(Great Barrier Reef, Silfra, Blue Hole, Sipadan, Red Sea vb.)
+	•	Her rota için kısa açıklama, ülke, zorluk derecesi
+	•	En alt kısmında şu yönlendirme linki bulunmalı:
+“🛫 Explore Dive Packages from Turkish Airlines”
+
+⸻
+
+6. Dünya Haritası Üzerinde Dalış Noktaları (API veya maliyet olmadan)
+	•	Harita bileşeni olarak Leaflet.js (ücretsiz ve API’siz) kullanılmalı.
+	•	Dalış noktaları statik bir JSON dosyasından okunmalı.
+Örn:
+
+[
+  {"name": "Blue Hole", "lat": 17.315, "lng": -87.534, "country": "Belize"},
+  {"name": "Silfra Fissure", "lat": 64.255, "lng": -21.130, "country": "Iceland"}
+]
+
+
+	•	Tüm harita Dive Routes sekmesinde yer almalı.
+
+⸻
+
+💻 Teknik Gereksinimler
+	•	Replit ortamı için React + TailwindCSS + localStorage + Leaflet.js kullanılabilir.
+	•	Yeni bileşenlerin hiçbiri mevcut sayfaların işleyişini bozmamalıdır.
+	•	Kod yorumlu, modüler ve test edilebilir olsun.
+
+⸻
+
+✅ Görev:
+
+Yukarıdaki tüm geliştirmeleri mevcut ScuPlan kod tabanına zarar vermeden sırayla entegre et. Her yeni özellik için component dosyası oluştur ve düzenli olarak test et.
+
+⸻
+
+İstersen bu promptu bir .txt veya .md dosyasına da dönüştürebilirim ya da doğrudan Claude AI gibi bir araca aktarılmak üzere yeniden yapılandırabilirim.
+
+Devam etmek ister misin?
+	•	Claude prompt formatı
+	•	Kodlara geçiş
+	•	Döküman haline getirme (Notion, PDF, Markdown)
+
+Hangisini istersin?

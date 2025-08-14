@@ -71,6 +71,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/dive-routes' %}active{% endif %}" href="{{ url_for('dive_routes') }}">
+                            <i class="fas fa-map-marked-alt me-1"></i> Dive Routes
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" id="offlineStorageButton" onclick="showOfflineStorageModal(); return false;">
                             <i class="fas fa-save me-1"></i> Saved Plans
                         </a>
@@ -181,6 +186,8 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
 
     <!-- App Scripts -->
+    <script src="{{ url_for('static', filename='js/units.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/air-consumption.js') }}"></script>
     <script src="{{ url_for('static', filename='js/dive.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tank.js') }}"></script>
     <script src="{{ url_for('static', filename='js/buddy.js') }}"></script>

@@ -112,6 +112,12 @@ def share():
         return redirect(url_for('index'))
     return render_template('share.html')
 
+# Dive routes sayfası rotası
+@app.route('/dive-routes')
+def dive_routes():
+    """World-famous dive routes and locations"""
+    return render_template('dive_routes.html')
+
 # API: Dive plan calculation
 @app.route('/api/calculate', methods=['POST'])
 def calculate_plan():

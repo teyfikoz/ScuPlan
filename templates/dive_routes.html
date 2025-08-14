@@ -1,0 +1,411 @@
+{% extends "layout.html" %}
+{% block title %}World Dive Routes - ScuPlan{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-map-marked-alt me-2"></i>World Dive Routes</h1>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="listViewBtn" onclick="toggleView('list')">
+                        <i class="fas fa-list"></i> List View
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm active" id="mapViewBtn" onclick="toggleView('map')">
+                        <i class="fas fa-map"></i> Map View
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="regionFilter" class="form-label">Region</label>
+                            <select class="form-select" id="regionFilter" onchange="filterDiveSites()">
+                                <option value="">All Regions</option>
+                                <option value="pacific">Pacific Ocean</option>
+                                <option value="atlantic">Atlantic Ocean</option>
+                                <option value="indian">Indian Ocean</option>
+                                <option value="mediterranean">Mediterranean Sea</option>
+                                <option value="caribbean">Caribbean Sea</option>
+                                <option value="red-sea">Red Sea</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="difficultyFilter" class="form-label">Difficulty</label>
+                            <select class="form-select" id="difficultyFilter" onchange="filterDiveSites()">
+                                <option value="">All Levels</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="technical">Technical</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="typeFilter" class="form-label">Dive Type</label>
+                            <select class="form-select" id="typeFilter" onchange="filterDiveSites()">
+                                <option value="">All Types</option>
+                                <option value="reef">Coral Reef</option>
+                                <option value="wreck">Wreck Diving</option>
+                                <option value="cave">Cave Diving</option>
+                                <option value="drift">Drift Diving</option>
+                                <option value="wall">Wall Diving</option>
+                                <option value="macro">Macro Photography</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="searchInput" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search dive sites..." onkeyup="filterDiveSites()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map View -->
+    <div id="mapViewContainer" class="row" style="display: block;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-globe-americas me-2"></i>Interactive World Dive Map</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="worldMap" style="height: 600px; background: #f8f9fa;" class="d-flex align-items-center justify-content-center">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-map fa-3x mb-3"></i>
+                            <h5>Interactive Map Coming Soon</h5>
+                            <p>We're working on integrating Leaflet.js for an interactive dive site map.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- List View -->
+    <div id="listViewContainer" class="row" style="display: none;">
+        <div class="col-12">
+            <div id="diveSitesList">
+                <!-- Dive sites will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// World-famous dive sites data
+const worldDiveSites = [
+    {
+        name: "Great Blue Hole",
+        location: "Belize",
+        region: "atlantic",
+        coordinates: [17.3190, -87.5353],
+        difficulty: "advanced",
+        type: "wall",
+        maxDepth: 124,
+        visibility: "30-40m",
+        temperature: "26-29°C",
+        description: "A giant marine sinkhole off the coast of Belize. Famous for its perfectly circular shape and incredible stalactites.",
+        highlights: ["Stalactites", "Reef sharks", "Deep wall diving"],
+        bestTime: "November to June"
+    },
+    {
+        name: "SS Thistlegorm",
+        location: "Red Sea, Egypt",
+        region: "red-sea",
+        coordinates: [27.8167, 33.9167],
+        difficulty: "intermediate",
+        type: "wreck",
+        maxDepth: 30,
+        visibility: "20-30m",
+        temperature: "22-28°C",
+        description: "British merchant navy ship sunk in 1941. One of the world's most famous wreck dives.",
+        highlights: ["WWII artifacts", "Motorcycles", "Trucks", "Historical significance"],
+        bestTime: "March to November"
+    },
+    {
+        name: "Barracuda Point",
+        location: "Sipadan, Malaysia",
+        region: "pacific",
+        coordinates: [4.1158, 118.6281],
+        difficulty: "intermediate",
+        type: "drift",
+        maxDepth: 40,
+        visibility: "25-40m",
+        temperature: "27-30°C",
+        description: "Famous for massive schools of barracuda and incredible biodiversity.",
+        highlights: ["Barracuda tornadoes", "Hammerhead sharks", "Turtles", "Rich coral life"],
+        bestTime: "March to October"
+    },
+    {
+        name: "Cenote Dos Ojos",
+        location: "Tulum, Mexico",
+        region: "atlantic",
+        coordinates: [20.3264, -87.3528],
+        difficulty: "intermediate",
+        type: "cave",
+        maxDepth: 10,
+        visibility: "80-100m",
+        temperature: "24-25°C",
+        description: "Part of the world's longest underwater cave system with crystal clear freshwater.",
+        highlights: ["Crystal clear water", "Stalactites", "Haloclines", "Cave formations"],
+        bestTime: "Year-round"
+    },
+    {
+        name: "Molokini Crater",
+        location: "Maui, Hawaii",
+        region: "pacific",
+        coordinates: [20.6286, -156.4994],
+        difficulty: "beginner",
+        type: "reef",
+        maxDepth: 18,
+        visibility: "45-60m",
+        temperature: "24-27°C",
+        description: "Crescent-shaped volcanic crater with pristine coral reefs and tropical fish.",
+        highlights: ["Tropical fish", "Coral gardens", "Clear water", "Protected marine sanctuary"],
+        bestTime: "Year-round"
+    },
+    {
+        name: "Blue Corner",
+        location: "Palau",
+        region: "pacific",
+        coordinates: [7.2906, 134.2167],
+        difficulty: "advanced",
+        type: "drift",
+        maxDepth: 40,
+        visibility: "30-50m",
+        temperature: "27-30°C",
+        description: "World-renowned drift dive site famous for shark encounters and strong currents.",
+        highlights: ["Grey reef sharks", "Barracuda schools", "Napoleon wrasse", "Strong currents"],
+        bestTime: "November to June"
+    },
+    {
+        name: "Poor Knights Islands",
+        location: "New Zealand",
+        region: "pacific",
+        coordinates: [-35.4667, 174.7333],
+        difficulty: "intermediate",
+        type: "reef",
+        maxDepth: 40,
+        visibility: "15-30m",
+        temperature: "15-21°C",
+        description: "Marine reserve with unique temperate water marine life and dramatic underwater landscapes.",
+        highlights: ["Kelp forests", "Stingray City", "Archways", "Subtropical marine life"],
+        bestTime: "October to May"
+    },
+    {
+        name: "Silfra Fissure",
+        location: "Iceland",
+        region: "atlantic",
+        coordinates: [64.2558, -20.1219],
+        difficulty: "intermediate",
+        type: "cave",
+        maxDepth: 18,
+        visibility: "100m+",
+        temperature: "2-4°C",
+        description: "Dive between two tectonic plates in crystal clear glacial water.",
+        highlights: ["Tectonic plates", "Ultra-clear water", "Unique geological formations", "Drysuit required"],
+        bestTime: "Year-round"
+    }
+];
+
+let filteredSites = [...worldDiveSites];
+
+function toggleView(view) {
+    const mapView = document.getElementById('mapViewContainer');
+    const listView = document.getElementById('listViewContainer');
+    const mapBtn = document.getElementById('mapViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+
+    if (view === 'map') {
+        mapView.style.display = 'block';
+        listView.style.display = 'none';
+        mapBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        mapView.style.display = 'none';
+        listView.style.display = 'block';
+        listBtn.classList.add('active');
+        mapBtn.classList.remove('active');
+        renderDiveSitesList();
+    }
+}
+
+function filterDiveSites() {
+    const regionFilter = document.getElementById('regionFilter').value;
+    const difficultyFilter = document.getElementById('difficultyFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+    filteredSites = worldDiveSites.filter(site => {
+        return (!regionFilter || site.region === regionFilter) &&
+               (!difficultyFilter || site.difficulty === difficultyFilter) &&
+               (!typeFilter || site.type === typeFilter) &&
+               (!searchInput || 
+                site.name.toLowerCase().includes(searchInput) ||
+                site.location.toLowerCase().includes(searchInput) ||
+                site.description.toLowerCase().includes(searchInput));
+    });
+
+    if (document.getElementById('listViewContainer').style.display !== 'none') {
+        renderDiveSitesList();
+    }
+}
+
+function renderDiveSitesList() {
+    const container = document.getElementById('diveSitesList');
+    
+    if (filteredSites.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-search fa-3x mb-3"></i>
+                <h5>No dive sites found</h5>
+                <p>Try adjusting your filters or search terms.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const sitesHTML = filteredSites.map(site => {
+        const difficultyColor = {
+            'beginner': 'success',
+            'intermediate': 'warning',
+            'advanced': 'danger',
+            'technical': 'dark'
+        };
+
+        const typeIcon = {
+            'reef': 'fas fa-fish',
+            'wreck': 'fas fa-ship',
+            'cave': 'fas fa-mountain',
+            'drift': 'fas fa-water',
+            'wall': 'fas fa-chart-line',
+            'macro': 'fas fa-search-plus'
+        };
+
+        return `
+            <div class="card mb-3 dive-site-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">
+                                <i class="${typeIcon[site.type] || 'fas fa-map-marker-alt'} me-2"></i>
+                                ${site.name}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="fas fa-map-marker-alt me-1"></i>${site.location}
+                            </h6>
+                            <p class="card-text">${site.description}</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Highlights:</strong><br>
+                                        ${site.highlights.join(', ')}
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Best Time:</strong> ${site.bestTime}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-end">
+                                <span class="badge bg-${difficultyColor[site.difficulty]} mb-2">${site.difficulty}</span>
+                                <span class="badge bg-info mb-2">${site.type}</span>
+                            </div>
+                            
+                            <div class="dive-specs mt-3">
+                                <div class="spec-item">
+                                    <i class="fas fa-arrows-alt-v me-1"></i>
+                                    <strong>Max Depth:</strong> <span data-unit="depth">${site.maxDepth}m</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-eye me-1"></i>
+                                    <strong>Visibility:</strong> ${site.visibility}
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-thermometer-half me-1"></i>
+                                    <strong>Temperature:</strong> ${site.temperature}
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-primary btn-sm w-100" onclick="planDiveToSite('${site.name}', ${site.maxDepth})">
+                                    <i class="fas fa-calendar-plus me-1"></i>Plan Dive Here
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = sitesHTML;
+    
+    // Update units if available
+    if (window.unitsManager) {
+        window.unitsManager.updateAllUnits();
+    }
+}
+
+function planDiveToSite(siteName, maxDepth) {
+    // Store site info and redirect to main planner
+    sessionStorage.setItem('selectedDiveSite', JSON.stringify({
+        name: siteName,
+        maxDepth: maxDepth
+    }));
+    
+    // Redirect to main page with parameters
+    window.location.href = `/?site=${encodeURIComponent(siteName)}&depth=${maxDepth}`;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    renderDiveSitesList();
+    
+    // Listen for units changes
+    if (window.unitsManager) {
+        window.addEventListener('unitsChanged', function() {
+            if (document.getElementById('listViewContainer').style.display !== 'none') {
+                renderDiveSitesList();
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.dive-site-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dive-site-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.spec-item {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.badge {
+    text-transform: capitalize;
+}
+
+#worldMap {
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+</style>
+{% endblock %}

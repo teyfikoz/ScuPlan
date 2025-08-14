@@ -3,6 +3,55 @@
  * Handles dive planning calculations, profile generation, and related functionalities
  */
 
+// Check for dive site parameters on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const siteName = urlParams.get('site');
+    const siteDepth = urlParams.get('depth');
+    
+    if (siteName && siteDepth) {
+        // Pre-fill the dive site information
+        const depthInput = document.getElementById('depthInput');
+        if (depthInput) {
+            depthInput.value = siteDepth;
+            // Show a notification about the selected dive site
+            showDiveSiteNotification(siteName, siteDepth);
+            // Trigger calculation if auto-calculate is enabled
+            setTimeout(() => {
+                if (window.autoCalculate) {
+                    calculateDive();
+                }
+            }, 500);
+        }
+    }
+});
+
+/**
+ * Show notification about selected dive site
+ */
+function showDiveSiteNotification(siteName, depth) {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-info alert-dismissible fade show';
+    notification.style.position = 'fixed';
+    notification.style.top = '80px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.innerHTML = `
+        <i class="fas fa-map-marker-alt me-2"></i>
+        <strong>Dive Site Selected:</strong> ${siteName} (Max Depth: ${depth}m)
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification && notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
 /**
  * Calculate a simplified dive profile when offline or for quick calculations
  * @param {Object} planData - Plan data including depth and bottom time
