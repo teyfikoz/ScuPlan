@@ -1,0 +1,82 @@
+Please implement the interactive map functionality in the “Map View” section of the Dive Routes page using Leaflet.js, without relying on any paid APIs.
+
+The visual placeholder currently shown (“Interactive Map Coming Soon”) should be replaced with a fully functional map and can now be removed.
+
+⸻
+
+🧩 Technical Requirements:
+	1.	Leaflet.js Integration
+	•	Install and configure Leaflet.js
+	•	Ensure map container loads properly inside Dive Routes > Map View section
+	•	Set default zoom and center (world view)
+	2.	Static Dive Locations (No API / No Server)
+	•	Use a static local file: /public/dive_locations.json
+	•	Example structure:
+
+[
+  {
+    "name": "Blue Hole",
+    "country": "Belize",
+    "lat": 17.315,
+    "lng": -87.534,
+    "description": "Circular reef structure. Deep diving.",
+    "link": "https://example.com/bluehole"
+  },
+  ...
+]
+
+
+	3.	Map Markers
+	•	For each location in the JSON, add a Leaflet marker
+	•	On click, show a popup with:
+	•	Dive site name
+	•	Country
+	•	Short description
+	•	Optional link (e.g., “Plan Dive Here” or external travel link)
+	4.	Style
+	•	Use styled markers or icons (optional)
+	•	Use L.popup for descriptions
+	•	Cluster markers if needed (if more than 20 sites are loaded)
+
+⸻
+
+🌐 Turkish Airlines Dive Travel CTA
+
+At the bottom of the map, add a CTA banner or button:
+
+<a href="https://www.turkishairlinesholidays.com/en-tr/diving-and-snorkelling-hotels-vacation-package" 
+   target="_blank" 
+   class="block w-full bg-blue-700 text-white font-bold text-center p-3 mt-6 rounded-lg hover:bg-blue-800">
+   🛫 Explore Dive Trips with Turkish Airlines Holidays
+</a>
+
+
+⸻
+
+🗺️ UI Logic:
+	•	The existing Map View / List View toggle must remain functional
+	•	When Map View is selected:
+	•	Render the map dynamically
+	•	Load dive data from JSON
+	•	When List View is selected:
+	•	Continue to show the existing card layout
+
+⸻
+
+📦 Dev Stack Notes
+	•	Framework: React (with hooks)
+	•	Leaflet: via npm (npm install leaflet)
+	•	Don’t forget import 'leaflet/dist/leaflet.css'
+	•	JSON must be fetched via relative path (no backend/server call)
+	•	Mobile responsiveness should be preserved
+
+⸻
+
+✅ Expected Outcome
+
+After this task is complete:
+	•	The Dive Routes > Map View section will show a fully working, zoomable, clickable Leaflet map
+	•	Major dive sites will be visualized with tooltips or popups
+	•	Turkish Airlines link will be visually accessible as CTA
+	•	No external API, server, or cost will be introduced
+
