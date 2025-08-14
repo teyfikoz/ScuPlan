@@ -1,0 +1,38 @@
+Lütfen aşağıdaki 3 geliştirmeyi yapacak şekilde eksiksiz ve sadeleştirilmiş bir frontend + JS çözümü öner:
+
+⸻
+
+✅ 1. Metric / Imperial Conversion Button Düzeltmesi:
+	•	Uygulamada kullanılan “Metric ↔ Imperial” butonu tüm sayfalarda eksiksiz çalışmalıdır.
+	•	Herhangi bir hesaplama yapıldığında, kullanıcı hesaplamasını paylaşmadan ya da kaydetmeden önce dönüşüm yapabilmelidir.
+	•	Dönüşüm sonrası, hesap değerleri ve birim etiketleri eş zamanlı olarak güncellenmelidir.
+	•	Aynı dönüşüm yapısı “Interactive Dive Simulator” gibi tüm alt sayfalarda da sorunsuz çalışmalıdır.
+
+⸻
+
+✅ 2. Renk Paleti ve UI Uyumlaştırması ( Bu kısım tamamen senin tercihine bağlı ) :
+	•	Tüm sayfa genelinde renk paleti, etiketler, butonlar ve yazılar uyumlu ve kullanıcı dostu olacak şekilde düzenlenmelidir.
+	•	Arayüz, göz yormayan renklerle oluşturulmalı ve açık/kapalı modda çalışabilmelidir.
+	•	Her bir bölüm için önerilen palet:
+	•	Arka plan: #f0f4f8 (açık mod) / #1e1e2f (koyu mod)
+	•	Yazı rengi: #1a1a1a / #f5f5f5
+	•	Ana renk: #0077b6 (linkler ve aktif butonlar)
+	•	İkincil renk: #90e0ef (hover ve ikonlar)
+
+⸻
+
+✅ 3. AI Assistant Fonksiyonlarını Genişlet:
+	•	Herhangi bir ücretli API kullanmadan, aşağıdaki konularda bilgi veren basit bilgi kutuları ve fonksiyonlar ekle:
+	•	Derin dalış fiziği hakkında bilgiler
+	•	Su altında görsel algı ve ışık kırılması
+	•	Soğuk su dalışlarında dikkat edilmesi gerekenler
+	•	Gece dalışı ve kullanılan ekipmanlar
+	•	Balık türleri ve deniz canlılarının davranış rehberi
+	•	Bilgiler data/*.json dosyalarından alınsın ve modüler şekilde yüklensin (içerikler offline, sabit JSON üzerinden çalışsın).
+        
+
+⸻
+
+Tüm bu sistem Replit üzerinde tek bir proje içinde yer almalıdır. Dış bağlantı, ücretli API, ücretli framework, ücretli yazı tipi vs. kullanmayın. Sadece açık kaynak araçlar kullanın.
+
+Lütfen bu geliştirmeyi yaparken arayüz düzenlemeleri, dönüşüm hesaplayıcıları ve bilgi kutularını sayfa sayfa ayrı bileşenler olarak planla. Kod yapısı sade, eğitim amaçlı ve kolay test edilebilir olsun.

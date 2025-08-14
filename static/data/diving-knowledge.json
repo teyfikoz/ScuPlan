@@ -1,0 +1,138 @@
+{
+  "deepDiving": {
+    "title": "Derin Dalış Fiziği",
+    "content": [
+      {
+        "topic": "Basınç Etkileri",
+        "info": "Her 10 metrede basınç 1 atmosfer artar. 30m'de 4 ATA basınç vardır. Bu basınç vücut boşluklarını etkiler ve eşitleme gerektirir.",
+        "formula": "Basınç (ATA) = (Derinlik ÷ 10) + 1"
+      },
+      {
+        "topic": "Nitrojen Narkozu",
+        "info": "30m'den sonra başlar. Her 15m 'bir martini etkisi' yaratır. Belirtiler: öforya, kötü karar verme, koordinasyon kaybı.",
+        "safety": "Trimix kullanımı veya daha sığ derinliklere çıkma"
+      },
+      {
+        "topic": "Oksijen Toksisitesi",
+        "info": "1.6 ATA PPO₂ üzerinde CNS toksisitesi riski. Nöbet geçirme riski var. MOD sınırlarını aşmayın.",
+        "symptoms": "VENTID: Görme bozukluğu, Kulak çınlaması, Mide bulantısı, Kas kasılmaları, Sinirlilik, Baş dönmesi"
+      }
+    ]
+  },
+  "underwaterVision": {
+    "title": "Su Altında Görsel Algı ve Işık Kırılması",
+    "content": [
+      {
+        "topic": "Işık Kırılması",
+        "info": "Su altında nesneler %25 daha yakın ve %33 daha büyük görünür. Bu maske camının etkisidir.",
+        "practical": "Mesafe takdiri zorlaşır, el işaretleri ve navigasyon bu duruma göre planlanmalıdır"
+      },
+      {
+        "topic": "Renk Kaybı",
+        "info": "Kırmızı 5m'de, turuncu 10m'de, sarı 15m'de kaybolur. Mavi ve yeşil en son kaybolur.",
+        "depths": {
+          "5m": "Kırmızı kaybolur",
+          "10m": "Turuncu kaybolur", 
+          "15m": "Sarı kaybolur",
+          "20m": "Yeşil azalır",
+          "30m+": "Sadece mavi tonları"
+        }
+      },
+      {
+        "topic": "Görüş Mesafesi",
+        "info": "Su kalitesi, parçacıklar ve ışık miktarına bağlıdır. Açık suda 30-50m, resif yakınında 10-20m normal.",
+        "factors": ["Su sıcaklığı", "Plankton yoğunluğu", "Sediment", "Derinlik", "Mevsim"]
+      }
+    ]
+  },
+  "coldWaterDiving": {
+    "title": "Soğuk Su Dalışları",
+    "content": [
+      {
+        "topic": "Termal Koruma",
+        "info": "7mm wetsuit 15°C üzeri, kuru elbise 10°C altı önerilir. Baş, boyun, bilek koruması kritik.",
+        "temperatures": {
+          "20°C+": "3-5mm wetsuit",
+          "15-20°C": "5-7mm wetsuit",
+          "10-15°C": "7mm wetsuit + hood",
+          "10°C-": "Kuru elbise gerekli"
+        }
+      },
+      {
+        "topic": "Hipotermi Belirtileri",
+        "info": "Titreme, koordinasyon kaybı, konuşma bozukluğu, bilinç bulanıklığı. Dalışı hemen sonlandırın.",
+        "prevention": "Uygun kıyafet, sıcak içecekler, kısa dalış süreleri, buddy kontrolü"
+      },
+      {
+        "topic": "Ekipman Değişiklikleri",
+        "info": "Regülatör donması riski. Kuru elbise eğitimi gerekli. Ağırlık artışı hesaplanmalı.",
+        "tips": "Yavaş nefes alın, regülatörleri dondurmayın, kuru elbise kullanım eğitimi alın"
+      }
+    ]
+  },
+  "nightDiving": {
+    "title": "Gece Dalışı ve Ekipmanlar",
+    "content": [
+      {
+        "topic": "Işık Ekipmanları",
+        "info": "Ana fener (1000+ lümen), yedek fener (2 adet), işaret feneri. LED tercih edin, batarya ömrü kontrol edin.",
+        "equipment": {
+          "primaryLight": "Ana fener: 1000-3000 lümen",
+          "backupLights": "Yedek fenerler: 200-500 lümen × 2",
+          "signalLight": "İşaret feneri: yanıp sönen",
+          "batteries": "Ekstra batarya paketi"
+        }
+      },
+      {
+        "topic": "Navigasyon",
+        "info": "Pusula ve derinlik ölçer kritik. Referans noktaları belirleyin. Buddy ile sürekli temas halinde kalın.",
+        "techniques": "Doğal navigasyon, pusula azimutı, kick sayımı, referans noktaları"
+      },
+      {
+        "topic": "Gece Deniz Yaşamı",
+        "info": "Nocturnal türler aktiftir. Biyolüminesans plankton, ahtapot, yengeç türleri gözlemlenebilir.",
+        "species": ["Nocturnal balıklar", "Biyolüminesans plankton", "Ahtapot türleri", "Deniz yıldızları", "Gece avcıları"]
+      }
+    ]
+  },
+  "marineLife": {
+    "title": "Balık Türleri ve Deniz Canlıları Davranış Rehberi",
+    "content": [
+      {
+        "topic": "Resif Balıkları",
+        "info": "Papağan balıkları, melek balıkları, kelebek balıkları resif ekosisteminin temeli. Yaklaşırken yavaş ve sakin hareket edin.",
+        "species": {
+          "parrotfish": "Papağan Balığı: Mercanları temizler, renkli ve büyük",
+          "angelfish": "Melek Balığı: Çekingen, yavaş yaklaşım gerekir",
+          "butterflyfish": "Kelebek Balığı: Çiftler halinde, nazik yaklaşım",
+          "wrasse": "Lafes: Temizleyici balık, symbiosis ilişkisi"
+        }
+      },
+      {
+        "topic": "Büyük Pelagik Türler",
+        "info": "Köpekbalıkları, rays, barracuda. Sakin kalın, ani hareket yapmayın. Genellikle zararsızdır.",
+        "behavior": {
+          "sharks": "Köpekbalığı: Sakin yaklaşım, göz teması, yavaş hareket",
+          "rays": "Rays: Alttan yaklaşmayın, kuyruğa dikkat",
+          "barracuda": "Barracuda: Büyük gruplar oluşturur, genellikle zararsız",
+          "tuna": "Ton balığı: Hızlı yüzücü, açık suda"
+        }
+      },
+      {
+        "topic": "Tehlikeli Türler",
+        "info": "Deniz anası, aslan balığı, deniz yılanı, ahtapot türleri. Dokunmayın, uzaktan gözlemleyin.",
+        "dangers": {
+          "jellyfish": "Deniz Anası: Tentaküllerden uzak durun",
+          "lionfish": "Aslan Balığı: Zehirli dikenler, yaklaşmayın", 
+          "seasnake": "Deniz Yılanı: Son derece zehirli, kaçın",
+          "blueringedoctopus": "Mavi Halkalı Ahtapot: Ölümcül zehir"
+        }
+      },
+      {
+        "topic": "Fotoğraf Teknikleri",
+        "info": "Yavaş yaklaşım, doğal ışık kullanın, canlıları rahatsız etmeyin. Makro ve wide-angle teknikler.",
+        "tips": "Düşük güç flash, yaklaşım açısı, sabır, çevre koruması"
+      }
+    ]
+  }
+}

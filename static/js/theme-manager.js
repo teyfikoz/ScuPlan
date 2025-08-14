@@ -1,0 +1,177 @@
+/**
+ * Theme Management System for ScuPlan
+ * Handles light/dark theme switching with smooth transitions
+ */
+
+class ThemeManager {
+    constructor() {
+        this.currentTheme = localStorage.getItem('theme') || 'light';
+        this.initializeTheme();
+        this.createThemeToggle();
+    }
+
+    /**
+     * Initialize theme on page load
+     */
+    initializeTheme() {
+        document.documentElement.setAttribute('data-theme', this.currentTheme);
+        this.updateThemeIcon();
+    }
+
+    /**
+     * Create theme toggle button
+     */
+    createThemeToggle() {
+        // Remove existing toggle if present
+        const existingToggle = document.getElementById('themeToggle');
+        if (existingToggle) {
+            existingToggle.remove();
+        }
+
+        // Create new toggle button
+        const toggleButton = document.createElement('button');
+        toggleButton.id = 'themeToggle';
+        toggleButton.className = 'theme-toggle';
+        toggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+        toggleButton.title = 'Toggle Dark Mode';
+        
+        // Add event listener
+        toggleButton.addEventListener('click', () => {
+            this.toggleTheme();
+        });
+
+        // Add to body
+        document.body.appendChild(toggleButton);
+        
+        // Update icon based on current theme
+        this.updateThemeIcon();
+    }
+
+    /**
+     * Toggle between light and dark themes
+     */
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', this.currentTheme);
+        
+        // Add transition class
+        document.documentElement.style.transition = 'all 0.3s ease';
+        document.documentElement.setAttribute('data-theme', this.currentTheme);
+        
+        this.updateThemeIcon();
+        this.triggerThemeChange();
+
+        // Remove transition after animation
+        setTimeout(() => {
+            document.documentElement.style.transition = '';
+        }, 300);
+    }
+
+    /**
+     * Update theme toggle icon
+     */
+    updateThemeIcon() {
+        const toggleButton = document.getElementById('themeToggle');
+        if (toggleButton) {
+            const icon = toggleButton.querySelector('i');
+            if (icon) {
+                icon.className = this.currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+            toggleButton.title = this.currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        }
+    }
+
+    /**
+     * Trigger custom event when theme changes
+     */
+    triggerThemeChange() {
+        window.dispatchEvent(new CustomEvent('themeChanged', {
+            detail: { theme: this.currentTheme }
+        }));
+    }
+
+    /**
+     * Get current theme
+     */
+    getCurrentTheme() {
+        return this.currentTheme;
+    }
+
+    /**
+     * Set theme programmatically
+     */
+    setTheme(theme) {
+        if (['light', 'dark'].includes(theme)) {
+            this.currentTheme = theme;
+            localStorage.setItem('theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            this.updateThemeIcon();
+            this.triggerThemeChange();
+        }
+    }
+}
+
+// Enhanced Unit Toggle with better positioning and styling
+class EnhancedUnitsManager extends UnitsManager {
+    constructor() {
+        super();
+    }
+
+    /**
+     * Create enhanced unit toggle button
+     */
+    createToggle() {
+        // Remove existing toggle if present
+        const existingToggle = document.getElementById('unitToggleButton');
+        if (existingToggle) {
+            existingToggle.remove();
+        }
+
+        // Create new toggle button
+        const toggleButton = document.createElement('button');
+        toggleButton.id = 'unitToggleButton';
+        toggleButton.className = 'unit-toggle';
+        toggleButton.innerHTML = `<i class="fas fa-exchange-alt me-2"></i>${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}`;
+        toggleButton.title = 'Toggle Unit System';
+        
+        // Add event listener
+        toggleButton.addEventListener('click', () => {
+            const newSystem = this.currentSystem === 'metric' ? 'imperial' : 'metric';
+            this.setSystem(newSystem);
+            this.updateToggleText();
+        });
+
+        // Add to body
+        document.body.appendChild(toggleButton);
+    }
+
+    /**
+     * Update toggle button text
+     */
+    updateToggleText() {
+        const toggleButton = document.getElementById('unitToggleButton');
+        if (toggleButton) {
+            toggleButton.innerHTML = `<i class="fas fa-exchange-alt me-2"></i>${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}`;
+        }
+    }
+
+    /**
+     * Override setSystem to update button text
+     */
+    setSystem(system) {
+        super.setSystem(system);
+        this.updateToggleText();
+    }
+}
+
+// Initialize enhanced systems
+let themeManager;
+let enhancedUnitsManager;
+
+document.addEventListener('DOMContentLoaded', function() {
+    themeManager = new ThemeManager();
+    enhancedUnitsManager = new EnhancedUnitsManager();
+    
+    // Override global unitsManager with enhanced version
+    window.unitsManager = enhancedUnitsManager;
+});
