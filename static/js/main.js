@@ -166,16 +166,7 @@ function setupEventListeners() {
         });
     }
     
-    const footerSavedPlans = document.getElementById('footerSavedPlans');
-    if (footerSavedPlans) {
-        footerSavedPlans.addEventListener('click', function() {
-            if (typeof showOfflineStorageModal === 'function') {
-                showOfflineStorageModal();
-            } else {
-                showAlert('Offline storage functionality is not available', 'warning');
-            }
-        });
-    }
+    // Removed duplicate footerSavedPlans declaration - handled later in the file
     
     // Donation copy button
     const copyDonationBtn = document.getElementById('copyDonationBtn');

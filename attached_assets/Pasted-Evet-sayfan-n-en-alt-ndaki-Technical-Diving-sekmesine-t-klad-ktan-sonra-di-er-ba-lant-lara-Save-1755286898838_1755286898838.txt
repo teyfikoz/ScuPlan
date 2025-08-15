@@ -1,0 +1,73 @@
+Evet, sayfanın en altındaki “Technical Diving” sekmesine tıkladıktan sonra diğer bağlantılara (“Saved Plans”, “Offline Usage Guide”, “Export & Print Guide”) tıklayınca yine “Technical Diving” sayfasının başına yönlendirme oluyorsa, bu anchor-link navigasyonunun hatalı yapılandırıldığı veya JavaScript olay dinleyicilerinin çakıştığı anlamına gelir. Ayrıca verdiğiniz hata mesajları da JavaScript dosyasındaki sorunlara işaret ediyor.
+
+Aşağıda bu sorunu nasıl çözebileceğinizi detaylıca açıklıyorum:
+
+⸻
+
+🔧 1. Hata: Identifier 'footerSavedPlans' has already been declared
+
+Bu hata, JavaScript içinde aynı değişkenin birden fazla kez let ya da const ile tanımlandığını gösterir.
+
+✅ Çözüm:
+
+technical.js dosyasının ilgili kısmında, aşağıdaki gibi duplicate tanımlamayı kaldırın veya sadece bir kez tanımlayın:
+
+// Hatalı (iki kez tanımlanmış)
+let footerSavedPlans = document.getElementById('footerSavedPlans');
+...
+let footerSavedPlans = document.getElementById('footerSavedPlans'); // bu satırı kaldırın
+
+
+⸻
+
+🔧 2. Hata: calculateBtn is not defined
+
+Bu hata, calculateBtn adında bir değişkeni kullanmaya çalıştığınızda henüz tanımlı olmamasından kaynaklanır.
+
+✅ Çözüm:
+
+Dosyanızda calculateBtn şu şekilde tanımlı olmalı:
+
+const calculateBtn = document.getElementById('calculateBtn');
+
+Eğer calculateBtn ID’sine sahip bir HTML elementi yoksa, bu tanım da null döndürür. Önce HTML’inizde bu ID’ye sahip bir button ya da input olduğundan emin olun.
+
+⸻
+
+🧭 3. Anchor navigasyon sorunu (Yönlendirme hatası)
+
+Sayfa içi navigasyon linkleri düzgün çalışmıyorsa, aşağıdaki nedenlerden biri olabilir:
+
+💡 Olası Nedenler:
+	•	HTML’deki <a href="#something"> linkleri farklı sekmelere aynı id’yi kullanarak yönleniyor olabilir.
+	•	Sayfa yüklendiğinde, JavaScript belirli bir section’ı otomatik olarak scrollIntoView() yapıyor olabilir.
+	•	SPA (Single Page App) yapısında JavaScript yönlendirmeleri, kullanıcı tıklamalarına override yapıyor olabilir.
+
+✅ Çözüm Önerisi:
+	1.	HTML kısmında her bağlantının id’si benzersiz olmalı. Örneğin:
+
+<a href="#footerSavedPlans">Saved Plans</a>
+...
+<section id="footerSavedPlans">Saved Plans Section</section>
+
+	2.	Eğer SPA tarzı bir uygulama kullanıyorsanız, onclick handler ile doğrudan yönlendirme yapmayı deneyin:
+
+<a href="#" onclick="document.getElementById('footerSavedPlans').scrollIntoView({behavior: 'smooth'})">Saved Plans</a>
+
+Bu sayede hem çakışma önlenir hem de yumuşak bir geçiş sağlanır.
+
+⸻
+
+🔄 Tavsiye: JavaScript’i Optimize Edin
+
+Tüm technical.js dosyasındaki aşağıdaki yapıyı gözden geçirin:
+	•	DOMContentLoaded içinde tüm event listener’ları tek tek tanımlayın.
+	•	id çakışmalarına karşı aynı isimde let / const tanımlamalarını sadece bir kez yapın.
+	•	Navigasyon linkleri için ayrı fonksiyonlar oluşturun. Örn:
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+

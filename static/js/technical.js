@@ -534,25 +534,28 @@ function initMultiLevelCalculator() {
         });
     }
     
-    // Add new segment
-    addSegmentBtn.addEventListener('click', function() {
-        const segmentsTable = document.getElementById('multiLevelSegmentsTable').querySelector('tbody');
-        const newRow = segmentsTable.querySelector('tr.multi-level-segment').cloneNode(true);
-        
-        // Clear values
-        newRow.querySelector('.depth').value = 30;
-        newRow.querySelector('.time').value = 15;
-        
-        // Enable remove button
-        const removeBtn = newRow.querySelector('.remove-segment');
-        removeBtn.disabled = false;
-        removeBtn.addEventListener('click', function() {
-            segmentsTable.removeChild(newRow);
+    // Add new segment - make sure element exists
+    const addSegmentBtn = document.getElementById('addSegmentBtn');
+    if (addSegmentBtn) {
+        addSegmentBtn.addEventListener('click', function() {
+            const segmentsTable = document.getElementById('multiLevelSegmentsTable').querySelector('tbody');
+            const newRow = segmentsTable.querySelector('tr.multi-level-segment').cloneNode(true);
+            
+            // Clear values
+            newRow.querySelector('.depth').value = 30;
+            newRow.querySelector('.time').value = 15;
+            
+            // Enable remove button
+            const removeBtn = newRow.querySelector('.remove-segment');
+            removeBtn.disabled = false;
+            removeBtn.addEventListener('click', function() {
+                segmentsTable.removeChild(newRow);
+            });
+            
+            segmentsTable.appendChild(newRow);
+            updateSegmentGasSelects();
         });
-        
-        segmentsTable.appendChild(newRow);
-        updateSegmentGasSelects();
-    });
+    }
     
     // Helper function to update gas numbers
     function updateGasNumbers() {
@@ -603,7 +606,9 @@ function initMultiLevelCalculator() {
     });
     
     // Calculate Multi-Level Profile
-    calculateBtn.addEventListener('click', function() {
+    const calculateBtn = document.getElementById('calculateMultiLevelBtn');
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', function() {
         // Collect gases data
         const gases = [];
         document.querySelectorAll('.multi-level-gas').forEach(row => {
