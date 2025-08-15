@@ -197,20 +197,30 @@ function setupEventListeners() {
         });
     }
     
-    // Setup footer resource links
+    // Setup footer resource links - ensure they work properly
     const offlineGuideLink = document.getElementById('offlineGuideLink');
     if (offlineGuideLink) {
+        // Remove any existing event listeners
+        offlineGuideLink.removeEventListener('click', showOfflineGuide);
         offlineGuideLink.addEventListener('click', function(e) {
+            console.log('Offline Guide Link clicked');
             e.preventDefault();
+            e.stopImmediatePropagation();
             showOfflineGuide(e);
+            return false;
         });
     }
     
     const exportGuideLink = document.getElementById('exportGuideLink');
     if (exportGuideLink) {
+        // Remove any existing event listeners
+        exportGuideLink.removeEventListener('click', showExportGuide);
         exportGuideLink.addEventListener('click', function(e) {
+            console.log('Export Guide Link clicked');
             e.preventDefault();
+            e.stopImmediatePropagation();
             showExportGuide(e);
+            return false;
         });
     }
     
@@ -1300,14 +1310,20 @@ function loadPreDiveChecklist() {
  * Show information about offline functionality
  */
 function showOfflineGuide(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    console.log('showOfflineGuide called'); // Debug log
     
     // Remove any existing modal first
     const existingModal = document.getElementById('offlineGuideModal');
     if (existingModal) {
         const bsModal = bootstrap.Modal.getInstance(existingModal);
-        if (bsModal) bsModal.dispose();
+        if (bsModal) {
+            bsModal.dispose();
+        }
         existingModal.remove();
     }
     
@@ -1356,19 +1372,28 @@ function showOfflineGuide(e) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
     const modalElement = document.getElementById('offlineGuideModal');
-    const modal = new bootstrap.Modal(modalElement, {
-        backdrop: true,
-        keyboard: true,
-        focus: true
-    });
     
-    // Clean up after modal is hidden
-    modalElement.addEventListener('hidden.bs.modal', function(event) {
-        modal.dispose();
-        modalElement.remove();
-    }, { once: true });
-    
-    modal.show();
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        
+        // Clean up after modal is hidden
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            try {
+                modal.dispose();
+                modalElement.remove();
+            } catch (err) {
+                console.error('Error cleaning up modal:', err);
+            }
+        }, { once: true });
+        
+        modal.show();
+        console.log('Offline Guide modal shown'); // Debug log
+    }, 100);
 }
 
 /**
@@ -2203,14 +2228,20 @@ function printPreDiveChecklist() {
  * Show information about export and print functionality
  */
 function showExportGuide(e) {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    console.log('showExportGuide called'); // Debug log
     
     // Remove any existing modal first
     const existingModal = document.getElementById('exportGuideModal');
     if (existingModal) {
         const bsModal = bootstrap.Modal.getInstance(existingModal);
-        if (bsModal) bsModal.dispose();
+        if (bsModal) {
+            bsModal.dispose();
+        }
         existingModal.remove();
     }
     
@@ -2266,19 +2297,28 @@ function showExportGuide(e) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
     const modalElement = document.getElementById('exportGuideModal');
-    const modal = new bootstrap.Modal(modalElement, {
-        backdrop: true,
-        keyboard: true,
-        focus: true
-    });
     
-    // Clean up after modal is hidden
-    modalElement.addEventListener('hidden.bs.modal', function(event) {
-        modal.dispose();
-        modalElement.remove();
-    }, { once: true });
-    
-    modal.show();
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        
+        // Clean up after modal is hidden
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            try {
+                modal.dispose();
+                modalElement.remove();
+            } catch (err) {
+                console.error('Error cleaning up modal:', err);
+            }
+        }, { once: true });
+        
+        modal.show();
+        console.log('Export Guide modal shown'); // Debug log
+    }, 100);
 }
 
 /**
