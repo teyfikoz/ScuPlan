@@ -537,9 +537,9 @@ function initMultiLevelCalculator() {
     }
 
     // Add new segment functionality for multi-level (avoid duplicate declaration)
-    const addSegmentBtnMulti = document.getElementById('addSegmentBtn');
-    if (addSegmentBtnMulti) {
-        addSegmentBtnMulti.addEventListener('click', function() {
+    const addSegmentBtn = document.getElementById('addSegmentBtn');
+    if (addSegmentBtn) {
+        addSegmentBtn.addEventListener('click', function() {
             const segmentsTable = document.getElementById('multiLevelSegmentsTable').querySelector('tbody');
             const newRow = segmentsTable.querySelector('tr.multi-level-segment').cloneNode(true);
 
