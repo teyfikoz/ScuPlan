@@ -57,6 +57,27 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
         segmentColors.push(phaseColors[phase] || 'rgba(0, 123, 255, 0.5)');
     }
     
+    // Add decompression stop annotations if present
+    const annotations = {};
+    if (profile.decoStops && profile.decoStops.length > 0) {
+        profile.decoStops.forEach((stop, index) => {
+            annotations[`deco${index}`] = {
+                type: 'line',
+                mode: 'horizontal',
+                scaleID: 'y',
+                value: stop.depth,
+                borderColor: 'rgba(220, 53, 69, 0.8)',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                label: {
+                    enabled: true,
+                    content: `Deco Stop: ${stop.depth}m for ${stop.time}min`,
+                    position: 'start'
+                }
+            };
+        });
+    }
+    
     // Create the chart
     new Chart(canvas, {
         type: 'line',
@@ -71,6 +92,11 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                 pointBackgroundColor: function(context) {
                     const index = context.dataIndex;
                     const phase = phases[index];
+                    
+                    // Special colors for deco stops
+                    if (phase === 'deco_stop') {
+                        return 'rgba(220, 53, 69, 1)';
+                    }
                     
                     // Special colors for certain points
                     if (phase === 'deco_stop') {

@@ -42,21 +42,32 @@ class DiveUnitConverter {
                         </h6>
                     </div>
                     <div class="card-body">
-                        <!-- System Toggle -->
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <div class="btn-group w-100" role="group">
-                                    <input type="radio" class="btn-check" name="systemToggle" id="metricToggle" ${this.currentSystem === 'metric' ? 'checked' : ''}>
-                                    <label class="btn btn-outline-primary" for="metricToggle">
-                                        <i class="fas fa-ruler me-1"></i>Metric
-                                    </label>
-                                    
-                                    <input type="radio" class="btn-check" name="systemToggle" id="imperialToggle" ${this.currentSystem === 'imperial' ? 'checked' : ''}>
-                                    <label class="btn btn-outline-primary" for="imperialToggle">
-                                        <i class="fas fa-ruler-horizontal me-1"></i>Imperial
-                                    </label>
+                        <!-- Volume Conversion (NEW) -->
+                        <div class="conversion-section mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-cube me-1"></i>Volume
+                                <span class="info-tooltip" data-bs-toggle="tooltip" title="Tank volume or gas consumption">
+                                    <i class="fas fa-info-circle text-muted"></i>
+                                </span>
+                            </label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="volumeInput" step="0.1" placeholder="Enter volume">
+                                        <span class="input-group-text" id="volumeInputUnit">L</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text">=</span>
+                                        <input type="text" class="form-control" id="volumeOutput" readonly>
+                                        <span class="input-group-text" id="volumeOutputUnit">cu ft</span>
+                                    </div>
                                 </div>
                             </div>
+                            <small class="text-muted" id="volumeExplanation">
+                                1 L = 0.0353 cu ft. Standard tank: 12L/0.42 cu ft.
+                            </small>
                         </div>
 
                         <!-- Depth Conversion -->
@@ -153,14 +164,6 @@ class DiveUnitConverter {
      * Attach event listeners
      */
     attachEventListeners() {
-        // System toggle
-        document.querySelectorAll('input[name="systemToggle"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                this.currentSystem = e.target.id === 'metricToggle' ? 'metric' : 'imperial';
-                this.updateSystem();
-            });
-        });
-
         // Input field listeners
         document.getElementById('depthInput').addEventListener('input', (e) => {
             this.convertDepth(e.target.value);
@@ -168,6 +171,10 @@ class DiveUnitConverter {
 
         document.getElementById('pressureInput').addEventListener('input', (e) => {
             this.convertPressure(e.target.value);
+        });
+
+        document.getElementById('volumeInput').addEventListener('input', (e) => {
+            this.convertVolume(e.target.value);
         });
 
         // Quick conversion buttons
@@ -182,6 +189,9 @@ class DiveUnitConverter {
                 } else if (type === 'pressure') {
                     document.getElementById('pressureInput').value = value;
                     this.convertPressure(value);
+                } else if (type === 'volume') {
+                    document.getElementById('volumeInput').value = value;
+                    this.convertVolume(value);
                 }
             });
         });
@@ -273,6 +283,21 @@ class DiveUnitConverter {
     }
 
     /**
+     * Convert volume values
+     */
+    convertVolume(value) {
+        if (!value || isNaN(value)) {
+            document.getElementById('volumeOutput').value = '';
+            return;
+        }
+
+        const input = parseFloat(value);
+        const output = (input * 0.0353147).toFixed(4); // L to cu ft
+
+        document.getElementById('volumeOutput').value = output;
+    }
+
+    /**
      * Copy conversion results to clipboard
      */
     copyResults() {
@@ -294,6 +319,12 @@ class DiveUnitConverter {
         
         if (pressureInput && pressureOutput) {
             results += `Pressure: ${pressureInput}${pressureInputUnit} = ${pressureOutput}${pressureOutputUnit}\n`;
+        }
+
+        const volumeInput = document.getElementById('volumeInput').value;
+        const volumeOutput = document.getElementById('volumeOutput').value;
+        if (volumeInput && volumeOutput) {
+            results += `Volume: ${volumeInput}L = ${volumeOutput} cu ft\n`;
         }
         
         if (results === 'Dive Unit Conversions:\n') {
@@ -322,6 +353,8 @@ class DiveUnitConverter {
         document.getElementById('depthOutput').value = '';
         document.getElementById('pressureInput').value = '';
         document.getElementById('pressureOutput').value = '';
+        document.getElementById('volumeInput').value = '';
+        document.getElementById('volumeOutput').value = '';
     }
 
     /**

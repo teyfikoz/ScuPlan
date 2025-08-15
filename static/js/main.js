@@ -561,21 +561,27 @@ function displayDivePlanResults(data) {
     const decoStopsList = document.getElementById('decoStopsList');
     
     if (decoStopsContainer && decoStopsList) {
+        console.log('Checking decompression stops:', data.profile.decoStops);
+        
         if (data.profile.decoStops && data.profile.decoStops.length > 0) {
+            console.log('Displaying decompression stops:', data.profile.decoStops);
             decoStopsContainer.style.display = 'block';
             decoStopsList.innerHTML = '';
             
             data.profile.decoStops.forEach(stop => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${stop.depth.toFixed(1)}</td>
-                    <td>${stop.time.toFixed(0)}</td>
+                    <td>${stop.depth.toFixed(1)}m</td>
+                    <td>${stop.time.toFixed(0)} min</td>
                 `;
                 decoStopsList.appendChild(row);
             });
         } else {
+            console.log('No decompression stops to display');
             decoStopsContainer.style.display = 'none';
         }
+    } else {
+        console.error('Decompression stops containers not found');
     }
     
     // Draw the dive profile chart

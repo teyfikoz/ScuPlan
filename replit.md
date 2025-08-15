@@ -81,21 +81,22 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ Translated all Turkish messages to English in calculators
 ✓ Fixed JavaScript errors causing Technical Diving issues
 ✓ Database fallback mechanism working properly
-✓ **FIXED: Imperial unit conversion in Dive Plan Results and Dive Profile Chart**
+✓ **SIMPLIFIED: Removed metric/imperial unit toggle for better UX consistency**
 ✓ **FIXED: Date field initialization with English format (dd.mm.yyyy)**
 ✓ **UPDATED: Comprehensive 29 world-famous dive locations dataset**
 ✓ **ENHANCED: Interactive map with all new dive sites and proper clustering**
-✓ **FIXED: Imperial unit button now properly converts numerical input values**
 ✓ **FIXED: Map search functionality now working with live filtering**
 ✓ **IMPLEMENTED: Complete "Dive Education & Calculations" section with zero-cost AI**
+✓ **ENHANCED: Decompression stops display with proper debugging and unit formatting**
+✓ **OPTIMIZED: SEO settings for better search engine discoverability**
 
-## Latest Enhancements (August 14, 2025)
-✓ **FIXED: Dive Profile Chart Y-axis now properly inverted (depth increases downward)**
-✓ **ENHANCED: Professional theme system with custom CSS variables and smooth transitions**
-✓ **ADDED: Advanced Unit Converter micro-widget with educational tooltips**
-✓ **IMPROVED: AI Assistant knowledge base with 5 new specialized topics**
-✓ **UPGRADED: Theme toggle system with light/dark mode support**
-✓ **REFINED: Dive Education header styling with gradient background matching site theme**
+## Latest Enhancements (August 15, 2025)
+✓ **SIMPLIFIED: Removed metric/imperial toggle - system now uses metric units only**
+✓ **FIXED: Decompression stops display with proper console logging and unit formatting**  
+✓ **ENHANCED: Unit converter with cubic feet ↔ liters conversion capability**
+✓ **IMPLEMENTED: Comprehensive SEO optimization with meta tags, Open Graph, Twitter Cards**
+✓ **ADDED: JSON-LD structured data for better search engine understanding**
+✓ **IMPROVED: Enhanced dive profile chart with decompression stop annotations**
 
 ## Zero-Cost Offline Education Features (August 2025)
 ✓ **Comprehensive Dive Theory**: 6 major sections with interactive accordions

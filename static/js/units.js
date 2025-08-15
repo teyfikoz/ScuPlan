@@ -11,42 +11,21 @@ class UnitsManager {
     }
 
     /**
-     * Initialize the unit system toggle in the UI
+     * Initialize the unit system (METRIC ONLY)
      */
     initializeToggle() {
-        // Create toggle element if it doesn't exist
-        if (!document.getElementById('unitToggle')) {
-            this.createToggle();
-        }
-        
-        // Set initial state
-        const toggle = document.getElementById('unitToggle');
-        if (toggle) {
-            toggle.checked = this.currentSystem === 'imperial';
-            toggle.addEventListener('change', (e) => {
-                this.setSystem(e.target.checked ? 'imperial' : 'metric');
-            });
-        }
+        // Force metric system only - no toggle needed
+        this.currentSystem = 'metric';
+        localStorage.setItem('unitSystem', 'metric');
+        return; // Skip toggle creation
     }
 
     /**
-     * Create the unit toggle UI element
+     * Create the unit toggle UI element (DISABLED - METRIC ONLY)
      */
     createToggle() {
-        const navbar = document.querySelector('.navbar-nav');
-        if (navbar) {
-            const toggleContainer = document.createElement('li');
-            toggleContainer.className = 'nav-item d-flex align-items-center ms-3';
-            toggleContainer.innerHTML = `
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="unitToggle">
-                    <label class="form-check-label text-light small" for="unitToggle">
-                        <span id="unitLabel">${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}</span>
-                    </label>
-                </div>
-            `;
-            navbar.appendChild(toggleContainer);
-        }
+        // No toggle creation - metric system only
+        return;
     }
 
     /**
