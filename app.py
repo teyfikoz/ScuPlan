@@ -42,7 +42,7 @@ with app.app_context():
         # Import models within the app context
         from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
         db.create_all()
-        
+
         # Create default checklists if they don't exist
         default_checklists = [
             {"name": "Pre-Dive Checklist", "type": "pre-dive", "items": [
@@ -57,7 +57,7 @@ with app.app_context():
                 "First aid if needed", "Controlled ascent"
             ]}
         ]
-        
+
         if Checklist.query.count() == 0:
             for checklist_data in default_checklists:
                 checklist = Checklist(
@@ -67,7 +67,7 @@ with app.app_context():
                 )
                 db.session.add(checklist)
                 db.session.flush()  # Get the checklist ID
-                
+
                 for i, item_text in enumerate(checklist_data["items"]):
                     item = ChecklistItem(
                         checklist_id=checklist.id,
@@ -75,10 +75,10 @@ with app.app_context():
                         order=i+1
                     )
                     db.session.add(item)
-            
+
             db.session.commit()
             logging.debug("Default checklists created")
-            
+
     except Exception as e:
         app.logger.error(f"Database initialization error: {e}")
         db_available = False
@@ -131,20 +131,20 @@ def calculate_plan():
     try:
         logger.debug("Received dive plan calculation request")
         data = request.get_json()
-        
+
         if not data:
             return jsonify({'error': 'No data provided'}), 400
-        
+
         # Get and validate parameters
         try:
             depth = float(data.get('depth', 0))
             bottom_time = float(data.get('bottomTime', 0))
-            
+
             if depth <= 0 or bottom_time <= 0:
                 raise ValueError("Depth and bottom time must be positive numbers")
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
-        
+
         # Gas data
         tanks_data = data.get('tanks', [])
         gas_data = None
@@ -155,14 +155,14 @@ def calculate_plan():
                 'o2_percentage': float(primary_tank.get('o2', primary_tank.get('o2_percentage', 21.0))),
                 'he_percentage': float(primary_tank.get('he', primary_tank.get('he_percentage', 0.0)))
             }
-        
+
         # Generate dive profile
         profile_data = generate_dive_profile(depth, bottom_time, gas_data)
-        
+
         # Process date and time
         dive_date = data.get('diveDate', '')
         dive_time = data.get('diveTime', '')
-        
+
         # Use today's date if empty
         if not dive_date:
             formatted_date = datetime.now().date()
@@ -172,7 +172,7 @@ def calculate_plan():
             except ValueError:
                 # Use today's date if invalid format
                 formatted_date = datetime.now().date()
-        
+
         # Response data
         dive_plan = {
             'depth': depth,
@@ -186,7 +186,7 @@ def calculate_plan():
             'buddies': data.get('buddies', []),
             'totalDiveTime': profile_data['totalTime']
         }
-        
+
         # Save to database (optional) - only if database is available
         if data.get('save', True) and db_available:  # Default is to save
             try:
@@ -201,12 +201,12 @@ def calculate_plan():
                     total_dive_time=profile_data['totalTime'],
                     share_token=secrets.token_urlsafe(16)  # Unique token for sharing
                 )
-                
+
                 # Save decompression levels
                 if profile_data['decoStops']:
                     db_dive_plan.deco_levels = ','.join(str(stop['depth']) for stop in profile_data['decoStops'])
                     db_dive_plan.deco_times = ','.join(str(stop['time']) for stop in profile_data['decoStops'])
-                
+
                 # Save tanks
                 for tank_data in tanks_data:
                     tank = Tank(
@@ -217,7 +217,7 @@ def calculate_plan():
                         he_percentage=float(tank_data.get('he', 0.0))
                     )
                     db_dive_plan.tanks.append(tank)
-                
+
                 # Save buddies
                 for buddy_data in data.get('buddies', []):
                     buddy = Buddy(
@@ -227,10 +227,10 @@ def calculate_plan():
                         specialty=buddy_data.get('specialty', 'none')
                     )
                     db_dive_plan.buddies.append(buddy)
-                
+
                 db.session.add(db_dive_plan)
                 db.session.commit()
-                
+
                 # Add saved plan ID and share token
                 dive_plan['id'] = db_dive_plan.id
                 dive_plan['shareToken'] = db_dive_plan.share_token
@@ -243,7 +243,7 @@ def calculate_plan():
             dive_plan['saveError'] = 'Database is currently unavailable, plan could not be saved'
             # Generate a temporary token for the session
             dive_plan['shareToken'] = f"temp-{secrets.token_urlsafe(16)}"
-        
+
         return jsonify(dive_plan)
     except Exception as e:
         logger.error(f"Error calculating dive plan: {str(e)}")
@@ -255,7 +255,7 @@ def get_plan(token):
     """Get dive plan by token"""
     try:
         logger.debug(f"Attempting to load dive plan with token: {token}")
-        
+
         # Return error if database is not available
         if not db_available:
             logger.warning("Database is unavailable - cannot retrieve plan")
@@ -263,7 +263,7 @@ def get_plan(token):
                 'error': 'Database unavailable',
                 'message': 'The database service is currently unavailable. Please try again later.'
             }), 503
-        
+
         # First check by ID
         plan = None
         try:
@@ -282,7 +282,7 @@ def get_plan(token):
                 logger.debug(f"Plan found by token")
             else:
                 logger.debug(f"No plan found with token: {token}")
-        
+
         if not plan:
             # Handle temporary tokens (for database-less mode)
             if token.startswith("temp-"):
@@ -291,17 +291,17 @@ def get_plan(token):
                     'error': 'Temporary plan expired',
                     'message': 'This plan was temporary and cannot be retrieved. Please create a new plan.'
                 }), 404
-                
+
             logger.warning(f"Dive plan not found for token: {token}")
             return jsonify({
                 'error': 'Dive plan not found',
                 'message': 'The plan may have been deleted or the link is invalid.'
             }), 404
-        
+
         # Convert plan data to JSON
         logger.debug(f"Converting plan #{plan.id} to JSON")
         plan_data = plan.to_dict()
-        
+
         # Regenerate dive profile
         logger.debug(f"Generating dive profile for plan")
         gas_info = None
@@ -313,16 +313,16 @@ def get_plan(token):
                 'he_percentage': primary_tank.he_percentage
             }
             logger.debug(f"Using gas data from tank: {gas_info}")
-        
+
         profile_data = generate_dive_profile(
             plan.depth, 
             plan.bottom_time,
             gas_info
         )
-        
+
         plan_data['profile'] = profile_data
         logger.debug(f"Successfully prepared plan data")
-        
+
         return jsonify(plan_data)
     except Exception as e:
         logger.error(f"Error retrieving dive plan: {str(e)}")
@@ -387,23 +387,23 @@ def get_checklists():
                     ]
                 }
             ]
-            
+
             # If type filter is provided, filter the defaults
             checklist_type = request.args.get('type')
             if checklist_type:
                 filtered_checklists = [c for c in default_checklists if c['checklist_type'] == checklist_type]
                 return jsonify(filtered_checklists)
-            
+
             return jsonify(default_checklists)
-        
+
         # Normal database flow when database is available
         checklist_type = request.args.get('type')
-        
+
         if checklist_type:
             checklists = Checklist.query.filter_by(checklist_type=checklist_type).all()
         else:
             checklists = Checklist.query.all()
-            
+
         return jsonify([checklist.to_dict() for checklist in checklists])
     except Exception as e:
         logger.error(f"Error retrieving checklists: {str(e)}")
@@ -420,21 +420,21 @@ def create_checklist():
                 'error': 'Database unavailable',
                 'message': 'Cannot create custom checklists while database is unavailable.'
             }), 503
-            
+
         data = request.get_json()
-        
+
         if not data or 'name' not in data:
             return jsonify({'error': 'Checklist name is required'}), 400
-            
+
         checklist = Checklist(
             name=data['name'],
             checklist_type=data.get('type', 'pre-dive'),
             is_default=False
         )
-        
+
         db.session.add(checklist)
         db.session.flush()  # Get the checklist ID
-        
+
         # Add items if provided
         for i, item_text in enumerate(data.get('items', [])):
             item = ChecklistItem(
@@ -443,9 +443,9 @@ def create_checklist():
                 order=i+1
             )
             db.session.add(item)
-            
+
         db.session.commit()
-        
+
         return jsonify(checklist.to_dict()), 201
     except Exception as e:
         if db_available:
@@ -459,61 +459,61 @@ def calculate_deco_stops(depth, bottom_time, gas_data=None):
     # 1. Veri doğrulama ve dönüştürme
     depth = float(depth)
     bottom_time = float(bottom_time)
-    
+
     # Gas verilerini işleme
     if gas_data is None:
         gas_data = {'gas_type': 'air', 'o2_percentage': 21, 'he_percentage': 0}
-    
+
     # Gas yüzdelerini normalize et (eğer 0-100 aralığında verildiyse)
     o2_percent = gas_data.get('o2_percentage', 21)
     he_percent = gas_data.get('he_percentage', 0)
-    
+
     if isinstance(o2_percent, str):
         o2_percent = float(o2_percent)
     if isinstance(he_percent, str):
         he_percent = float(he_percent)
-    
+
     if o2_percent > 1:
         o2_percent = o2_percent / 100
     if he_percent > 1:
         he_percent = he_percent / 100
-    
+
     # 2. Dekompresyon ihtiyacını belirle (basit model)
     # Bu basit bir modeldir, gerçek dalış planlama için daha gelişmiş modeller kullanılmalıdır
     is_deco_needed = (depth > 18 and bottom_time > 35) or (depth > 30 and bottom_time > 20)
-    
+
     if not is_deco_needed:
         return []
-    
+
     # 3. Dekompresyon duraklarını hesapla (basit model)
     stops = []
-    
+
     # Hesaplama faktörleri (derinlik ve zaman bazlı)
     derinlik_faktoru = depth / 10
     zaman_faktoru = bottom_time / 20
-    
+
     # Duraklar için temel hesaplama
     if depth > 30:
         # 6m durak
         altı_metre_durak = math.ceil(zaman_faktoru * derinlik_faktoru * 1.5)
         if altı_metre_durak > 1:
             stops.append({'depth': 6, 'time': altı_metre_durak})
-        
+
         # 9m durak (daha derin dalışlar için)
         if depth > 40:
             dokuz_metre_durak = math.ceil(zaman_faktoru * derinlik_faktoru * 0.8)
             if dokuz_metre_durak > 1:
                 stops.append({'depth': 9, 'time': dokuz_metre_durak})
-    
+
     # 3m güvenlik durağı (her zaman ekle)
     uc_metre_durak = math.ceil(zaman_faktoru * derinlik_faktoru * 2) 
     if uc_metre_durak < 3:  # Minimum 3 dakika
         uc_metre_durak = 3
     stops.append({'depth': 3, 'time': uc_metre_durak})
-    
+
     # Derinliğe göre sırala (en derinden yüzeye)
     stops.sort(key=lambda x: x['depth'], reverse=True)
-    
+
     return stops
 
 # Dalış profili oluşturma fonksiyonu
@@ -522,25 +522,25 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
     # 1. Sabit parametreler
     descent_rate = 18  # m/dak (iniş hızı)
     ascent_rate = 9    # m/dak (çıkış hızı)
-    
+
     # 2. İniş ve çıkış sürelerini hesapla
     descent_time = depth / descent_rate
-    
+
     # 3. Dekompresyon duraklarını hesapla
     deco_stops = calculate_deco_stops(depth, bottom_time, gas_data)
-    
+
     # 4. Normal çıkış süresini hesapla (dekompresyonsuz)
     normal_ascent_time = depth / ascent_rate
-    
+
     # 5. Toplam çıkış süresini hesapla (dekompresyonlu)
     if deco_stops:
         # İlk durağa kadar iniş
         ascent_time = (depth - deco_stops[0]['depth']) / ascent_rate
-        
+
         # Duraklar arası ve durak süreleri
         for i, stop in enumerate(deco_stops):
             ascent_time += stop['time']  # Durakta geçen süre
-            
+
             # Sonraki durağa geçiş süresi (son durak hariç)
             if i < len(deco_stops) - 1:
                 depth_diff = stop['depth'] - deco_stops[i+1]['depth']
@@ -550,13 +550,13 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
                 ascent_time += stop['depth'] / ascent_rate
     else:
         ascent_time = normal_ascent_time
-    
+
     # 6. Toplam dalış süresini hesapla
     total_time = descent_time + bottom_time + ascent_time
-    
+
     # 7. Profil noktalarını oluştur
     profile_points = []
-    
+
     # İniş profili
     time_elapsed = 0
     for t in range(0, int(descent_time * 60), 30):  # 30 saniyelik adımlar
@@ -568,7 +568,7 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
             'depth': depth_at_time,
             'phase': 'descent'
         })
-    
+
     # Dip zamanı
     time_elapsed = descent_time
     profile_points.append({
@@ -576,47 +576,47 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
         'depth': depth,
         'phase': 'bottom_start'
     })
-    
+
     time_elapsed += bottom_time
     profile_points.append({
         'time': time_elapsed,
         'depth': depth,
         'phase': 'bottom_end'
     })
-    
+
     # Çıkış profili (dekompresyonlu veya dekompresyonsuz)
     if deco_stops:
         current_depth = depth
-        
+
         # İlk durağa çıkış
         next_depth = deco_stops[0]['depth']
         ascent_time_to_stop = (current_depth - next_depth) / ascent_rate
         time_at_next_stop = time_elapsed + ascent_time_to_stop
-        
+
         profile_points.append({
             'time': time_at_next_stop,
             'depth': next_depth,
             'phase': 'deco_start'
         })
-        
+
         # Duraklar
         for i, stop in enumerate(deco_stops):
             # Durağın sonu
             time_elapsed = time_at_next_stop + stop['time']
-            
+
             profile_points.append({
                 'time': time_elapsed,
                 'depth': stop['depth'],
                 'phase': 'deco_stop'
             })
-            
+
             # Sonraki durağa geçiş (son durak hariç)
             if i < len(deco_stops) - 1:
                 current_depth = stop['depth']
                 next_depth = deco_stops[i+1]['depth']
                 ascent_time_to_stop = (current_depth - next_depth) / ascent_rate
                 time_at_next_stop = time_elapsed + ascent_time_to_stop
-                
+
                 profile_points.append({
                     'time': time_at_next_stop,
                     'depth': next_depth,
@@ -627,7 +627,7 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
                 current_depth = stop['depth']
                 ascent_time_to_stop = current_depth / ascent_rate
                 time_elapsed += ascent_time_to_stop
-                
+
                 profile_points.append({
                     'time': time_elapsed,
                     'depth': 0,
@@ -636,13 +636,13 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
     else:
         # Dekompresyonsuz çıkış
         time_elapsed += normal_ascent_time
-        
+
         profile_points.append({
             'time': time_elapsed,
             'depth': 0,
             'phase': 'surface'
         })
-    
+
     # 8. Sonuç
     return {
         'points': profile_points,
@@ -654,198 +654,28 @@ def generate_dive_profile(depth, bottom_time, gas_data=None):
     }
 
 # Gas tüketim hesaplaması
-@app.route('/api/gas_consumption', methods=['POST'])
-# API: Teknik dalış hesaplamaları
-@app.route('/api/tech/mod', methods=['POST'])
-def calculate_mod_api():
-    """Maximum Operating Depth (MOD) hesaplama API'si"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        o2_percentage = float(data.get('o2', 21.0))
-        max_po2 = float(data.get('maxPo2', 1.4))
-        
-        # Yüzde olarak verildiyse normalize et
-        if o2_percentage > 1:
-            o2_percentage = o2_percentage / 100
-            
-        mod = technical_diving.calculate_mod(o2_percentage, max_po2)
-        
-        return jsonify({
-            'mod': mod,
-            'o2_percentage': o2_percentage * 100,
-            'max_po2': max_po2
-        })
-    except Exception as e:
-        logger.error(f"Error calculating MOD: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/tech/end', methods=['POST'])
-def calculate_end_api():
-    """Equivalent Narcotic Depth (END) hesaplama API'si"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        depth = float(data.get('depth', 0))
-        o2_percentage = float(data.get('o2', 21.0))
-        he_percentage = float(data.get('he', 0.0))
-        
-        # Yüzde olarak verildiyse normalize et
-        if o2_percentage > 1:
-            o2_percentage = o2_percentage / 100
-        if he_percentage > 1:
-            he_percentage = he_percentage / 100
-            
-        end = technical_diving.calculate_end(depth, o2_percentage, he_percentage)
-        
-        return jsonify({
-            'end': end,
-            'depth': depth,
-            'o2_percentage': o2_percentage * 100,
-            'he_percentage': he_percentage * 100,
-            'n2_percentage': (1 - o2_percentage - he_percentage) * 100
-        })
-    except Exception as e:
-        logger.error(f"Error calculating END: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/tech/best-mix', methods=['POST'])
-def calculate_best_mix_api():
-    """Optimal gaz karışımı hesaplama API'si"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        depth = float(data.get('depth', 0))
-        max_po2 = float(data.get('maxPo2', 1.4))
-        max_end = float(data.get('maxEnd', 30.0))
-        
-        best_mix = technical_diving.calculate_best_mix(depth, max_po2, max_end)
-        
-        return jsonify(best_mix)
-    except Exception as e:
-        logger.error(f"Error calculating best mix: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/tech/cns', methods=['POST'])
-def calculate_cns_api():
-    """CNS oksijen toksisitesi hesaplama API'si"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        exposure_segments = data.get('segments', [])
-        
-        if not exposure_segments:
-            return jsonify({'error': 'No exposure segments provided'}), 400
-            
-        total_cns = 0
-        segment_results = []
-        
-        for segment in exposure_segments:
-            depth = float(segment.get('depth', 0))
-            time = float(segment.get('time', 0))
-            o2_percentage = float(segment.get('o2', 21.0))
-            
-            # Yüzde olarak verildiyse normalize et
-            if o2_percentage > 1:
-                o2_percentage = o2_percentage / 100
-                
-            # pO2 hesapla
-            po2 = technical_diving.calculate_partial_pressure(o2_percentage, depth)
-            
-            # Bu segment için CNS hesapla
-            segment_cns = technical_diving.calculate_cns_loading(po2, time)
-            total_cns += segment_cns
-            
-            segment_results.append({
-                'depth': depth,
-                'time': time,
-                'o2_percentage': o2_percentage * 100,
-                'po2': round(po2, 2),
-                'segment_cns': round(segment_cns, 1)
-            })
-            
-        return jsonify({
-            'total_cns': round(total_cns, 1),
-            'segments': segment_results,
-            'warning': 'High CNS oxygen toxicity risk' if total_cns > 80 else None
-        })
-    except Exception as e:
-        logger.error(f"Error calculating CNS: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/tech/multi-level', methods=['POST'])
-def calculate_multi_level_api():
-    """Çoklu seviye dalış profili hesaplama API'si"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        depth_segments = data.get('segments', [])
-        gases = data.get('gases', [])
-        
-        if not depth_segments or not gases:
-            return jsonify({'error': 'Segments and gases are required'}), 400
-            
-        # Veri formatını hazırla
-        formatted_segments = []
-        for segment in depth_segments:
-            depth = float(segment.get('depth', 0))
-            time = float(segment.get('time', 0))
-            gas_index = int(segment.get('gas_index', 0))
-            
-            formatted_segments.append((depth, time, gas_index))
-            
-        formatted_gases = []
-        for gas in gases:
-            o2 = float(gas.get('o2', 21.0))
-            he = float(gas.get('he', 0.0))
-            
-            formatted_gases.append((o2, he))
-            
-        profile = technical_diving.calculate_multi_level_profile(formatted_segments, formatted_gases)
-        
-        return jsonify(profile)
-    except Exception as e:
-        logger.error(f"Error calculating multi-level profile: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-
 @app.route('/api/gas-consumption', methods=['POST'])
 def calculate_gas_consumption():
     """Gas consumption calculation API"""
     try:
         data = request.get_json()
-        
+
         if not data:
             return jsonify({'error': 'No data provided'}), 400
-            
+
         # Temel parametreler
         depth = float(data.get('depth', 0))
         bottom_time = float(data.get('bottomTime', 0))
         sac_rate = float(data.get('sacRate', 20))  # Surface Air Consumption rate (L/min)
-        
+
         if depth <= 0 or bottom_time <= 0:
             return jsonify({'error': 'Depth and bottom time must be positive numbers'}), 400
-            
+
         # Tank verileri
         tanks = data.get('tanks', [])
         if not tanks:
             return jsonify({'error': 'At least one tank is required'}), 400
-            
+
         # Dekompresyon hesaplaması için gaz verilerini al
         primary_tank = tanks[0]
         gas_data = {
@@ -853,31 +683,31 @@ def calculate_gas_consumption():
             'o2_percentage': float(primary_tank.get('o2', 21)),
             'he_percentage': float(primary_tank.get('he', 0))
         }
-        
+
         # Profil hesapla
         profile = generate_dive_profile(depth, bottom_time, gas_data)
-        
+
         # Gaz tüketimi hesapla
         results = []
-        
+
         for tank in tanks:
             tank_size = float(tank.get('size', 0))  # Litre
             tank_pressure = float(tank.get('pressure', 0))  # Bar
-            
+
             # Basınç faktörü (derinliğe göre)
             pressure_factor = (depth / 10) + 1
-            
+
             # Dip zaman tüketimi
             bottom_consumption = sac_rate * pressure_factor * bottom_time
-            
+
             # İniş tüketimi (ortalama derinlik = max_derinlik/2)
             descent_pressure_factor = (depth / 20) + 1
             descent_consumption = sac_rate * descent_pressure_factor * profile['descentTime']
-            
+
             # Çıkış tüketimi (dekompresyon dahil)
             ascent_consumption = 0
             current_depth = depth
-            
+
             if profile['decoStops']:
                 # İlk durağa kadar
                 first_stop_depth = profile['decoStops'][0]['depth']
@@ -885,9 +715,9 @@ def calculate_gas_consumption():
                 avg_depth_to_first = (depth + first_stop_depth) / 2
                 first_pressure_factor = (avg_depth_to_first / 10) + 1
                 ascent_consumption += sac_rate * first_pressure_factor * ascent_time_to_first
-                
+
                 current_depth = first_stop_depth
-                
+
                 # Duraklar ve aralarındaki geçişler
                 for i, stop in enumerate(profile['decoStops']):
                     # Durağın kendisi
@@ -895,45 +725,45 @@ def calculate_gas_consumption():
                     stop_time = stop['time']
                     stop_pressure_factor = (stop_depth / 10) + 1
                     ascent_consumption += sac_rate * stop_pressure_factor * stop_time
-                    
+
                     # Sonraki durağa geçiş (varsa)
                     if i < len(profile['decoStops']) - 1:
                         next_stop = profile['decoStops'][i+1]
                         next_depth = next_stop['depth']
-                        
+
                         transit_time = (stop_depth - next_depth) / 9  # 9 m/min
                         avg_transit_depth = (stop_depth + next_depth) / 2
                         transit_pressure_factor = (avg_transit_depth / 10) + 1
-                        
+
                         ascent_consumption += sac_rate * transit_pressure_factor * transit_time
                     else:
                         # Son duraktan yüzeye
                         final_ascent_time = stop_depth / 9  # 9 m/min
                         avg_final_depth = stop_depth / 2
                         final_pressure_factor = (avg_final_depth / 10) + 1
-                        
+
                         ascent_consumption += sac_rate * final_pressure_factor * final_ascent_time
             else:
                 # Dekompresyonsuz düz çıkış
                 avg_ascent_depth = depth / 2
                 ascent_pressure_factor = (avg_ascent_depth / 10) + 1
                 ascent_consumption = sac_rate * ascent_pressure_factor * profile['ascentTime']
-            
+
             # Toplam gaz tüketimi (litre)
             total_consumption = bottom_consumption + descent_consumption + ascent_consumption
-            
+
             # Tank gaz içeriği (litre)
             total_gas = tank_size * tank_pressure
-            
+
             # Kalan gaz (litre ve bar)
             remaining_gas = total_gas - total_consumption
             remaining_pressure = remaining_gas / tank_size if tank_size > 0 else 0
-            
+
             # Güvenlik faktörü (%33)
             safety_reserve = total_consumption * 0.33
             safe_remaining = remaining_gas - safety_reserve
             safe_remaining_pressure = safe_remaining / tank_size if tank_size > 0 else 0
-            
+
             # Tank sonuçlarını ekle
             tank_result = {
                 'tankIndex': tanks.index(tank),
@@ -951,11 +781,179 @@ def calculate_gas_consumption():
                 'safeRemainingPressure': round(safe_remaining_pressure, 1),
                 'safetyReserve': round(safety_reserve, 1)
             }
-            
+
             results.append(tank_result)
-        
+
         return jsonify({'results': results, 'profile': profile})
-        
+
     except Exception as e:
         logger.error(f"Error calculating gas consumption: {str(e)}")
         return jsonify({'error': f'Failed to calculate gas consumption: {str(e)}'}), 500
+
+# API: Teknik dalış hesaplamaları
+@app.route('/api/tech/mod', methods=['POST'])
+def calculate_mod_api():
+    """Maximum Operating Depth (MOD) hesaplama API'si"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        o2_percentage = float(data.get('o2', 21.0))
+        max_po2 = float(data.get('maxPo2', 1.4))
+
+        # Yüzde olarak verildiyse normalize et
+        if o2_percentage > 1:
+            o2_percentage = o2_percentage / 100
+
+        mod = technical_diving.calculate_mod(o2_percentage, max_po2)
+
+        return jsonify({
+            'mod': mod,
+            'o2_percentage': o2_percentage * 100,
+            'max_po2': max_po2
+        })
+    except Exception as e:
+        logger.error(f"Error calculating MOD: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/end', methods=['POST'])
+def calculate_end_api():
+    """Equivalent Narcotic Depth (END) hesaplama API'si"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        depth = float(data.get('depth', 0))
+        o2_percentage = float(data.get('o2', 21.0))
+        he_percentage = float(data.get('he', 0.0))
+
+        # Yüzde olarak verildiyse normalize et
+        if o2_percentage > 1:
+            o2_percentage = o2_percentage / 100
+        if he_percentage > 1:
+            he_percentage = he_percentage / 100
+
+        end = technical_diving.calculate_end(depth, o2_percentage, he_percentage)
+
+        return jsonify({
+            'end': end,
+            'depth': depth,
+            'o2_percentage': o2_percentage * 100,
+            'he_percentage': he_percentage * 100,
+            'n2_percentage': (1 - o2_percentage - he_percentage) * 100
+        })
+    except Exception as e:
+        logger.error(f"Error calculating END: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/best-mix', methods=['POST'])
+def calculate_best_mix_api():
+    """Optimal gaz karışımı hesaplama API'si"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        depth = float(data.get('depth', 0))
+        max_po2 = float(data.get('maxPo2', 1.4))
+        max_end = float(data.get('maxEnd', 30.0))
+
+        best_mix = technical_diving.calculate_best_mix(depth, max_po2, max_end)
+
+        return jsonify(best_mix)
+    except Exception as e:
+        logger.error(f"Error calculating best mix: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/cns', methods=['POST'])
+def calculate_cns_api():
+    """CNS oksijen toksisitesi hesaplama API'si"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        exposure_segments = data.get('segments', [])
+
+        if not exposure_segments:
+            return jsonify({'error': 'No exposure segments provided'}), 400
+
+        total_cns = 0
+        segment_results = []
+
+        for segment in exposure_segments:
+            depth = float(segment.get('depth', 0))
+            time = float(segment.get('time', 0))
+            o2_percentage = float(segment.get('o2', 21.0))
+
+            # Yüzde olarak verildiyse normalize et
+            if o2_percentage > 1:
+                o2_percentage = o2_percentage / 100
+
+            # pO2 hesapla
+            po2 = technical_diving.calculate_partial_pressure(o2_percentage, depth)
+
+            # Bu segment için CNS hesapla
+            segment_cns = technical_diving.calculate_cns_loading(po2, time)
+            total_cns += segment_cns
+
+            segment_results.append({
+                'depth': depth,
+                'time': time,
+                'o2_percentage': o2_percentage * 100,
+                'po2': round(po2, 2),
+                'segment_cns': round(segment_cns, 1)
+            })
+
+        return jsonify({
+            'total_cns': round(total_cns, 1),
+            'segments': segment_results,
+            'warning': 'High CNS oxygen toxicity risk' if total_cns > 80 else None
+        })
+    except Exception as e:
+        logger.error(f"Error calculating CNS: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tech/multi-level', methods=['POST'])
+def calculate_multi_level_api():
+    """Çoklu seviye dalış profili hesaplama API'si"""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        depth_segments = data.get('segments', [])
+        gases = data.get('gases', [])
+
+        if not depth_segments or not gases:
+            return jsonify({'error': 'Segments and gases are required'}), 400
+
+        # Veri formatını hazırla
+        formatted_segments = []
+        for segment in depth_segments:
+            depth = float(segment.get('depth', 0))
+            time = float(segment.get('time', 0))
+            gas_index = int(segment.get('gas_index', 0))
+
+            formatted_segments.append((depth, time, gas_index))
+
+        formatted_gases = []
+        for gas in gases:
+            o2 = float(gas.get('o2', 21.0))
+            he = float(gas.get('he', 0.0))
+
+            formatted_gases.append((o2, he))
+
+        profile = technical_diving.calculate_multi_level_profile(formatted_segments, formatted_gases)
+
+        return jsonify(profile)
+    except Exception as e:
+        logger.error(f"Error calculating multi-level profile: {str(e)}")
+        return jsonify({'error': str(e)}), 500
