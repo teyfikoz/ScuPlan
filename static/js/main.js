@@ -17,26 +17,26 @@ const app = {
  */
 function initDivePlanner() {
     console.log('Initializing ScuPlan Dive Planner');
-    
+
     // Initialize all components
     initTankManagement();
     initBuddyManagement();
-    
+
     // Initialize storage and donation features if they exist
     if (typeof initOfflineStorage === 'function') {
         initOfflineStorage();
     }
-    
+
     if (typeof initDonationFeatures === 'function') {
         initDonationFeatures();
     }
-    
+
     // Set up event listeners
     setupEventListeners();
-    
+
     // Check for internet connectivity
     updateConnectionStatus();
-    
+
     // Check if we're on the main page
     if (document.getElementById('divePlanForm')) {
         setupDivePlanForm();
@@ -48,48 +48,48 @@ function initDivePlanner() {
  */
 function initSharedPlanView() {
     console.log('Initializing Shared Plan View');
-    
+
     try {
         // Ensure the required DOM elements exist before proceeding
         const loadingContainer = document.getElementById('loadingContainer');
         const planDetailsContainer = document.getElementById('planDetailsContainer');
-        
+
         if (!loadingContainer || !planDetailsContainer) {
             console.error('Required DOM elements not found');
             alert('Error: Page elements not found. Please refresh the page.');
             return;
         }
-        
+
         // Get the plan ID from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const planId = urlParams.get('id');
-        
+
         if (!planId) {
             showPlanNotFound('No plan ID specified in the URL');
             return;
         }
-        
+
         // Load the shared plan
         loadSharedPlan(planId);
-        
+
         // Load a default pre-dive checklist
         loadPreDiveChecklist();
-        
+
         // Set up event listeners for the shared plan page
         setupSharedPlanEvents();
     } catch (error) {
         console.error('Error in initSharedPlanView:', error);
-        
+
         // Try to handle error gracefully
         const errorMsg = document.getElementById('jsNotFound');
         if (errorMsg) {
             errorMsg.textContent = 'An error occurred: ' + error.message;
             errorMsg.style.display = 'block';
         }
-        
+
         const loadingContainer = document.getElementById('loadingContainer');
         if (loadingContainer) loadingContainer.style.display = 'none';
-        
+
         const planDetailsContainer = document.getElementById('planDetailsContainer');
         if (planDetailsContainer) planDetailsContainer.style.display = 'block';
     }
@@ -100,11 +100,11 @@ function initSharedPlanView() {
  */
 function showPlanNotFound(errorMessage) {
     console.log('Showing plan not found message:', errorMessage);
-    
+
     // Hide loading indicator
     const loadingContainer = document.getElementById('loadingContainer');
     if (loadingContainer) loadingContainer.style.display = 'none';
-    
+
     // Show error message
     const planNotFound = document.getElementById('planNotFound');
     if (planNotFound) {
@@ -114,7 +114,7 @@ function showPlanNotFound(errorMessage) {
         `;
         planNotFound.style.display = 'block';
     }
-    
+
     // Hide plan details container if it exists
     const planDetailsContainer = document.getElementById('planDetailsContainer');
     if (planDetailsContainer) planDetailsContainer.style.display = 'none';
@@ -125,21 +125,21 @@ function showPlanNotFound(errorMessage) {
  */
 function initChecklists() {
     console.log('Initializing Checklists');
-    
+
     // Check if we're on the checklist page
     if (document.getElementById('checklistTabs')) {
         // Load default checklists
         loadDefaultChecklists();
-        
+
         // Set up event listeners for checklist page
         setupChecklistEvents();
-        
+
         // Check for offline saved checklists
         if (typeof loadOfflineChecklists === 'function') {
             loadOfflineChecklists();
         }
     }
-    
+
     // Initialize quick checklist on the dive planner page
     if (typeof initializeQuickChecklist === 'function') {
         initializeQuickChecklist();
@@ -153,7 +153,7 @@ function setupEventListeners() {
     // Check for network status changes
     window.addEventListener('online', updateConnectionStatus);
     window.addEventListener('offline', updateConnectionStatus);
-    
+
     // Setup event listeners for offline storage dialog
     const offlineStorageButton = document.getElementById('offlineStorageButton');
     if (offlineStorageButton) {
@@ -165,9 +165,9 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     // Removed duplicate footerSavedPlans declaration - handled later in the file
-    
+
     // Donation copy button
     const copyDonationBtn = document.getElementById('copyDonationBtn');
     if (copyDonationBtn) {
@@ -187,7 +187,7 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     // Setup footer resource links - ensure they work properly
     const offlineGuideLink = document.getElementById('offlineGuideLink');
     if (offlineGuideLink) {
@@ -203,7 +203,7 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     const exportGuideLink = document.getElementById('exportGuideLink');
     if (exportGuideLink) {
         console.log('Setting up exportGuideLink');
@@ -218,7 +218,7 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     // Fix footer saved plans navigation
     const footerSavedPlans = document.getElementById('footerSavedPlans');
     if (footerSavedPlans) {
@@ -234,7 +234,7 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     const donationGuideLink = document.getElementById('donationGuideLink');
     if (donationGuideLink) {
         donationGuideLink.addEventListener('click', function(e) {
@@ -246,14 +246,14 @@ function setupEventListeners() {
             }
         });
     }
-    
+
     // Setup About Me modal link
     const aboutMeLink = document.getElementById('aboutMeLink');
     if (aboutMeLink) {
         aboutMeLink.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             // Use Bootstrap's modal instance or create new one
             const aboutModal = document.getElementById('aboutMeModal');
             if (aboutModal) {
@@ -275,29 +275,29 @@ function setupDivePlanForm() {
     if (calculateButton) {
         calculateButton.addEventListener('click', calculateDivePlan);
     }
-    
+
     // Tank modals
     const addTankButton = document.getElementById('addTankButton');
     if (addTankButton) {
         addTankButton.addEventListener('click', showAddTankModal);
     }
-    
+
     const saveTankButton = document.getElementById('saveTankButton');
     if (saveTankButton) {
         saveTankButton.addEventListener('click', saveTank);
     }
-    
+
     // Buddy modals
     const addBuddyButton = document.getElementById('addBuddyButton');
     if (addBuddyButton) {
         addBuddyButton.addEventListener('click', showAddBuddyModal);
     }
-    
+
     const saveBuddyButton = document.getElementById('saveBuddyButton');
     if (saveBuddyButton) {
         saveBuddyButton.addEventListener('click', saveBuddy);
     }
-    
+
     // Save and share buttons (will be shown after calculation)
     const saveOfflineButton = document.getElementById('saveOfflineButton');
     if (saveOfflineButton) {
@@ -309,28 +309,28 @@ function setupDivePlanForm() {
             }
         });
     }
-    
+
     const sharePlanButton = document.getElementById('sharePlanButton');
     if (sharePlanButton) {
         sharePlanButton.addEventListener('click', showShareModal);
     }
-    
+
     const printPlanButton = document.getElementById('printPlanButton');
     if (printPlanButton) {
         printPlanButton.addEventListener('click', printCurrentPlan);
     }
-    
+
     // Share modal buttons
     const copyShareLinkBtn = document.getElementById('copyShareLinkBtn');
     if (copyShareLinkBtn) {
         copyShareLinkBtn.addEventListener('click', copyShareLink);
     }
-    
+
     const emailShareLinkBtn = document.getElementById('emailShareLinkBtn');
     if (emailShareLinkBtn) {
         emailShareLinkBtn.addEventListener('click', emailShareLink);
     }
-    
+
     // Gas type changes
     const gasType = document.getElementById('gasType');
     if (gasType) {
@@ -347,12 +347,12 @@ function setupSharedPlanEvents() {
     if (saveToPlannerBtn) {
         saveToPlannerBtn.addEventListener('click', saveSharedPlanToPlanner);
     }
-    
+
     const printSharedPlanBtn = document.getElementById('printSharedPlanBtn');
     if (printSharedPlanBtn) {
         printSharedPlanBtn.addEventListener('click', printSharedPlan);
     }
-    
+
     const printPreDiveBtn = document.getElementById('printPreDiveBtn');
     if (printPreDiveBtn) {
         printPreDiveBtn.addEventListener('click', printPreDiveChecklist);
@@ -368,30 +368,30 @@ function setupChecklistEvents() {
     if (createChecklistBtn) {
         createChecklistBtn.addEventListener('click', showCreateChecklistModal);
     }
-    
+
     // Add checklist item button
     const addChecklistItemBtn = document.getElementById('addChecklistItemBtn');
     if (addChecklistItemBtn) {
         addChecklistItemBtn.addEventListener('click', addChecklistItemInput);
     }
-    
+
     // Save checklist button
     const saveChecklistBtn = document.getElementById('saveChecklistBtn');
     if (saveChecklistBtn) {
         saveChecklistBtn.addEventListener('click', saveCustomChecklist);
     }
-    
+
     // Print buttons
     document.querySelectorAll('.print-checklist-btn').forEach(btn => {
         btn.addEventListener('click', printChecklist);
     });
-    
+
     // Print viewed checklist
     const printViewedChecklistBtn = document.getElementById('printViewedChecklistBtn');
     if (printViewedChecklistBtn) {
         printViewedChecklistBtn.addEventListener('click', printViewedChecklist);
     }
-    
+
     // Manage offline checklists
     const manageOfflineChecklistsBtn = document.getElementById('manageOfflineChecklistsBtn');
     if (manageOfflineChecklistsBtn) {
@@ -403,7 +403,7 @@ function setupChecklistEvents() {
             }
         });
     }
-    
+
     // Clear all offline data
     const clearAllOfflineBtn = document.getElementById('clearAllOfflineBtn');
     if (clearAllOfflineBtn) {
@@ -428,12 +428,12 @@ function calculateDivePlan() {
     const diveDate = document.getElementById('diveDate');
     const diveTime = document.getElementById('diveTime');
     const sacRate = document.getElementById('sacRate');
-    
+
     if (!diveDepth || !bottomTime) {
         showAlert('Dive form elements not found', 'danger');
         return;
     }
-    
+
     const depth = parseFloat(diveDepth.value);
     const time = parseFloat(bottomTime.value);
     const location = diveLocation ? diveLocation.value : '';
@@ -441,23 +441,23 @@ function calculateDivePlan() {
     const date = diveDate ? diveDate.value : '';
     const timeOfDay = diveTime ? diveTime.value : '';
     const sac = sacRate ? parseFloat(sacRate.value) : 20;
-    
+
     // Input validation
     if (isNaN(depth) || depth <= 0) {
         showAlert('Please enter a valid depth', 'danger');
         return;
     }
-    
+
     if (isNaN(time) || time <= 0) {
         showAlert('Please enter a valid bottom time', 'danger');
         return;
     }
-    
+
     if (isNaN(sac) || sac <= 0) {
         showAlert('Please enter a valid SAC rate', 'danger');
         return;
     }
-    
+
     // Construct plan data
     const planData = {
         depth: depth,
@@ -470,10 +470,10 @@ function calculateDivePlan() {
         tanks: app.tanks,
         buddies: app.buddies
     };
-    
+
     // Show loading indicator
     showLoading('Calculating dive plan...');
-    
+
     // Send API request
     fetch('/api/calculate', {
         method: 'POST',
@@ -491,13 +491,13 @@ function calculateDivePlan() {
     .then(data => {
         // Hide loading indicator
         hideLoading();
-        
+
         // Update application state
         app.currentPlan = data;
-        
+
         // Update the UI with results
         displayDivePlanResults(data);
-        
+
         // Calculate gas consumption
         if (app.tanks.length > 0) {
             calculateGasConsumption(data);
@@ -506,10 +506,10 @@ function calculateDivePlan() {
     .catch(error => {
         hideLoading();
         console.error('Error calculating dive plan:', error);
-        
+
         if (app.isOffline) {
             showAlert('You are offline. Using simplified calculations.', 'warning');
-            
+
             // Use client-side calculation as fallback when offline
             const offlineResults = calculateOfflineDivePlan(planData);
             app.currentPlan = offlineResults;
@@ -529,22 +529,22 @@ function displayDivePlanResults(data) {
     if (resultsCard) {
         resultsCard.style.display = 'block';
     }
-    
+
     // Update the stat values with proper unit conversion
     const maxDepthResult = document.getElementById('maxDepthResult');
     const bottomTimeResult = document.getElementById('bottomTimeResult');
     const totalTimeResult = document.getElementById('totalTimeResult');
-    
+
     if (maxDepthResult && window.unitsManager) {
         const convertedDepth = window.unitsManager.convertDepth(data.depth, 'metric');
         maxDepthResult.textContent = convertedDepth.toFixed(1);
     } else if (maxDepthResult) {
         maxDepthResult.textContent = data.depth.toFixed(1);
     }
-    
+
     if (bottomTimeResult) bottomTimeResult.textContent = data.bottomTime.toFixed(0);
     if (totalTimeResult) totalTimeResult.textContent = data.totalDiveTime.toFixed(0);
-    
+
     // Display buddy information
     const buddyResultsContainer = document.getElementById('buddyConsumptionResults');
     if (buddyResultsContainer) {
@@ -558,7 +558,7 @@ function displayDivePlanResults(data) {
                 const specialty = buddy.specialty && buddy.specialty !== 'none' ? 
                     buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) : 
                     'None';
-                    
+
                 buddyHtml += `
                     <div class="p-2 bg-light rounded mb-2">
                         <div class="fw-bold">${buddy.name}</div>
@@ -577,36 +577,36 @@ function displayDivePlanResults(data) {
             `;
         }
     }
-    
+
     // Show the profile visualization
     const profileVisualizationSection = document.getElementById('profileVisualizationSection');
     if (profileVisualizationSection) {
         profileVisualizationSection.style.display = 'block';
     }
-    
+
     // Update profile display values
     const descentTimeResult = document.getElementById('descentTimeResult');
     const bottomTimeDisplay = document.getElementById('bottomTimeDisplay');
     const ascentTimeResult = document.getElementById('ascentTimeResult');
     const totalTimeDisplay = document.getElementById('totalTimeDisplay');
-    
+
     if (descentTimeResult) descentTimeResult.textContent = data.profile.descentTime.toFixed(1) + ' min';
     if (bottomTimeDisplay) bottomTimeDisplay.textContent = data.profile.bottomTime.toFixed(1) + ' min';
     if (ascentTimeResult) ascentTimeResult.textContent = data.profile.ascentTime.toFixed(1) + ' min';
     if (totalTimeDisplay) totalTimeDisplay.textContent = data.profile.totalTime.toFixed(1) + ' min';
-    
+
     // Display decompression stops if any
     const decoStopsContainer = document.getElementById('decoStopsContainer');
     const decoStopsList = document.getElementById('decoStopsList');
-    
+
     if (decoStopsContainer && decoStopsList) {
         console.log('Checking decompression stops:', data.profile.decoStops);
-        
+
         if (data.profile.decoStops && data.profile.decoStops.length > 0) {
             console.log('Displaying decompression stops:', data.profile.decoStops);
             decoStopsContainer.style.display = 'block';
             decoStopsList.innerHTML = '';
-            
+
             data.profile.decoStops.forEach(stop => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -622,7 +622,7 @@ function displayDivePlanResults(data) {
     } else {
         console.error('Decompression stops containers not found');
     }
-    
+
     // Draw the dive profile chart
     if (typeof drawDiveProfileChart === 'function') {
         drawDiveProfileChart(data.profile);
@@ -641,16 +641,16 @@ function calculateGasConsumption(planData) {
         }
         return;
     }
-    
+
     const sacRate = document.getElementById('sacRate');
-    
+
     const data = {
         depth: planData.depth,
         bottomTime: planData.bottomTime,
         sacRate: sacRate ? sacRate.value : 20,
         tanks: app.tanks
     };
-    
+
     fetch('/api/gas-consumption', {
         method: 'POST',
         headers: {
@@ -669,7 +669,7 @@ function calculateGasConsumption(planData) {
     })
     .catch(error => {
         console.error('Error calculating gas consumption:', error);
-        
+
         if (app.isOffline) {
             // Use simplified calculation when offline
             const offlineResults = calculateOfflineGasConsumption(planData);
@@ -696,18 +696,18 @@ function calculateGasConsumption(planData) {
                     // Get the current dive depth and time
                     const diveDepth = parseFloat(document.getElementById('diveDepth')?.value || document.getElementById('maxDepth')?.value || 0);
                     const diveTime = parseFloat(document.getElementById('diveTime')?.value || document.getElementById('bottomTime')?.value || 0);
-                    
+
                     // Calculate approximate gas needs
                     const atmosphericPressure = (diveDepth / 10) + 1; // in bars
                     const avgSacRate = 20; // Average SAC rate in L/min
                     const estimatedGasNeeded = avgSacRate * atmosphericPressure * diveTime;
                     const recommendedReserve = estimatedGasNeeded * 0.5; // 50% reserve
                     const totalGasNeeded = estimatedGasNeeded + recommendedReserve;
-                    
+
                     // Recommendations based on depth
                     let recommendedTanks = '';
                     let recommendedGasMix = '';
-                    
+
                     if (diveDepth <= 18) {
                         recommendedTanks = '1 x 12L tank (2400L gas @ 200 bar)';
                         recommendedGasMix = 'Air or Nitrox 32%';
@@ -724,7 +724,7 @@ function calculateGasConsumption(planData) {
                         recommendedTanks = 'Twin tanks + stage bottles (~6000L+ gas)';
                         recommendedGasMix = 'Trimix 15/55 or 10/70';
                     }
-                    
+
                     gasConsumptionResults.innerHTML = `
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
@@ -737,7 +737,7 @@ function calculateGasConsumption(planData) {
                                 <li>Technical dives may require specific gas mixtures</li>
                                 <li>Deep dives may need multiple tanks or special gases</li>
                             </ul>
-                            
+
                             <div class="mt-3 border-top pt-2">
                                 <p><strong>Gas Requirements for this Dive:</strong></p>
                                 <ul>
@@ -763,26 +763,26 @@ function calculateGasConsumption(planData) {
 function displayGasConsumptionResults(results) {
     const container = document.getElementById('gasConsumptionResults');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     results.forEach(result => {
         const gasType = result.gasType.charAt(0).toUpperCase() + result.gasType.slice(1);
         const gasInfo = result.gasType === 'air' ? 'Air' : 
                        `${gasType} (${result.o2}% O₂${result.he > 0 ? ', ' + result.he + '% He' : ''})`;
-        
+
         // Apply unit conversions
         let tankSize, pressure, consumption, volumeUnit, pressureUnit;
-        
+
         if (window.unitsManager) {
             tankSize = window.unitsManager.convertVolume(result.tankSize, 'metric');
             pressure = window.unitsManager.convertPressure(result.initialPressure, 'metric');
             consumption = window.unitsManager.convertVolume(result.totalConsumption, 'metric');
             const safePressure = window.unitsManager.convertPressure(result.safeRemainingPressure, 'metric');
-            
+
             volumeUnit = window.unitsManager.getVolumeUnit();
             pressureUnit = window.unitsManager.getPressureUnit();
-            
+
             const tankDiv = document.createElement('div');
             tankDiv.className = 'mb-3 p-3 bg-light rounded';
             tankDiv.innerHTML = `
@@ -826,7 +826,7 @@ function displayGasConsumptionResults(results) {
  */
 function updateConnectionStatus() {
     app.isOffline = !navigator.onLine;
-    
+
     const offlineIndicator = document.getElementById('offlineIndicator');
     if (offlineIndicator) {
         if (app.isOffline) {
@@ -857,7 +857,7 @@ function showLoading(message = 'Loading...') {
             align-items: center;
             z-index: 9999;
         `;
-        
+
         overlay.innerHTML = `
             <div class="bg-white p-4 rounded shadow-sm text-center">
                 <div class="spinner-border text-primary mb-2" role="status">
@@ -866,7 +866,7 @@ function showLoading(message = 'Loading...') {
                 <div id="loadingMessage">${message}</div>
             </div>
         `;
-        
+
         document.body.appendChild(overlay);
     } else {
         // Update existing overlay
@@ -902,7 +902,7 @@ function showAlert(message, type = 'info', timeout = 5000) {
         `;
         document.body.appendChild(container);
     }
-    
+
     // Create alert element
     const alertId = 'alert-' + Date.now();
     const alertElement = document.createElement('div');
@@ -912,10 +912,10 @@ function showAlert(message, type = 'info', timeout = 5000) {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-    
+
     // Add to container
     document.getElementById('alertContainer').appendChild(alertElement);
-    
+
     // Auto-dismiss after timeout
     if (timeout > 0) {
         setTimeout(() => {
@@ -935,24 +935,24 @@ function loadSharedPlan(planId) {
     // Show loading
     const loadingContainer = document.getElementById('loadingContainer');
     const planDetailsContainer = document.getElementById('planDetailsContainer');
-    
+
     if (loadingContainer) loadingContainer.style.display = 'block';
     if (planDetailsContainer) planDetailsContainer.style.display = 'none';
-    
+
     // Hide any previous error
     const planNotFound = document.getElementById('planNotFound');
     if (planNotFound) planNotFound.style.display = 'none';
-    
+
     const jsNotFound = document.getElementById('jsNotFound');
     if (jsNotFound) jsNotFound.style.display = 'none';
-    
+
     console.log('Loading shared plan with ID:', planId);
-    
+
     // Validate planId format before making request
     if (!planId || planId.length < 8) {
         console.error('Invalid plan ID format:', planId);
         if (loadingContainer) loadingContainer.style.display = 'none';
-        
+
         if (planNotFound) {
             planNotFound.innerHTML = `
                 <i class="fas fa-exclamation-circle me-2"></i>
@@ -962,7 +962,7 @@ function loadSharedPlan(planId) {
         }
         return;
     }
-    
+
     // Fetch the plan
     fetch(`/api/plan/${planId}`)
     .then(response => {
@@ -983,23 +983,23 @@ function loadSharedPlan(planId) {
     })
     .then(data => {
         console.log('Successfully loaded shared plan');
-        
+
         // Check if we have valid data
         if (!data) {
             throw new Error('Received empty response from server');
         }
-        
+
         // Validate required plan data
         if (typeof data.depth === 'undefined' || data.depth === null) {
             console.warn('Plan missing depth data');
             data.depth = 0;
         }
-        
+
         if (typeof data.bottomTime === 'undefined' || data.bottomTime === null) {
             console.warn('Plan missing bottom time data');
             data.bottomTime = 0;
         }
-        
+
         if (!data.profile) {
             console.warn('Plan missing profile data, creating default');
             data.profile = {
@@ -1010,24 +1010,24 @@ function loadSharedPlan(planId) {
                 decoStops: []
             };
         }
-        
+
         // Store the plan data globally
         window.sharedPlan = data;
-        
+
         // Display the plan
         if (loadingContainer) loadingContainer.style.display = 'none';
         if (planDetailsContainer) planDetailsContainer.style.display = 'block';
-        
+
         if (planNotFound) planNotFound.style.display = 'none';
-        
+
         displaySharedPlanDetails(data);
     })
     .catch(error => {
         console.error('Error loading shared plan:', error);
-        
+
         // Hide loading indicator
         if (loadingContainer) loadingContainer.style.display = 'none';
-        
+
         // Show error message with details
         if (planNotFound) {
             planNotFound.innerHTML = `
@@ -1049,7 +1049,7 @@ function displaySharedPlanDetails(data) {
             console.error('No data provided to displaySharedPlanDetails');
             throw new Error('No plan data available');
         }
-        
+
         // Update basic information safely
         const safeSetText = (id, value, defaultValue = 'Not specified') => {
             const element = document.getElementById(id);
@@ -1059,9 +1059,9 @@ function displaySharedPlanDetails(data) {
                 console.warn(`Element with id ${id} not found`);
             }
         };
-        
+
         safeSetText('sharedLocation', data.location);
-        
+
         // Tarih ve saat bilgilerini birlikte göster
         let dateDisplay = 'Not specified';
         if (data.diveDate) {
@@ -1076,19 +1076,19 @@ function displaySharedPlanDetails(data) {
             }
         }
         safeSetText('sharedDate', dateDisplay);
-        
+
         safeSetText('sharedDiveType', data.diveType ? capitalizeFirstLetter(data.diveType) : 'Recreational');
         safeSetText('sharedMaxDepth', (data.depth || '0') + ' meters');
         safeSetText('sharedBottomTime', (data.bottomTime || '0') + ' minutes');
         safeSetText('sharedTotalTime', (data.totalDiveTime || '0') + ' minutes');
-    
+
         // Update profile display values safely
         if (data.profile) {
             safeSetText('sharedDescentTime', data.profile.descentTime ? data.profile.descentTime.toFixed(1) + ' min' : '0.0 min');
             safeSetText('sharedBottomTimeDisplay', data.profile.bottomTime ? data.profile.bottomTime.toFixed(1) + ' min' : '0.0 min');
             safeSetText('sharedAscentTime', data.profile.ascentTime ? data.profile.ascentTime.toFixed(1) + ' min' : '0.0 min');
             safeSetText('sharedTotalTimeDisplay', data.profile.totalTime ? data.profile.totalTime.toFixed(1) + ' min' : '0.0 min');
-            
+
             // Draw profile chart
             if (typeof drawDiveProfileChart === 'function') {
                 drawDiveProfileChart(data.profile, 'sharedProfileChart');
@@ -1100,17 +1100,17 @@ function displaySharedPlanDetails(data) {
             safeSetText('sharedAscentTime', '0.0 min');
             safeSetText('sharedTotalTimeDisplay', '0.0 min');
         }
-    
+
         // Display decompression stops if any
         const sharedDecoStopsContainer = document.getElementById('sharedDecoStopsContainer');
         const sharedDecoStopsList = document.getElementById('sharedDecoStopsList');
-    
+
     // Handle decompression stops safely
     if (data.profile && data.profile.decoStops && data.profile.decoStops.length > 0) {
         if (sharedDecoStopsContainer) sharedDecoStopsContainer.style.display = 'block';
         if (sharedDecoStopsList) {
             sharedDecoStopsList.innerHTML = '';
-            
+
             data.profile.decoStops.forEach(stop => {
                 try {
                     const row = document.createElement('tr');
@@ -1127,29 +1127,29 @@ function displaySharedPlanDetails(data) {
     } else {
         if (sharedDecoStopsContainer) sharedDecoStopsContainer.style.display = 'none';
     }
-    
+
         // Display tanks if any - safely with error handling
         const sharedTanksContainer = document.getElementById('sharedTanksContainer');
         const noSharedTanksMessage = document.getElementById('noSharedTanksMessage');
-        
+
         if (data.tanks && data.tanks.length > 0 && sharedTanksContainer && noSharedTanksMessage) {
             try {
                 noSharedTanksMessage.style.display = 'none';
                 sharedTanksContainer.innerHTML = '';
-                
+
                 data.tanks.forEach((tank, index) => {
                     try {
                         const tankDiv = document.createElement('div');
                         tankDiv.className = 'p-3 bg-light rounded mb-2';
-                        
+
                         // Get tank properties with defaults
                         const size = tank.size || '12';
                         const pressure = tank.pressure || '200';
-                        
+
                         // Get gas info
                         let gasInfo = 'Air';
                         const gasType = tank.gas_type || 'air';
-                        
+
                         if (gasType === 'nitrox') {
                             const o2 = tank.o2_percentage || 32;
                             gasInfo = `Nitrox ${o2}% O₂`;
@@ -1160,13 +1160,13 @@ function displaySharedPlanDetails(data) {
                         } else if (gasType === 'oxygen') {
                             gasInfo = 'Oxygen (100% O₂)';
                         }
-                        
+
                         tankDiv.innerHTML = `
                             <div class="fw-bold">Tank ${index + 1}</div>
                             <div class="small">${size}L @ ${pressure} bar</div>
                             <div class="small">${gasInfo}</div>
                         `;
-                        
+
                         sharedTanksContainer.appendChild(tankDiv);
                     } catch (e) {
                         console.warn('Error rendering tank:', e);
@@ -1181,41 +1181,41 @@ function displaySharedPlanDetails(data) {
         } else {
             if (noSharedTanksMessage) noSharedTanksMessage.style.display = 'block';
         }
-    
+
         // Display buddies if any - safely with error handling
         const sharedBuddiesContainer = document.getElementById('sharedBuddiesContainer');
         const noSharedBuddiesMessage = document.getElementById('noSharedBuddiesMessage');
-        
+
         if (data.buddies && data.buddies.length > 0 && sharedBuddiesContainer && noSharedBuddiesMessage) {
             try {
                 noSharedBuddiesMessage.style.display = 'none';
                 sharedBuddiesContainer.innerHTML = '';
-                
+
                 data.buddies.forEach(buddy => {
                     try {
                         const buddyDiv = document.createElement('div');
                         buddyDiv.className = 'p-3 bg-light rounded mb-2';
-                        
+
                         // Get name with fallback
                         const name = buddy.name || 'Unnamed Buddy';
-                        
+
                         // Other properties with fallbacks
                         const certification = buddy.certification || 'No certification specified';
                         const skillLevel = buddy.skill_level || 'not specified';
                         const formattedSkillLevel = capitalizeFirstLetter(skillLevel);
-                        
+
                         // Only show specialty if it exists and isn't 'none'
                         const specialtyLine = (buddy.specialty && buddy.specialty !== 'none')
                             ? `<div class="small">Specialty: ${capitalizeFirstLetter(buddy.specialty)}</div>`
                             : '';
-                        
+
                         buddyDiv.innerHTML = `
                             <div class="fw-bold">${name}</div>
                             <div class="small">${certification}</div>
                             <div class="small">Skill Level: ${formattedSkillLevel}</div>
                             ${specialtyLine}
                         `;
-                        
+
                         sharedBuddiesContainer.appendChild(buddyDiv);
                     } catch (e) {
                         console.warn('Error rendering buddy:', e);
@@ -1230,24 +1230,24 @@ function displaySharedPlanDetails(data) {
         } else {
             if (noSharedBuddiesMessage) noSharedBuddiesMessage.style.display = 'block';
         }
-        
+
     } catch (error) {
         console.error('Error in displaySharedPlanDetails:', error);
-        
+
         // Show JS error message
         const jsNotFound = document.getElementById('jsNotFound');
         if (jsNotFound) {
             jsNotFound.textContent = 'JavaScript error: ' + error.message;
             jsNotFound.style.display = 'block';
         }
-        
+
         // Hide loading and display plan container
         const loadingContainer = document.getElementById('loadingContainer');
         if (loadingContainer) loadingContainer.style.display = 'none';
-        
+
         const planDetailsContainer = document.getElementById('planDetailsContainer');
         if (planDetailsContainer) planDetailsContainer.style.display = 'block';
-        
+
         // Hide the plan content
         const planContent = document.getElementById('planContent');
         if (planContent) planContent.style.display = 'none';
@@ -1260,7 +1260,7 @@ function displaySharedPlanDetails(data) {
 function loadPreDiveChecklist() {
     const sharedPreDiveChecklist = document.getElementById('sharedPreDiveChecklist');
     if (!sharedPreDiveChecklist) return;
-    
+
     fetch('/api/checklists?type=pre-dive')
     .then(response => {
         if (!response.ok) {
@@ -1271,10 +1271,10 @@ function loadPreDiveChecklist() {
     .then(checklists => {
         if (checklists.length > 0) {
             const checklist = checklists[0];
-            
+
             // Create checklist HTML
             let html = '';
-            
+
             checklist.items.forEach(item => {
                 html += `
                     <div class="form-check checklist-item">
@@ -1283,9 +1283,9 @@ function loadPreDiveChecklist() {
                     </div>
                 `;
             });
-            
+
             sharedPreDiveChecklist.innerHTML = html;
-            
+
             // Add event listeners
             sharedPreDiveChecklist.querySelectorAll('.form-check-input').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -1307,7 +1307,7 @@ function loadPreDiveChecklist() {
     })
     .catch(error => {
         console.error('Error loading pre-dive checklist:', error);
-        
+
         sharedPreDiveChecklist.innerHTML = `
             <div class="alert alert-danger">
                 <i class="fas fa-exclamation-circle me-2"></i>
@@ -1325,9 +1325,9 @@ function showOfflineGuide(e) {
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     console.log('showOfflineGuide called'); // Debug log
-    
+
     // Remove any existing modal first
     const existingModal = document.getElementById('offlineGuideModal');
     if (existingModal) {
@@ -1337,7 +1337,7 @@ function showOfflineGuide(e) {
         }
         existingModal.remove();
     }
-    
+
     const modalHtml = `
         <div class="modal fade" id="offlineGuideModal" tabindex="-1" aria-labelledby="offlineGuideModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -1348,24 +1348,24 @@ function showOfflineGuide(e) {
                     </div>
                     <div class="modal-body">
                         <p>ScuPlan is designed to work even when you're offline. Here's how to use it:</p>
-                        
+
                         <h6 class="mt-3">Saving Plans for Offline Use</h6>
                         <ol>
                             <li>Create a dive plan as usual</li>
                             <li>Click the "Save Offline" button in the results panel</li>
                             <li>The plan will be stored in your browser's local storage</li>
                         </ol>
-                        
+
                         <h6 class="mt-3">Accessing Offline Plans</h6>
                         <ol>
                             <li>Click the "Saved Plans" button in the navigation bar</li>
                             <li>You'll see a list of all your saved plans</li>
                             <li>Click "Load" to load a plan into the planner</li>
                         </ol>
-                        
+
                         <h6 class="mt-3">Offline Calculations</h6>
                         <p>When offline, ScuPlan will use simplified calculations that don't require a server connection. These calculations may not be as precise as the online version, but they provide reasonable estimates for planning purposes.</p>
-                        
+
                         <div class="alert alert-info mt-3">
                             <i class="fas fa-info-circle me-2"></i>
                             Offline data is stored only in your browser. If you clear your browser data or switch to a different device, your saved plans won't be available.
@@ -1378,12 +1378,12 @@ function showOfflineGuide(e) {
             </div>
         </div>
     `;
-    
+
     // Create and show the modal
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
+
     const modalElement = document.getElementById('offlineGuideModal');
-    
+
     // Use setTimeout to ensure DOM is ready
     setTimeout(() => {
         const modal = new bootstrap.Modal(modalElement, {
@@ -1391,7 +1391,7 @@ function showOfflineGuide(e) {
             keyboard: true,
             focus: true
         });
-        
+
         // Clean up after modal is hidden
         modalElement.addEventListener('hidden.bs.modal', function() {
             try {
@@ -1401,7 +1401,7 @@ function showOfflineGuide(e) {
                 console.error('Error cleaning up modal:', err);
             }
         }, { once: true });
-        
+
         modal.show();
         console.log('Offline Guide modal shown'); // Debug log
     }, 100);
@@ -1416,26 +1416,26 @@ function printCurrentPlan() {
         showAlert('No dive plan to print', 'warning');
         return;
     }
-    
+
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
         showAlert('Pop-up blocked. Please allow pop-ups to print the plan.', 'warning');
         return;
     }
-    
+
     // Function to format date
     const formatDate = (date) => {
         if (!date) return 'Not specified';
         const d = new Date(date);
         return d.toLocaleDateString();
     };
-    
+
     // Get total time from profile if available, otherwise use plan value
     const totalTime = (app.currentPlan.profile && app.currentPlan.profile.totalTime) 
         ? app.currentPlan.profile.totalTime.toFixed(1) 
         : app.currentPlan.totalDiveTime;
-    
+
     // Create tanks HTML if there are tanks
     let tanksHtml = '';
     if (app.tanks && app.tanks.length > 0) {
@@ -1453,13 +1453,13 @@ function printCurrentPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         app.tanks.forEach((tank, index) => {
             let gasInfo = 'Air';
             // Standart gaz bilgisi
             let o2 = tank.o2Percentage || tank.o2 || 21;
             let he = tank.hePercentage || tank.he || 0;
-            
+
             if (tank.gasType === 'nitrox' || tank.gas_type === 'nitrox') {
                 gasInfo = `Nitrox ${o2}% O₂`;
             } else if (tank.gasType === 'trimix' || tank.gas_type === 'trimix') {
@@ -1467,11 +1467,11 @@ function printCurrentPlan() {
             } else if (tank.gasType === 'oxygen' || tank.gas_type === 'oxygen') {
                 gasInfo = 'Oxygen (100% O₂)';
             }
-            
+
             // Tanklar için standart boyut ve basınç değerleri (eğer belirtilmemişse)
             let tankSize = tank.size || 12; // Litre olarak
             let tankPressure = tank.pressure || 200; // Bar olarak
-            
+
             tanksHtml += `
                 <tr>
                     <td>${index + 1}</td>
@@ -1481,14 +1481,14 @@ function printCurrentPlan() {
                 </tr>
             `;
         });
-        
+
         tanksHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Create buddies HTML if there are buddies
     let buddiesHtml = '';
     if (app.buddies && app.buddies.length > 0) {
@@ -1506,12 +1506,12 @@ function printCurrentPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         app.buddies.forEach(buddy => {
             const specialtyDisplay = buddy.specialty && buddy.specialty !== 'none' 
                 ? buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) 
                 : 'None';
-            
+
             buddiesHtml += `
                 <tr>
                     <td>${buddy.name}</td>
@@ -1521,14 +1521,14 @@ function printCurrentPlan() {
                 </tr>
             `;
         });
-        
+
         buddiesHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Create deco stops HTML if there are any
     let decoStopsHtml = '';
     if (app.currentPlan.profile && app.currentPlan.profile.decoStops && app.currentPlan.profile.decoStops.length > 0) {
@@ -1544,7 +1544,7 @@ function printCurrentPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         app.currentPlan.profile.decoStops.forEach(stop => {
             decoStopsHtml += `
                 <tr>
@@ -1553,14 +1553,14 @@ function printCurrentPlan() {
                 </tr>
             `;
         });
-        
+
         decoStopsHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Build the HTML content
     const content = `
         <!DOCTYPE html>
@@ -1655,7 +1655,7 @@ function printCurrentPlan() {
                     <div class="logo">ScuPlan</div>
                     <p>Dive Plan Report</p>
                 </div>
-                
+
                 <div class="section">
                     <h3>Dive Summary</h3>
                     <div class="summary-grid">
@@ -1688,11 +1688,11 @@ function printCurrentPlan() {
                         </div>
                     </div>
                 </div>
-                
+
                 ${decoStopsHtml}
                 ${tanksHtml}
                 ${buddiesHtml}
-                
+
                 <div class="section">
                     <h3>Dive Profile</h3>
                     <table class="table table-bordered">
@@ -1716,12 +1716,12 @@ function printCurrentPlan() {
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="footer">
                     <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
                     <p>This plan is for reference only. Always dive within your training and capabilities.</p>
                 </div>
-                
+
                 <div class="print-button" style="text-align: center; margin-top: 20px;">
                     <button onclick="window.print()">Print this plan</button>
                 </div>
@@ -1737,7 +1737,7 @@ function printCurrentPlan() {
         </body>
         </html>
     `;
-    
+
     // Write the content to the new window and open print dialog
     printWindow.document.open();
     printWindow.document.write(content);
@@ -1753,21 +1753,21 @@ function printSharedPlan() {
         showAlert('No shared plan data to print', 'warning');
         return;
     }
-    
+
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
         showAlert('Pop-up blocked. Please allow pop-ups to print the plan.', 'warning');
         return;
     }
-    
+
     // Function to format date
     const formatDate = (date) => {
         if (!date) return 'Not specified';
         const d = new Date(date);
         return d.toLocaleDateString();
     };
-    
+
     // Create tanks HTML if there are tanks
     let tanksHtml = '';
     if (window.sharedPlan.tanks && window.sharedPlan.tanks.length > 0) {
@@ -1785,14 +1785,14 @@ function printSharedPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         window.sharedPlan.tanks.forEach((tank, index) => {
             let gasInfo = 'Air';
-            
+
             // Standart gaz bilgisi
             let o2 = tank.o2_percentage || tank.o2 || 21;
             let he = tank.he_percentage || tank.he || 0;
-            
+
             if (tank.gas_type === 'nitrox' || tank.gasType === 'nitrox') {
                 gasInfo = `Nitrox ${o2}% O₂`;
             } else if (tank.gas_type === 'trimix' || tank.gasType === 'trimix') {
@@ -1800,11 +1800,11 @@ function printSharedPlan() {
             } else if (tank.gas_type === 'oxygen' || tank.gasType === 'oxygen') {
                 gasInfo = 'Oxygen (100% O₂)';
             }
-            
+
             // Tanklar için standart boyut ve basınç değerleri (eğer belirtilmemişse)
             let tankSize = tank.size || 12; // Litre olarak
             let tankPressure = tank.pressure || 200; // Bar olarak
-            
+
             tanksHtml += `
                 <tr>
                     <td>${index + 1}</td>
@@ -1814,14 +1814,14 @@ function printSharedPlan() {
                 </tr>
             `;
         });
-        
+
         tanksHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Create buddies HTML if there are buddies
     let buddiesHtml = '';
     if (window.sharedPlan.buddies && window.sharedPlan.buddies.length > 0) {
@@ -1839,12 +1839,12 @@ function printSharedPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         window.sharedPlan.buddies.forEach(buddy => {
             const specialtyDisplay = buddy.specialty && buddy.specialty !== 'none' 
                 ? buddy.specialty.charAt(0).toUpperCase() + buddy.specialty.slice(1) 
                 : 'None';
-            
+
             buddiesHtml += `
                 <tr>
                     <td>${buddy.name}</td>
@@ -1854,14 +1854,14 @@ function printSharedPlan() {
                 </tr>
             `;
         });
-        
+
         buddiesHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Create deco stops HTML if there are any
     let decoStopsHtml = '';
     if (window.sharedPlan.profile && window.sharedPlan.profile.decoStops && window.sharedPlan.profile.decoStops.length > 0) {
@@ -1877,7 +1877,7 @@ function printSharedPlan() {
                     </thead>
                     <tbody>
         `;
-        
+
         window.sharedPlan.profile.decoStops.forEach(stop => {
             decoStopsHtml += `
                 <tr>
@@ -1886,14 +1886,14 @@ function printSharedPlan() {
                 </tr>
             `;
         });
-        
+
         decoStopsHtml += `
                     </tbody>
                 </table>
             </div>
         `;
     }
-    
+
     // Build the HTML content
     const content = `
         <!DOCTYPE html>
@@ -1988,7 +1988,7 @@ function printSharedPlan() {
                     <div class="logo">ScuPlan</div>
                     <p>Shared Dive Plan Report</p>
                 </div>
-                
+
                 <div class="section">
                     <h3>Dive Summary</h3>
                     <div class="summary-grid">
@@ -2021,11 +2021,11 @@ function printSharedPlan() {
                         </div>
                     </div>
                 </div>
-                
+
                 ${decoStopsHtml}
                 ${tanksHtml}
                 ${buddiesHtml}
-                
+
                 <div class="section">
                     <h3>Dive Profile</h3>
                     <table class="table table-bordered">
@@ -2049,12 +2049,12 @@ function printSharedPlan() {
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="footer">
                     <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
                     <p>This shared plan is for reference only. Always dive within your training and capabilities.</p>
                 </div>
-                
+
                 <div class="print-button" style="text-align: center; margin-top: 20px;">
                     <button onclick="window.print()">Print this plan</button>
                 </div>
@@ -2070,7 +2070,7 @@ function printSharedPlan() {
         </body>
         </html>
     `;
-    
+
     // Write the content to the new window and open print dialog
     printWindow.document.open();
     printWindow.document.write(content);
@@ -2086,26 +2086,26 @@ function printPreDiveChecklist() {
         showAlert('No checklist available to print', 'warning');
         return;
     }
-    
+
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
         showAlert('Pop-up blocked. Please allow pop-ups to print the checklist.', 'warning');
         return;
     }
-    
+
     // Get the current state of the checklist (which items are checked)
     const items = [];
     checklistContainer.querySelectorAll('.checklist-item').forEach(item => {
         const checkbox = item.querySelector('input[type="checkbox"]');
         const label = item.querySelector('label');
-        
+
         items.push({
             text: label.textContent,
             checked: checkbox.checked
         });
     });
-    
+
     // Build the HTML content
     const content = `
         <!DOCTYPE html>
@@ -2190,10 +2190,10 @@ function printPreDiveChecklist() {
                     <div class="logo">ScuPlan</div>
                     <p>Pre-Dive Checklist</p>
                 </div>
-                
+
                 <div class="checklist-container">
     `;
-    
+
     // Add each checklist item
     items.forEach(item => {
         content += `
@@ -2203,16 +2203,16 @@ function printPreDiveChecklist() {
             </div>
         `;
     });
-    
+
     // Complete the HTML
     const completeContent = content + `
                 </div>
-                
+
                 <div class="footer">
                     <p>Generated by ScuPlan on ${new Date().toLocaleString()}</p>
                     <p>Always complete a thorough safety check before every dive.</p>
                 </div>
-                
+
                 <div class="print-button" style="text-align: center; margin-top: 20px;">
                     <button onclick="window.print()">Print this checklist</button>
                 </div>
@@ -2228,7 +2228,7 @@ function printPreDiveChecklist() {
         </body>
         </html>
     `;
-    
+
     // Write the content to the new window and open print dialog
     printWindow.document.open();
     printWindow.document.write(completeContent);
@@ -2243,9 +2243,9 @@ function showExportGuide(e) {
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     console.log('showExportGuide called'); // Debug log
-    
+
     // Remove any existing modal first
     const existingModal = document.getElementById('exportGuideModal');
     if (existingModal) {
@@ -2255,7 +2255,7 @@ function showExportGuide(e) {
         }
         existingModal.remove();
     }
-    
+
     const modalHtml = `
         <div class="modal fade" id="exportGuideModal" tabindex="-1" aria-labelledby="exportGuideModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -2266,7 +2266,7 @@ function showExportGuide(e) {
                     </div>
                     <div class="modal-body">
                         <p>ScuPlan offers several ways to export or print your dive plans and checklists:</p>
-                        
+
                         <h6 class="mt-3">Printing Dive Plans</h6>
                         <ol>
                             <li>Create a dive plan</li>
@@ -2274,7 +2274,7 @@ function showExportGuide(e) {
                             <li>Your browser's print dialog will open</li>
                             <li>Select your printer or save as PDF</li>
                         </ol>
-                        
+
                         <h6 class="mt-3">Printing Checklists</h6>
                         <ol>
                             <li>Go to the Checklists page</li>
@@ -2282,7 +2282,7 @@ function showExportGuide(e) {
                             <li>Click the "Print" button next to it</li>
                             <li>Your browser's print dialog will open</li>
                         </ol>
-                        
+
                         <h6 class="mt-3">Sharing Plans</h6>
                         <ol>
                             <li>Create a dive plan</li>
@@ -2290,7 +2290,7 @@ function showExportGuide(e) {
                             <li>Copy the generated link</li>
                             <li>Send the link to your dive buddies</li>
                         </ol>
-                        
+
                         <div class="alert alert-info mt-3">
                             <i class="fas fa-info-circle me-2"></i>
                             When printing, try the "Save as PDF" option to create a digital copy that you can store on your device or share via email.
@@ -2303,12 +2303,12 @@ function showExportGuide(e) {
             </div>
         </div>
     `;
-    
+
     // Create and show the modal
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
+
     const modalElement = document.getElementById('exportGuideModal');
-    
+
     // Use setTimeout to ensure DOM is ready
     setTimeout(() => {
         const modal = new bootstrap.Modal(modalElement, {
@@ -2316,7 +2316,7 @@ function showExportGuide(e) {
             keyboard: true,
             focus: true
         });
-        
+
         // Clean up after modal is hidden
         modalElement.addEventListener('hidden.bs.modal', function() {
             try {
@@ -2326,7 +2326,7 @@ function showExportGuide(e) {
                 console.error('Error cleaning up modal:', err);
             }
         }, { once: true });
-        
+
         modal.show();
         console.log('Export Guide modal shown'); // Debug log
     }, 100);
@@ -2349,11 +2349,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentYear) {
         currentYear.textContent = new Date().getFullYear();
     }
-    
+
     // Check which page we're on
     if (document.getElementById('divePlanForm')) {
         initDivePlanner();
-        
+
         // Initialize date field with proper format (dd.mm.yyyy style)
         const dateInput = document.getElementById('diveDate');
         if (dateInput && !dateInput.value) {
@@ -2363,13 +2363,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const day = String(today.getDate()).padStart(2, '0');
             dateInput.value = `${year}-${month}-${day}`;
         }
-        
+
         // Initialize time field
         const timeInput = document.getElementById('diveTime');
         if (timeInput && !timeInput.value) {
             timeInput.value = '10:00';
         }
-        
+
         // Check for imported plan
         if (typeof checkForImportedPlan === 'function') {
             checkForImportedPlan();
