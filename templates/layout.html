@@ -215,6 +215,64 @@
         </div>
     </footer>
 
+    <!-- About Me Modal -->
+    <div class="modal fade" id="aboutMeModal" tabindex="-1" aria-labelledby="aboutMeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutMeModalLabel">About Me</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>About the Developer</h6>
+                            <p>ScuPlan was created by a passionate scuba diving enthusiast and software developer who recognized the need for comprehensive, free diving planning tools accessible to divers worldwide.</p>
+                            
+                            <h6 class="mt-4">Project Mission</h6>
+                            <p>Our mission is to provide safe, reliable, and completely free diving planning tools to the global diving community. We believe that safety-critical diving calculations should be accessible to everyone, regardless of their financial situation.</p>
+                            
+                            <h6 class="mt-4">Key Features</h6>
+                            <ul>
+                                <li><strong>100% Free:</strong> No hidden costs, premium features, or subscription fees</li>
+                                <li><strong>Offline Capability:</strong> Works without internet connection once loaded</li>
+                                <li><strong>Technical Diving Support:</strong> Advanced calculations for technical divers</li>
+                                <li><strong>Educational Resources:</strong> Comprehensive dive theory and safety information</li>
+                                <li><strong>World Dive Sites:</strong> Database of famous diving locations worldwide</li>
+                                <li><strong>AI Assistant:</strong> Zero-cost intelligent diving guidance</li>
+                            </ul>
+                            
+                            <h6 class="mt-4">Safety Notice</h6>
+                            <p class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i><strong>Important:</strong> ScuPlan is designed as a planning aid and educational tool. Always dive within your certification limits and use proper dive computers during actual dives. This tool should supplement, not replace, proper diving training and equipment.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Support the Project</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">If ScuPlan has helped you plan safer dives, consider supporting the project:</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-sm btn-outline-info copy-btn" data-address="xrp">
+                                            <i class="fas fa-coins me-1"></i>Donate XRP
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success copy-btn" data-address="usdt">
+                                            <i class="fas fa-dollar-sign me-1"></i>Donate USDT
+                                        </button>
+                                    </div>
+                                    <p class="small mt-2 text-muted">Your support keeps ScuPlan free for everyone!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Offline Indicator -->
     <div class="offline-indicator" id="offlineIndicator">
         <i class="fas fa-wifi me-2"></i> You're offline. Some features may be limited.

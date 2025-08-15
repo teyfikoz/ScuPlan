@@ -225,6 +225,24 @@ function setupEventListeners() {
             }
         });
     }
+    
+    // Setup About Me modal link
+    const aboutMeLink = document.getElementById('aboutMeLink');
+    if (aboutMeLink) {
+        aboutMeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Use Bootstrap's modal instance or create new one
+            const aboutModal = document.getElementById('aboutMeModal');
+            if (aboutModal) {
+                const modal = new bootstrap.Modal(aboutModal);
+                modal.show();
+            } else {
+                showAlert('About section is currently not available', 'warning');
+            }
+        });
+    }
 }
 
 /**
@@ -1283,10 +1301,19 @@ function loadPreDiveChecklist() {
  */
 function showOfflineGuide(e) {
     e.preventDefault();
+    e.stopPropagation();
+    
+    // Remove any existing modal first
+    const existingModal = document.getElementById('offlineGuideModal');
+    if (existingModal) {
+        const bsModal = bootstrap.Modal.getInstance(existingModal);
+        if (bsModal) bsModal.dispose();
+        existingModal.remove();
+    }
     
     const modalHtml = `
         <div class="modal fade" id="offlineGuideModal" tabindex="-1" aria-labelledby="offlineGuideModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="offlineGuideModalLabel">Offline Usage Guide</h5>
@@ -1326,17 +1353,22 @@ function showOfflineGuide(e) {
     `;
     
     // Create and show the modal
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHtml;
-    document.body.appendChild(modalContainer);
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
     
-    const modal = new bootstrap.Modal(document.getElementById('offlineGuideModal'));
-    modal.show();
-    
-    // Remove the modal from the DOM after it's hidden
-    document.getElementById('offlineGuideModal').addEventListener('hidden.bs.modal', function() {
-        document.body.removeChild(modalContainer);
+    const modalElement = document.getElementById('offlineGuideModal');
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
     });
+    
+    // Clean up after modal is hidden
+    modalElement.addEventListener('hidden.bs.modal', function(event) {
+        modal.dispose();
+        modalElement.remove();
+    }, { once: true });
+    
+    modal.show();
 }
 
 /**
@@ -2172,10 +2204,19 @@ function printPreDiveChecklist() {
  */
 function showExportGuide(e) {
     e.preventDefault();
+    e.stopPropagation();
+    
+    // Remove any existing modal first
+    const existingModal = document.getElementById('exportGuideModal');
+    if (existingModal) {
+        const bsModal = bootstrap.Modal.getInstance(existingModal);
+        if (bsModal) bsModal.dispose();
+        existingModal.remove();
+    }
     
     const modalHtml = `
         <div class="modal fade" id="exportGuideModal" tabindex="-1" aria-labelledby="exportGuideModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exportGuideModalLabel">Export & Print Guide</h5>
@@ -2222,17 +2263,22 @@ function showExportGuide(e) {
     `;
     
     // Create and show the modal
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHtml;
-    document.body.appendChild(modalContainer);
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
     
-    const modal = new bootstrap.Modal(document.getElementById('exportGuideModal'));
-    modal.show();
-    
-    // Remove the modal from the DOM after it's hidden
-    document.getElementById('exportGuideModal').addEventListener('hidden.bs.modal', function() {
-        document.body.removeChild(modalContainer);
+    const modalElement = document.getElementById('exportGuideModal');
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
     });
+    
+    // Clean up after modal is hidden
+    modalElement.addEventListener('hidden.bs.modal', function(event) {
+        modal.dispose();
+        modalElement.remove();
+    }, { once: true });
+    
+    modal.show();
 }
 
 /**

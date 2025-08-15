@@ -694,28 +694,28 @@ function initMultiLevelCalculator() {
             // Check END limits
             if (data.max_end > 40) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> END 40m üzerinde, aşırı narkoz riski!</div>';
+                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> END over 40m, excessive narcosis risk!</div>';
             } else if (data.max_end > 30) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> END 30m üzerinde, dikkatle yaklaşın.</div>';
+                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> END over 30m, approach with caution.</div>';
             }
             
             // Check pO2 limits
             if (data.max_po2 > 1.6) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> pO2 1.6 üzerinde, oksijen toksisitesi riski!</div>';
+                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> pO2 over 1.6, oxygen toxicity risk!</div>';
             } else if (data.max_po2 > 1.4) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> pO2 1.4 üzerinde, dikkatle yaklaşın.</div>';
+                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> pO2 over 1.4, approach with caution.</div>';
             }
             
             // Check CNS limits
             if (data.max_cns > 80) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> CNS %80 üzerinde, oksijen toksisitesi riski!</div>';
+                warningText += '<div><i class="fas fa-exclamation-triangle me-2"></i> CNS over 80%, oxygen toxicity risk!</div>';
             } else if (data.max_cns > 50) {
                 hasWarning = true;
-                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> CNS %50 üzerinde, dikkatle yaklaşın.</div>';
+                warningText += '<div><i class="fas fa-exclamation-circle me-2"></i> CNS over 50%, approach with caution.</div>';
             }
             
             if (hasWarning) {
@@ -723,7 +723,7 @@ function initMultiLevelCalculator() {
                 alertBox.innerHTML = warningText;
             } else {
                 alertBox.className = 'alert alert-success mt-3 mb-0';
-                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Gaz değerleri güvenli sınırlar içinde.';
+                alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Gas values within safe limits.';
             }
             
             resultBox.style.display = 'block';
