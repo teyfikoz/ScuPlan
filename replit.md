@@ -102,6 +102,15 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **ENHANCED: Comprehensive AI assistant with technical diving knowledge base**
 ✓ **REMOVED: Imperial system completely eliminated - only metric system supported**
 ✓ **FIXED: All unit conversion dependencies removed from codebase**
+✓ **EXPANDED: Comprehensive Mediterranean dive sites database (30 locations)**
+✓ **ADDED: Turkish dive sites (Bodrum, Kas, Antalya, Gallipoli)**
+✓ **ADDED: Greek dive sites (Santorini, Zakynthos, Crete, Rhodes)**
+✓ **ADDED: Italian dive sites (Ustica, Capri, Elba, Cinque Terre)**
+✓ **ADDED: Spanish dive sites (Costa Brava, Ibiza, Mallorca)**
+✓ **ADDED: Croatian Adriatic sites (Kornati, Vis, Pula wrecks)**
+✓ **ADDED: Cyprus, Malta, French dive sites**
+✓ **FIXED: Map search functionality with proper no-results handling**
+✓ **ENHANCED: Interactive map with clustering and detailed popups**
 
 ## Zero-Cost Offline Education Features (August 2025)
 ✓ **Comprehensive Dive Theory**: 6 major sections with interactive accordions
