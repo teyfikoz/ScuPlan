@@ -1,6 +1,7 @@
 /**
  * Tank Air Remaining Simulation
  * Advanced air consumption calculations for dive planning
+ * METRIC SYSTEM ONLY
  */
 
 class AirConsumptionCalculator {
@@ -36,7 +37,7 @@ class AirConsumptionCalculator {
                             <div class="col-md-4">
                                 <div class="air-stat">
                                     <span class="air-label">Remaining Pressure:</span>
-                                    <span class="air-value fw-bold text-info" id="remainingPressureValue">-- <span data-unit="pressure">bar</span></span>
+                                    <span class="air-value fw-bold text-info" id="remainingPressureValue">-- bar</span>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +51,7 @@ class AirConsumptionCalculator {
                             <div class="col-md-6">
                                 <div class="air-stat">
                                     <span class="air-label">Avg. Depth:</span>
-                                    <span class="air-value" id="avgDepthUsed">-- <span data-unit="depth">m</span></span>
+                                    <span class="air-value" id="avgDepthUsed">-- m</span>
                                 </div>
                             </div>
                         </div>
@@ -85,11 +86,6 @@ class AirConsumptionCalculator {
         window.addEventListener('tanksUpdated', () => {
             this.recalculateAirConsumption();
         });
-
-        // Listen for units change
-        window.addEventListener('unitsChanged', () => {
-            this.updateUnitsDisplay();
-        });
     }
 
     /**
@@ -114,52 +110,33 @@ class AirConsumptionCalculator {
         this.displayAirResults(airConsumption, diveData);
         this.displayRunTimeTable(airConsumption, diveData);
         container.style.display = 'block';
-
-        // Show decompression explanation when air simulation is displayed
-        const decoBox = document.getElementById('decoExplanationBox');
-        if (decoBox) {
-            decoBox.style.display = 'block';
-        }
     }
 
     /**
      * Calculate air consumption based on dive profile and tank data
      */
     calculateAirConsumption(diveData, tank) {
-        const depth = parseFloat(diveData.depth) || 30;
+        const depth = parseFloat(diveData.depth) || 18;
         const bottomTime = parseFloat(diveData.bottomTime) || 30;
+        const sacRate = parseFloat(diveData.sacRate) || 20; // L/min
+        const tankSize = parseFloat(tank.size) || 12; // L
+        const tankPressure = parseFloat(tank.pressure) || 200; // bar
+        
         const descentTime = parseFloat(diveData.descentTime) || 2;
         const ascentTime = parseFloat(diveData.ascentTime) || 3;
-        const totalTime = bottomTime + descentTime + ascentTime;
-
-        // Tank specifications
-        const tankSize = parseFloat(tank.size) || 12; // liters
-        const tankPressure = parseFloat(tank.pressure) || 200; // bar
-        const totalAir = tankSize * tankPressure; // total air in liters at 1 bar
-
-        // SAC rate estimation (can be made configurable)
-        const sacRate = parseFloat(tank.sacRate) || 20; // L/min at surface
-
-        // Calculate air consumption for each phase
-        const descentConsumption = this.calculatePhaseConsumption(
-            sacRate, 0, depth, descentTime
-        );
         
-        const bottomConsumption = this.calculatePhaseConsumption(
-            sacRate, depth, depth, bottomTime
-        );
+        // Calculate consumption for each phase (metric only)
+        const descentConsumption = this.calculatePhaseConsumption(sacRate, 0, depth, descentTime);
+        const bottomConsumption = this.calculatePhaseConsumption(sacRate, depth, depth, bottomTime);
+        const ascentConsumption = this.calculatePhaseConsumption(sacRate, depth, 0, ascentTime);
         
-        const ascentConsumption = this.calculatePhaseConsumption(
-            sacRate, depth, 0, ascentTime
-        );
-
         const totalAirUsed = descentConsumption + bottomConsumption + ascentConsumption;
+        const totalAir = tankSize * tankPressure;
         const remainingAir = totalAir - totalAirUsed;
         const remainingPressure = remainingAir / tankSize;
-
-        // Calculate average depth for display
-        const avgDepth = (depth * (bottomTime + descentTime/2 + ascentTime/2)) / totalTime;
-
+        
+        const avgDepth = (depth * (bottomTime + descentTime/2 + ascentTime/2)) / (bottomTime + descentTime + ascentTime);
+        
         return {
             totalAirUsed,
             remainingAir,
@@ -185,123 +162,44 @@ class AirConsumptionCalculator {
     }
 
     /**
-     * Display air consumption results
+     * Display air consumption results (metric only)
      */
     displayAirResults(consumption, diveData) {
-        const unitsManager = window.unitsManager;
-        
-        // Update values with unit conversions
-        const airUsedDisplay = unitsManager ? 
-            unitsManager.formatVolume(consumption.totalAirUsed, 0) :
-            `${Math.round(consumption.totalAirUsed)} L`;
-            
-        const remainingAirDisplay = unitsManager ? 
-            unitsManager.formatVolume(consumption.remainingAir, 0) :
-            `${Math.round(consumption.remainingAir)} L`;
-            
-        const remainingPressureDisplay = unitsManager ? 
-            unitsManager.formatPressure(consumption.remainingPressure, 1) :
-            `${consumption.remainingPressure.toFixed(1)} bar`;
-            
-        const avgDepthDisplay = unitsManager ? 
-            unitsManager.formatDepth(consumption.avgDepth, 1) :
-            `${consumption.avgDepth.toFixed(1)} m`;
-
-        // Update DOM elements
-        document.getElementById('airUsedValue').textContent = airUsedDisplay;
-        document.getElementById('remainingAirValue').textContent = remainingAirDisplay;
-        document.getElementById('remainingPressureValue').innerHTML = remainingPressureDisplay;
+        // Update DOM elements with metric units only
+        document.getElementById('airUsedValue').textContent = `${Math.round(consumption.totalAirUsed)} L`;
+        document.getElementById('remainingAirValue').textContent = `${Math.round(consumption.remainingAir)} L`;
+        document.getElementById('remainingPressureValue').textContent = `${consumption.remainingPressure.toFixed(1)} bar`;
         document.getElementById('sacRateUsed').textContent = `${consumption.sacRate} L/min`;
-        document.getElementById('avgDepthUsed').innerHTML = avgDepthDisplay;
+        document.getElementById('avgDepthUsed').textContent = `${consumption.avgDepth.toFixed(1)} m`;
 
         // Show warnings if necessary
         this.checkAirWarnings(consumption);
     }
 
     /**
-     * Display run time table with segment breakdown
-     */
-    displayRunTimeTable(consumption, diveData) {
-        const tableContainer = document.getElementById('runTimeTableContainer');
-        const tableBody = document.getElementById('runTimeTableBody');
-        
-        if (!tableContainer || !tableBody) return;
-
-        const unitsManager = window.unitsManager;
-        const descentTime = parseFloat(diveData.descentTime) || 2;
-        const bottomTime = parseFloat(diveData.bottomTime) || 30;
-        const ascentTime = parseFloat(diveData.ascentTime) || 3;
-        
-        let cumulativeTime = 0;
-        let remainingAir = consumption.totalAir;
-
-        const segments = [
-            {
-                name: 'Descent',
-                time: descentTime,
-                airUsed: consumption.phases.descent
-            },
-            {
-                name: 'Bottom',
-                time: bottomTime,
-                airUsed: consumption.phases.bottom
-            },
-            {
-                name: 'Ascent',
-                time: ascentTime,
-                airUsed: consumption.phases.ascent
-            }
-        ];
-
-        let tableHTML = '';
-        segments.forEach(segment => {
-            cumulativeTime += segment.time;
-            remainingAir -= segment.airUsed;
-            
-            const airUsedDisplay = unitsManager ? 
-                unitsManager.formatVolume(segment.airUsed, 0) :
-                `${Math.round(segment.airUsed)} L`;
-                
-            const remainingDisplay = unitsManager ? 
-                unitsManager.formatVolume(remainingAir, 0) :
-                `${Math.round(remainingAir)} L`;
-            
-            tableHTML += `
-                <tr>
-                    <td><strong>${segment.name}</strong></td>
-                    <td>${segment.time}</td>
-                    <td>${airUsedDisplay}</td>
-                    <td>${cumulativeTime}</td>
-                    <td>${remainingDisplay}</td>
-                </tr>
-            `;
-        });
-
-        tableBody.innerHTML = tableHTML;
-        tableContainer.style.display = 'block';
-    }
-
-    /**
-     * Check for air consumption warnings
+     * Check and display air consumption warnings
      */
     checkAirWarnings(consumption) {
         const warningContainer = document.getElementById('airWarning');
         const warningText = document.getElementById('airWarningText');
         
         if (!warningContainer || !warningText) return;
-
-        let warning = null;
         
-        if (consumption.remainingPressure < 50) {
-            warning = 'Low remaining air pressure. Consider reducing dive time or depth.';
-        } else if (consumption.remainingAir < 500) {
-            warning = 'Low remaining air volume. Plan for emergency ascent procedures.';
-        } else if (consumption.totalAirUsed / consumption.totalAir > 0.8) {
-            warning = 'High air consumption ratio. Consider backup air source or buddy procedures.';
+        let warnings = [];
+        
+        // Check if remaining air is critically low
+        const remainingPercentage = (consumption.remainingAir / consumption.totalAir) * 100;
+        if (remainingPercentage < 30) {
+            warnings.push(`Low air warning: Only ${remainingPercentage.toFixed(1)}% air remaining`);
         }
-
-        if (warning) {
-            warningText.textContent = warning;
+        
+        // Check if remaining pressure is below safety reserve
+        if (consumption.remainingPressure < 50) {
+            warnings.push(`Safety reserve warning: Remaining pressure ${consumption.remainingPressure.toFixed(1)} bar is below 50 bar safety minimum`);
+        }
+        
+        if (warnings.length > 0) {
+            warningText.textContent = warnings.join('. ');
             warningContainer.style.display = 'block';
         } else {
             warningContainer.style.display = 'none';
@@ -309,55 +207,25 @@ class AirConsumptionCalculator {
     }
 
     /**
-     * Get tank data from the tanks system
+     * Get tank data from the app state
      */
     getTankData() {
-        const tanks = [];
-        document.querySelectorAll('.tank-container').forEach(container => {
-            const sizeInput = container.querySelector('input[placeholder*="size"]');
-            const pressureInput = container.querySelector('input[placeholder*="pressure"]');
-            const o2Input = container.querySelector('input[placeholder*="O₂"]');
-            
-            if (sizeInput && pressureInput) {
-                tanks.push({
-                    size: sizeInput.value,
-                    pressure: pressureInput.value,
-                    o2: o2Input ? o2Input.value : 21,
-                    sacRate: 20 // Default SAC rate, can be made configurable
-                });
-            }
-        });
-        return tanks;
+        return window.app && window.app.tanks ? window.app.tanks : [];
     }
 
     /**
-     * Recalculate air consumption when tank data changes
+     * Recalculate air consumption when tanks are updated
      */
     recalculateAirConsumption() {
-        // Trigger recalculation if dive results are visible
-        const resultsContainer = document.getElementById('diveResults');
-        if (resultsContainer && resultsContainer.style.display !== 'none') {
-            // Get current dive data from form
-            const diveData = {
-                depth: document.getElementById('depthInput')?.value,
-                bottomTime: document.getElementById('timeInput')?.value,
-                descentTime: 2, // Default values
-                ascentTime: 3
-            };
-            this.updateAirSimulation(diveData);
+        // Get the last calculated dive data
+        const lastDiveData = window.app && window.app.currentPlan ? window.app.currentPlan : null;
+        if (lastDiveData) {
+            this.updateAirSimulation(lastDiveData);
         }
-    }
-
-    /**
-     * Update units display when unit system changes
-     */
-    updateUnitsDisplay() {
-        // Re-trigger display update if results are visible
-        this.recalculateAirConsumption();
     }
 }
 
 // Initialize air consumption calculator
 document.addEventListener('DOMContentLoaded', function() {
-    new AirConsumptionCalculator();
+    window.airConsumptionCalculator = new AirConsumptionCalculator();
 });

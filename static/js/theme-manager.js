@@ -111,67 +111,13 @@ class ThemeManager {
     }
 }
 
-// Enhanced Unit Toggle with better positioning and styling
-class EnhancedUnitsManager extends UnitsManager {
-    constructor() {
-        super();
-    }
-
-    /**
-     * Create enhanced unit toggle button
-     */
-    createToggle() {
-        // Remove existing toggle if present
-        const existingToggle = document.getElementById('unitToggleButton');
-        if (existingToggle) {
-            existingToggle.remove();
-        }
-
-        // Create new toggle button
-        const toggleButton = document.createElement('button');
-        toggleButton.id = 'unitToggleButton';
-        toggleButton.className = 'unit-toggle';
-        toggleButton.innerHTML = `<i class="fas fa-exchange-alt me-2"></i>${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}`;
-        toggleButton.title = 'Toggle Unit System';
-        
-        // Add event listener
-        toggleButton.addEventListener('click', () => {
-            const newSystem = this.currentSystem === 'metric' ? 'imperial' : 'metric';
-            this.setSystem(newSystem);
-            this.updateToggleText();
-        });
-
-        // Add to body
-        document.body.appendChild(toggleButton);
-    }
-
-    /**
-     * Update toggle button text
-     */
-    updateToggleText() {
-        const toggleButton = document.getElementById('unitToggleButton');
-        if (toggleButton) {
-            toggleButton.innerHTML = `<i class="fas fa-exchange-alt me-2"></i>${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}`;
-        }
-    }
-
-    /**
-     * Override setSystem to update button text
-     */
-    setSystem(system) {
-        super.setSystem(system);
-        this.updateToggleText();
-    }
-}
-
-// Initialize enhanced systems
-let themeManager;
-let enhancedUnitsManager;
-
+// Initialize theme manager only (Imperial system completely removed)
 document.addEventListener('DOMContentLoaded', function() {
-    themeManager = new ThemeManager();
-    enhancedUnitsManager = new EnhancedUnitsManager();
+    window.themeManager = new ThemeManager();
     
-    // Override global unitsManager with enhanced version
-    window.unitsManager = enhancedUnitsManager;
+    // Add smooth transitions to elements that might change with theme
+    const elementsToAnimate = document.querySelectorAll('.card, .btn, .form-control, .navbar');
+    elementsToAnimate.forEach(element => {
+        element.style.transition = 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease';
+    });
 });
