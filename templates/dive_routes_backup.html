@@ -1,0 +1,629 @@
+{% extends "layout.html" %}
+{% block title %}World Dive Routes - ScuPlan{% endblock %}
+
+{% block head_extras %}
+<!-- Leaflet.js CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Marker Cluster CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-map-marked-alt me-2"></i>World Dive Routes</h1>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="listViewBtn" onclick="toggleView('list')">
+                        <i class="fas fa-list"></i> List View
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm active" id="mapViewBtn" onclick="toggleView('map')">
+                        <i class="fas fa-map"></i> Map View
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="regionFilter" class="form-label">Region</label>
+                            <select class="form-select" id="regionFilter" onchange="filterDiveSites()">
+                                <option value="">All Regions</option>
+                                <option value="pacific">Pacific Ocean</option>
+                                <option value="atlantic">Atlantic Ocean</option>
+                                <option value="indian">Indian Ocean</option>
+                                <option value="mediterranean">Mediterranean Sea</option>
+                                <option value="caribbean">Caribbean Sea</option>
+                                <option value="red-sea">Red Sea</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="difficultyFilter" class="form-label">Difficulty</label>
+                            <select class="form-select" id="difficultyFilter" onchange="filterDiveSites()">
+                                <option value="">All Levels</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="technical">Technical</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="typeFilter" class="form-label">Dive Type</label>
+                            <select class="form-select" id="typeFilter" onchange="filterDiveSites()">
+                                <option value="">All Types</option>
+                                <option value="reef">Coral Reef</option>
+                                <option value="wreck">Wreck Diving</option>
+                                <option value="cave">Cave Diving</option>
+                                <option value="drift">Drift Diving</option>
+                                <option value="wall">Wall Diving</option>
+                                <option value="macro">Macro Photography</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="searchInput" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search dive sites..." onkeyup="filterDiveSites()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map View -->
+    <div id="mapViewContainer" class="row" style="display: block;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-globe-americas me-2"></i>Interactive World Dive Map</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="worldMap" style="height: 600px;"></div>
+                    
+                    <!-- Turkish Airlines CTA Banner -->
+                    <div class="p-3 bg-light border-top">
+                        <a href="https://www.turkishairlinesholidays.com/en-tr/diving-and-snorkelling-hotels-vacation-package" 
+                           target="_blank" 
+                           class="btn btn-primary w-100 py-3 fw-bold">
+                            <i class="fas fa-plane me-2"></i>
+                            🛫 Explore Dive Trips with Turkish Airlines Holidays
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- List View -->
+    <div id="listViewContainer" class="row" style="display: none;">
+        <div class="col-12">
+            <div id="diveSitesList">
+                <!-- Dive sites will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet.js and Marker Cluster JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<!-- Dive Routes functionality -->
+<script src="{{ url_for('static', filename='js/dive-routes.js') }}"></script>
+
+{% endblock %}
+function updateMapMarkers() {
+    // Clear existing markers
+    markerClusterGroup.clearLayers();
+    
+    // Add filtered markers
+    filteredSites.forEach(location => {
+        addDiveLocationMarker(location);
+    });
+}
+
+function toggleView(view) {
+    const mapView = document.getElementById('mapViewContainer');
+    const listView = document.getElementById('listViewContainer');
+    const mapBtn = document.getElementById('mapViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+
+    if (view === 'map') {
+        mapView.style.display = 'block';
+        listView.style.display = 'none';
+        mapBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        mapView.style.display = 'none';
+        listView.style.display = 'block';
+        listBtn.classList.add('active');
+        mapBtn.classList.remove('active');
+        renderDiveSitesList();
+    }
+}
+
+function filterDiveSites() {
+    const regionFilter = document.getElementById('regionFilter').value;
+    const difficultyFilter = document.getElementById('difficultyFilter').value;
+    const typeFilter = document.getElementById('typeFilter').value;
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+    filteredSites = worldDiveSites.filter(site => {
+        // Map region from country to general region for filtering
+        const siteRegion = getRegionFromCountry(site.country);
+        
+        return (!regionFilter || siteRegion === regionFilter) &&
+               (!difficultyFilter || site.difficulty.toLowerCase() === difficultyFilter) &&
+               (!typeFilter || site.type.toLowerCase().includes(typeFilter)) &&
+               (!searchInput || 
+                site.name.toLowerCase().includes(searchInput) ||
+                site.country.toLowerCase().includes(searchInput) ||
+                site.description.toLowerCase().includes(searchInput));
+    });
+
+    if (document.getElementById('listViewContainer').style.display !== 'none') {
+        renderDiveSitesList();
+    }
+}
+
+function getRegionFromCountry(country) {
+    const regionMap = {
+        'Belize': 'caribbean',
+        'Egypt': 'red-sea',
+        'Malaysia': 'pacific',
+        'Mexico': 'caribbean',
+        'United States (Hawaii)': 'pacific',
+        'Palau': 'pacific',
+        'New Zealand': 'pacific',
+        'Iceland': 'atlantic',
+        'Maldives': 'indian',
+        'Indonesia (Bali)': 'pacific',
+        'Thailand': 'pacific'
+    };
+    return regionMap[country] || 'other';
+}
+
+function renderDiveSitesList() {
+    const container = document.getElementById('diveSitesList');
+    
+    if (filteredSites.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-search fa-3x mb-3"></i>
+                <h5>No dive sites found</h5>
+                <p>Try adjusting your filters or search terms.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const sitesHTML = filteredSites.map(site => {
+        const difficultyColor = {
+            'Beginner': 'success',
+            'Intermediate': 'warning',
+            'Advanced': 'danger',
+            'Technical': 'dark'
+        };
+
+        const typeIcon = getTypeIcon(site.type);
+
+        return `
+            <div class="card mb-3 dive-site-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">
+                                <i class="${typeIcon} me-2"></i>
+                                ${site.name}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="fas fa-map-marker-alt me-1"></i>${site.country}
+                            </h6>
+                            <p class="card-text">${site.description}</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Best Time:</strong> ${site.bestTime}
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Type:</strong> ${site.type}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-end">
+                                <span class="badge bg-${difficultyColor[site.difficulty]} mb-2">${site.difficulty}</span>
+                                <span class="badge bg-info mb-2">${site.type.split(' ')[0]}</span>
+                            </div>
+                            
+                            <div class="dive-specs mt-3">
+                                <div class="spec-item">
+                                    <i class="fas fa-arrows-alt-v me-1"></i>
+                                    <strong>Max Depth:</strong> <span data-unit="depth">${site.maxDepth}m</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-eye me-1"></i>
+                                    <strong>Visibility:</strong> ${site.visibility}
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-thermometer-half me-1"></i>
+                                    <strong>Temperature:</strong> ${site.temperature}
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-primary btn-sm w-100" onclick="planDiveToSite('${site.name}', ${site.maxDepth})">
+                                    <i class="fas fa-calendar-plus me-1"></i>Plan Dive Here
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = sitesHTML;
+    
+    // Update units if available
+    if (window.unitsManager) {
+        window.unitsManager.updateAllUnits();
+    }
+}
+
+function planDiveToSite(siteName, maxDepth) {
+    // Store site info and redirect to main planner
+    sessionStorage.setItem('selectedDiveSite', JSON.stringify({
+        name: siteName,
+        maxDepth: maxDepth
+    }));
+    
+    // Redirect to main page with parameters
+    window.location.href = `/?site=${encodeURIComponent(siteName)}&depth=${maxDepth}`;
+}
+
+// Map variables
+let map = null;
+let markerClusterGroup = null;
+let diveLocations = [];
+
+// Initialize map functionality
+async function initializeMap() {
+    try {
+        // Use already loaded dive locations data or load it
+        if (worldDiveSites.length === 0) {
+            await loadDiveSitesData();
+        }
+        diveLocations = worldDiveSites;
+        
+        // Initialize Leaflet map
+        map = L.map('worldMap').setView([20, 0], 2);
+        
+        // Add tile layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        // Initialize marker cluster group
+        markerClusterGroup = L.markerClusterGroup({
+            chunkedLoading: true,
+            maxClusterRadius: 50
+        });
+        
+        // Add markers for each dive location
+        diveLocations.forEach(location => {
+            addDiveLocationMarker(location);
+        });
+        
+        // Add marker cluster group to map
+        map.addLayer(markerClusterGroup);
+        
+        console.log('Map initialized with', diveLocations.length, 'dive sites');
+        
+    } catch (error) {
+        console.error('Error initializing map:', error);
+        document.getElementById('worldMap').innerHTML = `
+            <div class="d-flex align-items-center justify-content-center h-100 text-center text-muted">
+                <div>
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h5>Map Loading Error</h5>
+                    <p>Unable to load the interactive map. Please try refreshing the page.</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function addDiveLocationMarker(location) {
+    // Create custom icon based on difficulty level
+    const iconColor = getDifficultyColor(location.difficulty);
+    const typeIcon = getTypeIcon(location.type);
+    
+    // Create marker with custom icon
+    const marker = L.marker([location.lat, location.lng], {
+        icon: L.divIcon({
+            className: 'custom-dive-marker',
+            html: `<div class="marker-icon" style="background-color: ${iconColor};">
+                     <i class="${typeIcon}" style="color: white; font-size: 16px;"></i>
+                   </div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+        })
+    });
+    
+    // Create popup content
+    const popupContent = createPopupContent(location);
+    marker.bindPopup(popupContent, {
+        maxWidth: 300,
+        className: 'dive-site-popup'
+    });
+    
+    // Add marker to cluster group
+    markerClusterGroup.addLayer(marker);
+}
+
+function getDifficultyColor(difficulty) {
+    const colors = {
+        'Beginner': '#28a745',
+        'Intermediate': '#ffc107', 
+        'Advanced': '#dc3545',
+        'Technical': '#343a40'
+    };
+    return colors[difficulty] || '#6c757d';
+}
+
+function getTypeIcon(type) {
+    const icons = {
+        'Reef Diving': 'fas fa-fish',
+        'Wreck Diving': 'fas fa-ship',
+        'Cave Diving': 'fas fa-mountain',
+        'Drift Diving': 'fas fa-water',
+        'Wall Diving': 'fas fa-chart-line',
+        'Fissure Diving': 'fas fa-mountain'
+    };
+    return icons[type] || 'fas fa-map-marker-alt';
+}
+
+function createPopupContent(location) {
+    const unitsManager = window.unitsManager;
+    const depthDisplay = unitsManager ? 
+        unitsManager.formatDepth(location.maxDepth, 0) :
+        `${location.maxDepth}m`;
+    
+    return `
+        <div class="dive-site-popup-content">
+            <h6 class="fw-bold mb-2">
+                <i class="${getTypeIcon(location.type)} me-2"></i>
+                ${location.name}
+            </h6>
+            <p class="mb-2">
+                <i class="fas fa-map-marker-alt me-1"></i>
+                <strong>${location.country}</strong>
+            </p>
+            <p class="small mb-3">${location.description}</p>
+            
+            <div class="row mb-3">
+                <div class="col-6">
+                    <small class="text-muted">
+                        <strong>Max Depth:</strong><br>
+                        ${depthDisplay}
+                    </small>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">
+                        <strong>Difficulty:</strong><br>
+                        <span class="badge" style="background-color: ${getDifficultyColor(location.difficulty)};">
+                            ${location.difficulty}
+                        </span>
+                    </small>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-6">
+                    <small class="text-muted">
+                        <strong>Visibility:</strong><br>
+                        ${location.visibility}
+                    </small>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">
+                        <strong>Temperature:</strong><br>
+                        ${location.temperature}
+                    </small>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <small class="text-muted">
+                    <strong>Best Time:</strong> ${location.bestTime}
+                </small>
+            </div>
+            
+            <div class="d-grid">
+                <a href="${location.link}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-calendar-plus me-1"></i>
+                    Plan Dive Here
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// Enhanced toggle view function with map initialization
+function toggleView(view) {
+    const mapView = document.getElementById('mapViewContainer');
+    const listView = document.getElementById('listViewContainer');
+    const mapBtn = document.getElementById('mapViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+
+    if (view === 'map') {
+        mapView.style.display = 'block';
+        listView.style.display = 'none';
+        mapBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        
+        // Initialize map if not already done
+        if (!map) {
+            setTimeout(() => {
+                initializeMap();
+            }, 100);
+        } else {
+            // Invalidate map size to ensure proper rendering
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+        }
+    } else {
+        mapView.style.display = 'none';
+        listView.style.display = 'block';
+        listBtn.classList.add('active');
+        mapBtn.classList.remove('active');
+        renderDiveSitesList();
+    }
+}
+
+// Load dive sites data
+async function loadDiveSitesData() {
+    try {
+        const response = await fetch('{{ url_for("static", filename="dive_locations.json") }}');
+        worldDiveSites = await response.json();
+        filteredSites = [...worldDiveSites];
+        console.log('Loaded', worldDiveSites.length, 'dive sites');
+    } catch (error) {
+        console.error('Error loading dive sites data:', error);
+        worldDiveSites = [];
+        filteredSites = [];
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load dive sites data first
+    await loadDiveSitesData();
+    
+    // Render list view by default
+    renderDiveSitesList();
+    
+    // Initialize map if map view is default
+    const mapView = document.getElementById('mapViewContainer');
+    if (mapView && mapView.style.display !== 'none') {
+        setTimeout(() => {
+            initializeMap();
+        }, 500);
+    }
+    
+    // Listen for units changes
+    if (window.unitsManager) {
+        window.addEventListener('unitsChanged', function() {
+            if (document.getElementById('listViewContainer').style.display !== 'none') {
+                renderDiveSitesList();
+            }
+        });
+    }
+});
+</script>
+
+<!-- Leaflet.js JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Marker Cluster JavaScript -->
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<style>
+.dive-site-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dive-site-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.spec-item {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.badge {
+    text-transform: capitalize;
+}
+
+#worldMap {
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+
+/* Custom Leaflet Map Styles */
+.custom-dive-marker .marker-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.custom-dive-marker:hover .marker-icon {
+    transform: scale(1.1);
+}
+
+.dive-site-popup-content {
+    min-width: 280px;
+}
+
+.dive-site-popup-content .badge {
+    font-size: 0.75em;
+    color: white !important;
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.leaflet-popup-tip {
+    background-color: white;
+}
+
+/* Marker cluster styles */
+.marker-cluster-small {
+    background-color: rgba(181, 226, 140, 0.6);
+}
+
+.marker-cluster-small div {
+    background-color: rgba(110, 204, 57, 0.6);
+}
+
+.marker-cluster-medium {
+    background-color: rgba(241, 211, 87, 0.6);
+}
+
+.marker-cluster-medium div {
+    background-color: rgba(240, 194, 12, 0.6);
+}
+
+.marker-cluster-large {
+    background-color: rgba(253, 156, 115, 0.6);
+}
+
+.marker-cluster-large div {
+    background-color: rgba(241, 128, 23, 0.6);
+}
+</style>
+{% endblock %}

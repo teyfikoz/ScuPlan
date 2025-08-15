@@ -1,0 +1,97 @@
+You are improving a free scuba diving web application called **ScuPlan.com** hosted on Replit. The app includes dive planning tools, calculators, simulators, educational content, and an offline AI Assistant — all 100% free and with no paid APIs or LLMs. Please implement the following updates and fixes below, keeping the code modular and clean, and using only open-source tools/libraries.
+
+---
+
+✅ 1. Set Default Metric Values on All Relevant Fields:
+
+• In the **Dive Planner** section:
+   - Set default `Maximum Depth` to `18 m`
+   - Set default `SAC Rate` to `20 L/min`
+
+• In the **Interactive Dive Simulator** section:
+   - Set default `Max Depth` to `18 m`
+   - Set default `Bottom Time` to `30 min`
+   - Set default `SAC Rate` to `20 L/min`
+
+• In the **Surface Interval Calculator**:
+   - Set metric-friendly values like `17 m`, `35 min`, `1 h` etc.
+
+All default values must load in metric by default, regardless of user toggle status, but must update correctly if the user changes the unit system after loading.
+
+---
+
+✅ 2. Fix Unit Conversion Logic (Metric ↔ Imperial Toggle)
+
+• Ensure that switching between **Metric** and **Imperial**:
+   - Correctly updates *all numeric values and units* across:
+     - Dive Planner
+     - Dive Simulator
+     - Calculators (NDL, SAC, Gas Mix, Surface Interval)
+     - Saved Plans
+   - Avoids value corruption (e.g., 16035.8 L bug in SAC)
+   - Resets or preserves values sensibly if the toggle is switched back and forth
+
+---
+
+✅ 3. Fix World Dive Routes Search Function
+
+• Make the **search box** inside the `World Dive Routes - Map View` work correctly
+   - It should filter markers based on name matches in the dataset
+   - If no match is found, show a clear "No results" message
+
+---
+
+✅ 4. Enhance AI Assistant Capabilities
+
+• Expand the capabilities of the built-in **ScuPlan AI Diving Assistant**:
+   - It must run **completely locally in-browser**
+   - No paid API or external server connections
+   - No local LLM installation needed
+
+• It should now support questions about:
+   - Technical diving and trimix
+   - Underwater light physics and visual limits
+   - Cold water diving physiology
+   - Night diving techniques
+   - Advanced marine life behavior
+   - Dive theory from the education tab
+   - Basic deco level estimation if user inputs depth, bottom time, gas mix
+
+The assistant must be aware of all educational content (via local JSON files or embedded summaries).
+
+---
+
+✅ 5. Visual & Design Improvements
+
+• In the **Dive Education & Calculations** section:
+   - Update the banner color to match other UI gradients
+   - Use a consistent theme across tabs (same header blue gradient and font colors)
+   - Avoid any jarring color contrast
+
+---
+
+✅ Optional Add-On: Minimal Unit Converter Widget
+
+Add a small popup or tab titled **“Unit Converter”**:
+• Support only:
+   - `meters ↔ feet`
+   - `liters ↔ cu ft`
+   - `bar ↔ psi`
+
+• Include:
+   - Location-based default unit suggestion (if IP is accessible via free JS library)
+   - Tooltip: “What does this value mean?” with short definitions
+
+• Keep widget very lightweight and modular
+
+---
+
+🚫 Do not use:
+• Any paid LLM (like OpenAI, Claude, Gemini)
+• Any cloud service
+• Any paid font or JS library
+
+✅ Only use:
+• Vanilla JS, lightweight React (if used), open-source packages
+• Local `.json` data and logic
+• Optimized static design for Replit hosting

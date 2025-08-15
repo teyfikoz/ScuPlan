@@ -11,21 +11,93 @@ class UnitsManager {
     }
 
     /**
-     * Initialize the unit system (METRIC ONLY)
+     * Initialize the unit system with metric defaults and working toggle
      */
     initializeToggle() {
-        // Force metric system only - no toggle needed
-        this.currentSystem = 'metric';
-        localStorage.setItem('unitSystem', 'metric');
-        return; // Skip toggle creation
+        // Set default to metric but allow user to toggle
+        this.currentSystem = localStorage.getItem('unitSystem') || 'metric';
+        
+        // Create toggle element if it doesn't exist
+        if (!document.getElementById('unitToggle')) {
+            this.createToggle();
+        }
+        
+        // Set initial state
+        const toggle = document.getElementById('unitToggle');
+        if (toggle) {
+            toggle.checked = this.currentSystem === 'imperial';
+            toggle.addEventListener('change', (e) => {
+                this.setSystem(e.target.checked ? 'imperial' : 'metric');
+            });
+        }
+        
+        // Set default metric values on page load
+        this.setDefaultMetricValues();
     }
 
     /**
-     * Create the unit toggle UI element (DISABLED - METRIC ONLY)
+     * Create the unit toggle UI element
      */
     createToggle() {
-        // No toggle creation - metric system only
-        return;
+        const navbar = document.querySelector('.navbar-nav');
+        if (navbar) {
+            const toggleContainer = document.createElement('li');
+            toggleContainer.className = 'nav-item d-flex align-items-center ms-3';
+            toggleContainer.innerHTML = `
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="unitToggle">
+                    <label class="form-check-label text-light small" for="unitToggle">
+                        <span id="unitLabel">${this.currentSystem === 'metric' ? 'Metric' : 'Imperial'}</span>
+                    </label>
+                </div>
+            `;
+            navbar.appendChild(toggleContainer);
+        }
+    }
+
+    /**
+     * Set default metric values on page load
+     */
+    setDefaultMetricValues() {
+        const defaultValues = {
+            // Dive Planner defaults
+            'diveDepth': 18,
+            'sacRate': 20,
+            'bottomTime': 40,
+            
+            // Interactive Dive Simulator defaults
+            'simDepth': 18,
+            'simBottomTime': 30,
+            'simSacRate': 20,
+            
+            // Surface Interval Calculator defaults
+            'firstDiveDepth': 17,
+            'firstDiveTime': 35,
+            'secondDiveDepth': 14,
+            'desiredSecondDiveTime': 40,
+            'surfaceInterval': 1,
+            
+            // NDL Calculator defaults
+            'ndlDepth': 17,
+            'surfaceIntervalHours': 1,
+            
+            // Gas Mix Calculator defaults
+            'maxDepthGasMix': 28,
+            'desiredPPO2': 1.4,
+            
+            // SAC Rate Calculator defaults
+            'tankSize': 12,
+            'workingPressure': 200,
+            'avgDepth': 17,
+            'diveTimeMinutes': 40
+        };
+        
+        Object.entries(defaultValues).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element && (!element.value || element.value === '')) {
+                element.value = value;
+            }
+        });
     }
 
     /**
