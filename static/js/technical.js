@@ -505,8 +505,10 @@ function initMultiLevelCalculator() {
         });
     });
     
-    // Add new gas
-    addGasBtn.addEventListener('click', function() {
+    // Add new gas - make sure element exists
+    const addGasBtn = document.getElementById('addGasBtn');
+    if (addGasBtn) {
+        addGasBtn.addEventListener('click', function() {
         const gasesTable = document.getElementById('multiLevelGasesTable').querySelector('tbody');
         const newRow = gasesTable.querySelector('tr.multi-level-gas').cloneNode(true);
         
@@ -529,7 +531,8 @@ function initMultiLevelCalculator() {
         
         gasesTable.appendChild(newRow);
         updateSegmentGasSelects();
-    });
+        });
+    }
     
     // Add new segment
     addSegmentBtn.addEventListener('click', function() {

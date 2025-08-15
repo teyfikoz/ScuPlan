@@ -326,12 +326,21 @@
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // About Me link
-        document.getElementById('aboutMeLink').addEventListener('click', function(e) {
-            e.preventDefault();
-            var aboutMeModal = new bootstrap.Modal(document.getElementById('aboutMeModal'));
-            aboutMeModal.show();
-        });
+        // About Me link - ensure it doesn't conflict
+        const aboutMeLink = document.getElementById('aboutMeLink');
+        if (aboutMeLink) {
+            aboutMeLink.addEventListener('click', function(e) {
+                console.log('About Me link clicked');
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    var aboutMeModal = new bootstrap.Modal(document.getElementById('aboutMeModal'));
+                    aboutMeModal.show();
+                } catch (error) {
+                    console.error('Error showing about modal:', error);
+                }
+            });
+        }
     </script>
 </body>
 </html>

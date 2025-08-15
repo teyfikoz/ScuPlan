@@ -200,27 +200,47 @@ function setupEventListeners() {
     // Setup footer resource links - ensure they work properly
     const offlineGuideLink = document.getElementById('offlineGuideLink');
     if (offlineGuideLink) {
-        // Remove any existing event listeners
-        offlineGuideLink.removeEventListener('click', showOfflineGuide);
+        console.log('Setting up offlineGuideLink');
         offlineGuideLink.addEventListener('click', function(e) {
             console.log('Offline Guide Link clicked');
             e.preventDefault();
-            e.stopImmediatePropagation();
-            showOfflineGuide(e);
-            return false;
+            e.stopPropagation();
+            try {
+                showOfflineGuide(e);
+            } catch (error) {
+                console.error('Error showing offline guide:', error);
+            }
         });
     }
     
     const exportGuideLink = document.getElementById('exportGuideLink');
     if (exportGuideLink) {
-        // Remove any existing event listeners
-        exportGuideLink.removeEventListener('click', showExportGuide);
+        console.log('Setting up exportGuideLink');
         exportGuideLink.addEventListener('click', function(e) {
             console.log('Export Guide Link clicked');
             e.preventDefault();
-            e.stopImmediatePropagation();
-            showExportGuide(e);
-            return false;
+            e.stopPropagation();
+            try {
+                showExportGuide(e);
+            } catch (error) {
+                console.error('Error showing export guide:', error);
+            }
+        });
+    }
+    
+    // Fix footer saved plans navigation
+    const footerSavedPlans = document.getElementById('footerSavedPlans');
+    if (footerSavedPlans) {
+        console.log('Setting up footerSavedPlans');
+        footerSavedPlans.addEventListener('click', function(e) {
+            console.log('Footer Saved Plans clicked');
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof showOfflineStorageModal === 'function') {
+                showOfflineStorageModal();
+            } else {
+                console.error('showOfflineStorageModal function not found');
+            }
         });
     }
     
