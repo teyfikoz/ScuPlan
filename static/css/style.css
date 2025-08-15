@@ -337,3 +337,44 @@ footer {
         margin-bottom: 20px;
     }
 }
+
+
+/* Marine Life Tooltips & Ambient Sounds */
+.marine-life-toggle {
+    box-shadow: 0 2px 10px rgba(0,123,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.marine-life-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+}
+
+.ambient-sound-panel {
+    border: 2px solid rgba(0,123,255,0.1);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+}
+
+.ambient-toggle-btn {
+    box-shadow: 0 2px 10px rgba(0,123,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.ambient-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+}
+
+.marine-life-tooltip {
+    filter: drop-shadow(2px 2px 8px rgba(0,0,0,0.3));
+}
+
+.marine-info-popup {
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+    100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
