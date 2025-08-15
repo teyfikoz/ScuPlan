@@ -1,0 +1,67 @@
+You're maintaining a no-cost scuba diving assistant site called **ScuPlan.com**, built entirely on Replit using HTML, JS (React optional), and local resources only. No paid API or backend required.
+
+The following fixes and improvements are requested across the **Dive Education** and **Dive Planner** pages:
+
+---
+
+### 🧩 1. Fix Repeated Content in Dive Education Tabs:
+
+- [ ] Remove duplicated `<Interactive Dive Simulator>` component under the "Calculators" tab.
+- [ ] Ensure each tab (`Dive Theory`, `Calculators`, `Dive Simulator`, `AI Assistant`, `Unit Converter`) displays only its unique content.
+- [ ] Move shared elements (like the simulator or conversion tool) into reusable React components if possible, but **show only on relevant tabs**.
+
+---
+
+### 📉 2. Reverse Interactive Dive Simulator Graph:
+
+- [ ] The dive profile graph (depth vs time) should reflect real underwater direction:
+  - Depth should increase *downward* on the vertical axis (0 at top, deeper at bottom).
+  - Use Chart.js or pure SVG inversion to plot correctly.
+
+---
+
+### 🔄 3. Fix Metric ↔ Imperial Conversion Bug in Dive Plan Calculator:
+
+- [ ] When switching from metric to imperial (or vice versa), values in the **Dive Plan Results** panel must:
+  - Convert numerically in real-time.
+  - Update unit labels (`m` ↔ `ft`, `L/min` ↔ `cu ft/min`, etc.)
+  - Ensure synced display with `Dive Plan Calculator` panel inputs.
+- [ ] Conversion logic should apply to:
+  - Max Depth
+  - Bottom Time
+  - Total Time
+  - SAC Rate
+  - Gas Volume / Pressure
+
+---
+
+### ⚙️ 4. Add Micro Unit Converter Widget:
+
+- [ ] Build a compact `Unit Converter` module with:
+  - Depth: meters ↔ feet
+  - Pressure: bar ↔ psi
+- [ ] Add button toggle between units (`metric` / `imperial`)
+- [ ] Location-based default:
+  - Detect location using free JS geolocation API (no paid IP service)
+  - Auto-select default unit system (metric/imperial)
+- [ ] Tooltip-style explanations: e.g. "1 bar ≈ 10m depth" or "1 atm = sea level pressure"
+
+---
+
+### 🎨 5. Harmonize Visual Design (Global):
+
+- [ ] Adjust background gradient of `Dive Education & Calculations` banner:
+  - Match gradient theme used in section headers (`#0085c7 → #80d9f2`)
+  - Remove flat blue box that breaks consistency
+- [ ] All calculator cards should use:
+  - Header: `#0288d1`
+  - Background: `#f4faff`
+  - Font: consistent `#1a1a1a` or `#ffffff` for dark mode
+- [ ] Ensure dark/light mode toggle applies to all tabs and graphs
+
+---
+
+💡 Notes:
+- No paid API, no local LLM, no premium font/CDN.
+- Use basic JS, TailwindCSS (if allowed), Chart.js, and open data only.
+- Keep layout mobile-friendly and keyboard-accessible.

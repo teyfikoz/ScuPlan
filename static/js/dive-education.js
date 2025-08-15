@@ -391,12 +391,12 @@ function drawSimulationChart() {
     
     simulationData.forEach((point, index) => {
         const x = margin + (point.time / maxTime) * chartWidth;
-        const y = margin + (point.depth / maxDepth) * chartHeight;
+        const y = margin + (point.depth / maxDepth) * chartHeight; // Depth increases downward
         
         if (index === 0) {
-            ctx.moveTo(x, height - y); // Invert Y for depth
+            ctx.moveTo(x, y);
         } else {
-            ctx.lineTo(x, height - y);
+            ctx.lineTo(x, y);
         }
     });
     
@@ -427,8 +427,18 @@ function drawSimulationChart() {
     ctx.save();
     ctx.translate(15, height / 2);
     ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Depth', 0, 0);
+    ctx.fillText('Depth (m)', 0, 0);
     ctx.restore();
+    
+    // Add depth scale markers
+    ctx.fillStyle = '#666';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+        const depth = (maxDepth / 5) * i;
+        const y = margin + (i / 5) * chartHeight;
+        ctx.fillText(depth.toFixed(0), margin - 5, y + 3);
+    }
 }
 
 /**
@@ -609,9 +619,36 @@ function generateAIResponse(message) {
         return "Dive conditions affect safety and enjoyment. Check weather, sea state, currents, visibility before diving. Cancel dives in unsafe conditions. Strong currents increase air consumption and fatigue. Poor visibility increases disorientation risk.";
     }
     
-    // Marine Life and Environment
+    // Marine Life and Environment (ENHANCED with specialized knowledge)
     if (lowerMessage.includes('marine life') || lowerMessage.includes('coral') || lowerMessage.includes('fish')) {
         return "Observe marine life respectfully: don't touch, chase, or feed animals. Maintain good buoyancy to avoid coral damage. Coral reefs are fragile ecosystems - one touch can kill decades of growth. Take only pictures, leave only bubbles!";
+    }
+    
+    // NEW SPECIALIZED DIVING TOPICS (Added August 2025)
+    
+    // Deep Diving Physics & Technical Diving
+    if (lowerMessage.includes('deep div') || lowerMessage.includes('technical div') || lowerMessage.includes('trimix') || lowerMessage.includes('helium')) {
+        return "Deep diving (>40m) requires helium to reduce narcosis. Trimix (O₂/He/N₂) calculations: For 60m dive, typical mix is 18/45 (18% O₂, 45% He, 37% N₂). Helium benefits: no narcosis, fast on/off-gassing. Challenges: thermal conductivity (heat loss), voice distortion, HPNS at >150m depth.";
+    }
+    
+    // Underwater Vision & Light Physics
+    if (lowerMessage.includes('vision') || lowerMessage.includes('light') || lowerMessage.includes('color') || lowerMessage.includes('visibility')) {
+        return "Underwater vision physics: Water absorbs light wavelengths progressively. Red disappears by 5m, orange by 10m, yellow by 20m. Only blue-green penetrates deep water. Refraction through mask makes objects appear 25% larger and closer. Snell's Law: n₁sinθ₁ = n₂sinθ₂. Use lights to restore true colors.";
+    }
+    
+    // Cold Water Diving Physiology  
+    if (lowerMessage.includes('cold water') || lowerMessage.includes('hypothermia') || lowerMessage.includes('thermal protection') || lowerMessage.includes('dry suit')) {
+        return "Cold water diving challenges: Hypothermia onset at <10°C, vasoconstriction reduces dexterity, increased air consumption. Thermal protection: 7mm wetsuit good to 10°C, dry suit required <10°C. Physiological responses: peripheral vasoconstriction, reduced reaction time, increased nitrogen absorption. Pre-dive warming essential.";
+    }
+    
+    // Night Diving Techniques
+    if (lowerMessage.includes('night div') || lowerMessage.includes('darkness') || lowerMessage.includes('flashlight') || lowerMessage.includes('nocturnal')) {
+        return "Night diving safety: Primary light (1000+ lumens), backup light, signal light. Navigation: compass headings, natural references, shore/boat lights. Marine life: nocturnal creatures emerge, different behaviors, photosensitive organisms. Techniques: slow movements, red light for chart reading, maintain buddy contact via light signals.";
+    }
+    
+    // Advanced Marine Life Interactions & Safety
+    if (lowerMessage.includes('shark') || lowerMessage.includes('jellyfish') || lowerMessage.includes('dangerous fish') || lowerMessage.includes('aggressive marine life')) {
+        return "Marine life safety: Maintain 2m distance, no touching/feeding. Shark encounters: remain calm, maintain eye contact, back away slowly. Jellyfish stings: vinegar neutralizes nematocysts, hot water (45°C) for pain. Aggressive fish: during breeding season, respect territories. Photography: use natural light when possible, avoid flash near sensitive species.";
     }
     
     // Equipment specific

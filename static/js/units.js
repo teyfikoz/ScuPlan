@@ -57,8 +57,26 @@ class UnitsManager {
         this.currentSystem = system;
         localStorage.setItem('unitSystem', system);
         this.updateToggleLabel();
+        this.convertInputValues(); // Convert input values first
         this.applyUnits();
         this.triggerUnitsChange();
+    }
+
+    /**
+     * Trigger a units change event for other components
+     */
+    triggerUnitsChange() {
+        const event = new CustomEvent('unitsChanged', {
+            detail: {
+                system: this.currentSystem,
+                units: {
+                    depth: this.getDepthUnit(),
+                    pressure: this.getPressureUnit(),
+                    volume: this.getVolumeUnit()
+                }
+            }
+        });
+        window.dispatchEvent(event);
     }
 
     /**
@@ -202,8 +220,13 @@ class UnitsManager {
         // Store current values before conversion
         const previousSystem = this.currentSystem === 'metric' ? 'imperial' : 'metric';
         
-        // Convert depth inputs
-        const depthInputs = document.querySelectorAll('input[id*="Depth"], input[id*="depth"]');
+        // Convert depth inputs - comprehensive selectors
+        const depthInputs = document.querySelectorAll(`
+            input[id*="Depth"], input[id*="depth"], 
+            input[id="maxDepth"], input[id="firstDiveDepth"], 
+            input[id="secondDiveDepth"], input[id="ndlDepth"],
+            input[id="avgDepth"], input[id="simDepth"]
+        `);
         depthInputs.forEach(input => {
             if (input.value && !isNaN(input.value)) {
                 const oldValue = parseFloat(input.value);
@@ -213,7 +236,10 @@ class UnitsManager {
         });
         
         // Convert pressure inputs  
-        const pressureInputs = document.querySelectorAll('input[id*="pressure"], input[id*="Pressure"]');
+        const pressureInputs = document.querySelectorAll(`
+            input[id*="pressure"], input[id*="Pressure"],
+            input[id="workingPressure"]
+        `);
         pressureInputs.forEach(input => {
             if (input.value && !isNaN(input.value)) {
                 const oldValue = parseFloat(input.value);
@@ -222,13 +248,53 @@ class UnitsManager {
             }
         });
         
-        // Convert SAC rate (volume-related)
-        const sacInput = document.getElementById('sacRate');
-        if (sacInput && sacInput.value && !isNaN(sacInput.value)) {
-            const oldValue = parseFloat(sacInput.value);
-            const newValue = this.convertVolume(oldValue, previousSystem);
-            sacInput.value = Math.round(newValue * 10) / 10;
+        // Convert SAC rate and volume inputs
+        const volumeInputs = document.querySelectorAll(`
+            input[id*="SAC"], input[id*="sac"], input[id*="Rate"],
+            input[id="tankSize"], input[id="simSAC"]
+        `);
+        volumeInputs.forEach(input => {
+            if (input.value && !isNaN(input.value)) {
+                const oldValue = parseFloat(input.value);
+                const newValue = this.convertVolume(oldValue, previousSystem);
+                input.value = Math.round(newValue * 10) / 10; // Round to 1 decimal
+            }
+        });
+        
+        // Update any displayed results that might be visible
+        this.updateDisplayedResults();
+    }
+
+    /**
+     * Update displayed results when units change
+     */
+    updateDisplayedResults() {
+        // Update dive plan results if visible
+        const diveResults = document.getElementById('diveResults');
+        if (diveResults && diveResults.style.display !== 'none') {
+            // Trigger recalculation of dive plan
+            const calculateBtn = document.querySelector('button[onclick="calculateDivePlan()"]');
+            if (calculateBtn && typeof calculateDivePlan === 'function') {
+                calculateDivePlan();
+            }
         }
+        
+        // Update any visible calculator results
+        const resultContainers = document.querySelectorAll('.alert:not([style*="display: none"])');
+        resultContainers.forEach(container => {
+            // Update unit displays in results
+            const spans = container.querySelectorAll('span[id*="Depth"], span[id*="depth"], span[id*="Pressure"], span[id*="pressure"]');
+            spans.forEach(span => {
+                const textContent = span.textContent;
+                if (textContent.includes('m') || textContent.includes('ft')) {
+                    // Update depth units in result text
+                    const value = parseFloat(textContent);
+                    if (!isNaN(value)) {
+                        span.textContent = this.formatDepth(this.convertDepth(value, this.currentSystem === 'metric' ? 'imperial' : 'metric'));
+                    }
+                }
+            });
+        });
     }
     
     /**
@@ -256,7 +322,7 @@ class UnitsManager {
 }
 
 // Initialize global units manager
-let unitsManager;
+window.unitsManager = null;
 document.addEventListener('DOMContentLoaded', function() {
-    unitsManager = new UnitsManager();
+    window.unitsManager = new UnitsManager();
 });
