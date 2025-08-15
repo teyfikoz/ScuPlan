@@ -1,0 +1,71 @@
+Hatanın açıklaması:
+
+Identifier 'addSegmentBtn' has already been declared
+JavaScript’te aynı isimle bir değişken, sabit veya fonksiyon birden fazla kez tanımlanmış anlamına gelir.
+
+⸻
+
+✅ Sorunu Anlama
+
+Bu hata şunlardan biri nedeniyle olur:
+
+Neden	Açıklama
+1. let, const, veya var ile aynı isimde iki kez tanımlama yapılması	Örneğin: let addSegmentBtn = ... satırı iki kez varsa
+2. Kod farklı dosyalarda veya bileşenlerde aynı isimle yükleniyorsa	Özellikle script etiketleri içinde aynı kod iki kez çağrılmış olabilir
+3. Hot reload veya Replit gibi platformlarda script’in birden fazla kez mount edilmesi	Uygulama iki kez render ediliyor olabilir
+
+
+⸻
+
+🔎 Örnek Hatalı Kod
+
+let addSegmentBtn = document.getElementById("addSegmentBtn");
+...
+let addSegmentBtn = document.querySelector("#addSegmentBtn"); // ❌ tekrar tanımlama
+
+
+⸻
+
+✅ Çözüm Önerileri
+
+1. 🔁 Tekrar tanımlamayı kaldırın
+
+Kodda addSegmentBtn tanımı yalnızca bir kez yer almalı. Aşağıdaki gibi:
+
+let addSegmentBtn = document.getElementById("addSegmentBtn");
+// addEventListener gibi işlemleri burada yap
+
+Eğer bu değişkene daha sonra tekrar erişmeniz gerekiyorsa, tekrar let yazmadan kullanın:
+
+addSegmentBtn.addEventListener('click', function () { ... }); // ✅
+
+
+⸻
+
+2. ✅ Tanımlama yoksa, koşullu tanımlayın
+
+Alternatif olarak if (typeof ...) ile güvenceye alabilirsiniz:
+
+if (typeof addSegmentBtn === 'undefined') {
+  let addSegmentBtn = document.getElementById("addSegmentBtn");
+}
+
+Ama genelde en iyi çözüm, tek sefer tanımlamak ve tekrar tanımlamamaktır.
+
+⸻
+
+3. 🧹 Replit’te script çakışmalarını temizleyin
+
+Eğer script’i birden fazla kez yüklediyseniz veya aynı component iki kez render ediliyorsa:
+	•	index.html içindeki <script src="..."> etiketlerini kontrol edin
+	•	Replit’te birden fazla aynı dosya çağrısı olmadığından emin olun
+
+⸻
+
+4. 💡 Kodunuzu paylaşın, birlikte düzeltelim
+
+Eğer sorun çözülmediyse, aşağıdakini paylaş:
+	•	addSegmentBtn tanımının geçtiği satır(lar)
+	•	Hangi dosyada olduğunu (örneğin main.js veya App.tsx)
+	•	Bu script’in kaç kez çağrıldığını
+

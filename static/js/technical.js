@@ -307,31 +307,34 @@ function initCNSCalculator() {
         });
     });
     
-    // Add new segment
-    addSegmentBtn.addEventListener('click', function() {
-        const segmentsTable = document.getElementById('cnsSegmentsTable').querySelector('tbody');
-        const newRow = segmentsTable.querySelector('tr.cns-segment').cloneNode(true);
-        
-        // Clear values
-        newRow.querySelectorAll('input').forEach(input => {
-            if (input.classList.contains('depth')) {
-                input.value = 30;
-            } else if (input.classList.contains('time')) {
-                input.value = 20;
-            } else if (input.classList.contains('o2')) {
-                input.value = 32;
-            }
+    // Add new segment - ensure button exists
+    const addSegmentBtnCNS = document.getElementById('addSegmentBtn');
+    if (addSegmentBtnCNS) {
+        addSegmentBtnCNS.addEventListener('click', function() {
+            const segmentsTable = document.getElementById('cnsSegmentsTable').querySelector('tbody');
+            const newRow = segmentsTable.querySelector('tr.cns-segment').cloneNode(true);
+            
+            // Clear values
+            newRow.querySelectorAll('input').forEach(input => {
+                if (input.classList.contains('depth')) {
+                    input.value = 30;
+                } else if (input.classList.contains('time')) {
+                    input.value = 20;
+                } else if (input.classList.contains('o2')) {
+                    input.value = 32;
+                }
+            });
+            
+            // Enable remove button
+            const removeBtn = newRow.querySelector('.remove-segment');
+            removeBtn.disabled = false;
+            removeBtn.addEventListener('click', function() {
+                segmentsTable.removeChild(newRow);
+            });
+            
+            segmentsTable.appendChild(newRow);
         });
-        
-        // Enable remove button
-        const removeBtn = newRow.querySelector('.remove-segment');
-        removeBtn.disabled = false;
-        removeBtn.addEventListener('click', function() {
-            segmentsTable.removeChild(newRow);
-        });
-        
-        segmentsTable.appendChild(newRow);
-    });
+    }
     
     // Enable removal for the first segment if more segments are added
     document.addEventListener('click', function() {
@@ -444,7 +447,6 @@ function initCNSCalculator() {
  */
 function initMultiLevelCalculator() {
     const multiLevelForm = document.getElementById('multiLevelForm');
-    const addSegmentBtn = document.getElementById('addSegmentBtn');
     const removeSegmentBtn = document.getElementById('removeSegmentBtn');
     
     if (!multiLevelForm) return;
@@ -534,10 +536,10 @@ function initMultiLevelCalculator() {
         });
     }
     
-    // Add new segment - make sure element exists
-    const addSegmentBtn = document.getElementById('addSegmentBtn');
-    if (addSegmentBtn) {
-        addSegmentBtn.addEventListener('click', function() {
+    // Add new segment functionality for multi-level (avoid duplicate declaration)
+    const addSegmentBtnMulti = document.getElementById('addSegmentBtn');
+    if (addSegmentBtnMulti) {
+        addSegmentBtnMulti.addEventListener('click', function() {
             const segmentsTable = document.getElementById('multiLevelSegmentsTable').querySelector('tbody');
             const newRow = segmentsTable.querySelector('tr.multi-level-segment').cloneNode(true);
             
