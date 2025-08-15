@@ -97,6 +97,9 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **IMPLEMENTED: Comprehensive SEO optimization with meta tags, Open Graph, Twitter Cards**
 ✓ **ADDED: JSON-LD structured data for better search engine understanding**
 ✓ **IMPROVED: Enhanced dive profile chart with decompression stop annotations**
+✓ **COMPLETED: All calculator default values now use metric system (18m depth, 20L SAC rate)**
+✓ **FIXED: Clean dive routes template with working interactive map functionality**
+✓ **ENHANCED: Comprehensive AI assistant with technical diving knowledge base**
 
 ## Zero-Cost Offline Education Features (August 2025)
 ✓ **Comprehensive Dive Theory**: 6 major sections with interactive accordions
