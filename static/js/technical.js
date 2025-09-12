@@ -40,7 +40,7 @@ function initMODCalculator() {
             return;
         }
 
-        // Call API for calculation
+        // Try API first, then fallback to offline calculation
         fetch('/api/tech/mod', {
             method: 'POST',
             headers: {
@@ -53,7 +53,7 @@ function initMODCalculator() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error occurred while calculating MOD.');
+                throw new Error('API not available, using offline calculation');
             }
             return response.json();
         })
@@ -84,7 +84,42 @@ function initMODCalculator() {
             resultBox.style.display = 'block';
         })
         .catch(error => {
-            showError('modResult', 'modAlert', error.message);
+            console.log('API call failed, using offline calculation:', error);
+            
+            // Offline MOD calculation
+            try {
+                const offlineMOD = calculateOfflineMOD(o2Percentage, maxPO2);
+                
+                // Display offline results
+                document.getElementById('modDepth').textContent = offlineMOD.mod;
+                document.getElementById('modDepthCheck').textContent = offlineMOD.mod;
+                document.getElementById('modPO2Check').textContent = offlineMOD.max_po2;
+
+                // Set alert based on the result
+                const resultBox = document.getElementById('modResult');
+                const alertBox = document.getElementById('modAlert');
+
+                if (offlineMOD.mod <= 0) {
+                    alertBox.className = 'alert alert-danger mt-3 mb-0';
+                    alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> This gas mixture is not safe for diving.';
+                } else if (offlineMOD.mod <= 18) {
+                    alertBox.className = 'alert alert-success mt-3 mb-0';
+                    alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> Safe within recreational diving limits.';
+                } else if (offlineMOD.mod <= 40) {
+                    alertBox.className = 'alert alert-warning mt-3 mb-0';
+                    alertBox.innerHTML = '<i class="fas fa-info-circle me-2"></i> Within technical diving limits. Ensure you have proper certification.';
+                } else {
+                    alertBox.className = 'alert alert-danger mt-3 mb-0';
+                    alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Very deep dive. Advanced technical diving training and experience required.';
+                }
+                
+                // Add offline indicator
+                alertBox.innerHTML += '<br><small class="text-muted"><i class="fas fa-wifi-slash me-1"></i>Calculated offline</small>';
+
+                resultBox.style.display = 'block';
+            } catch (offlineError) {
+                showError('modResult', 'modAlert', 'Calculation failed: ' + offlineError.message);
+            }
         });
     });
 }
@@ -770,4 +805,121 @@ function showError(resultBoxId, alertBoxId, message) {
     alertBox.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> ' + message;
 
     resultBox.style.display = 'block';
+}
+
+/**
+ * Offline MOD (Maximum Operating Depth) calculation
+ * Formula: MOD = (pO2_max / (O2_fraction / 100)) - 1) * 10
+ */
+function calculateOfflineMOD(o2Percentage, maxPO2) {
+    const o2Fraction = o2Percentage / 100;
+    const mod = ((maxPO2 / o2Fraction) - 1) * 10;
+    
+    return {
+        mod: mod.toFixed(1),
+        max_po2: maxPO2.toFixed(1),
+        o2_percentage: o2Percentage
+    };
+}
+
+/**
+ * Offline END (Equivalent Narcotic Depth) calculation
+ * Formula: END = (Depth + 10) * (N2_fraction / 0.79) - 10
+ */
+function calculateOfflineEND(depth, o2Percentage, hePercentage) {
+    const n2Percentage = 100 - o2Percentage - hePercentage;
+    const n2Fraction = n2Percentage / 100;
+    const end = (depth + 10) * (n2Fraction / 0.79) - 10;
+    
+    return {
+        end: end.toFixed(1),
+        depth: depth,
+        n2_percentage: n2Percentage.toFixed(1),
+        o2_percentage: o2Percentage,
+        he_percentage: hePercentage
+    };
+}
+
+/**
+ * Offline Best Mix calculation
+ * Calculates optimal O2 and He percentages for given depth
+ */
+function calculateOfflineBestMix(depth, maxPO2, maxEND) {
+    // Calculate optimal O2 percentage based on pO2 limit
+    const optimalO2 = Math.min(100, (maxPO2 / ((depth / 10) + 1)) * 100);
+    
+    // Calculate required He percentage to achieve target END
+    // END = (Depth + 10) * (N2_fraction / 0.79) - 10
+    // Solving for N2_fraction: N2_fraction = ((END + 10) * 0.79) / (Depth + 10)
+    const targetN2Fraction = ((maxEND + 10) * 0.79) / (depth + 10);
+    const targetN2Percentage = targetN2Fraction * 100;
+    
+    // Calculate He percentage
+    const hePercentage = Math.max(0, 100 - optimalO2 - targetN2Percentage);
+    const actualN2Percentage = 100 - optimalO2 - hePercentage;
+    
+    // Determine mix name
+    let mixName;
+    if (hePercentage < 1) {
+        mixName = `Nitrox ${Math.round(optimalO2)}`;
+    } else {
+        mixName = `Trimix ${Math.round(optimalO2)}/${Math.round(hePercentage)}`;
+    }
+    
+    return {
+        mix_name: mixName,
+        o2_percentage: optimalO2.toFixed(1),
+        he_percentage: hePercentage.toFixed(1),
+        n2_percentage: actualN2Percentage.toFixed(1),
+        depth: depth
+    };
+}
+
+/**
+ * Offline CNS calculation based on NOAA CNS tables
+ * Simplified calculation for demonstration purposes
+ */
+function calculateOfflineCNS(segments) {
+    let totalCNS = 0;
+    const results = [];
+    
+    segments.forEach(segment => {
+        const depth = parseFloat(segment.depth);
+        const time = parseFloat(segment.time);
+        const o2 = parseFloat(segment.o2);
+        
+        // Calculate pO2
+        const po2 = ((depth / 10) + 1) * (o2 / 100);
+        
+        // Simplified CNS calculation (approximation)
+        let cnsPerMinute = 0;
+        if (po2 <= 0.5) {
+            cnsPerMinute = 0;
+        } else if (po2 <= 1.0) {
+            cnsPerMinute = 0.5;
+        } else if (po2 <= 1.2) {
+            cnsPerMinute = 1.0;
+        } else if (po2 <= 1.4) {
+            cnsPerMinute = 1.5;
+        } else if (po2 <= 1.6) {
+            cnsPerMinute = 2.5;
+        } else {
+            cnsPerMinute = 5.0; // High risk
+        }
+        
+        const segmentCNS = cnsPerMinute * time;
+        totalCNS += segmentCNS;
+        
+        results.push({
+            depth: depth,
+            time: time,
+            po2: po2.toFixed(2),
+            segment_cns: segmentCNS.toFixed(1)
+        });
+    });
+    
+    return {
+        total_cns: totalCNS.toFixed(1),
+        segments: results
+    };
 }

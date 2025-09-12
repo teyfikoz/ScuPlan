@@ -247,22 +247,45 @@ function setupEventListeners() {
         });
     }
 
-    // Setup About Me modal link
+    // Setup About Me modal link - improved with better error handling
     const aboutMeLink = document.getElementById('aboutMeLink');
     if (aboutMeLink) {
+        console.log('Setting up About Me link');
         aboutMeLink.addEventListener('click', function(e) {
+            console.log('About Me link clicked');
             e.preventDefault();
             e.stopPropagation();
 
-            // Use Bootstrap's modal instance or create new one
-            const aboutModal = document.getElementById('aboutMeModal');
-            if (aboutModal) {
-                const modal = new bootstrap.Modal(aboutModal);
-                modal.show();
-            } else {
-                showAlert('About section is currently not available', 'warning');
+            try {
+                // Use Bootstrap's modal instance or create new one
+                const aboutModal = document.getElementById('aboutMeModal');
+                if (aboutModal) {
+                    // Check if modal instance already exists
+                    let modal = bootstrap.Modal.getInstance(aboutModal);
+                    if (!modal) {
+                        modal = new bootstrap.Modal(aboutModal, {
+                            backdrop: true,
+                            keyboard: true,
+                            focus: true
+                        });
+                    }
+                    modal.show();
+                    console.log('About Me modal shown successfully');
+                } else {
+                    console.error('About Me modal element not found');
+                    if (typeof showAlert === 'function') {
+                        showAlert('About section is currently not available', 'warning');
+                    }
+                }
+            } catch (error) {
+                console.error('Error showing About Me modal:', error);
+                if (typeof showAlert === 'function') {
+                    showAlert('Error opening About section: ' + error.message, 'danger');
+                }
             }
         });
+    } else {
+        console.warn('About Me link element not found');
     }
 }
 
@@ -276,10 +299,16 @@ function setupDivePlanForm() {
         calculateButton.addEventListener('click', calculateDivePlan);
     }
 
-    // Tank modals
+    // Tank modals - Original button
     const addTankButton = document.getElementById('addTankButton');
     if (addTankButton) {
         addTankButton.addEventListener('click', showAddTankModal);
+    }
+    
+    // Tank modals - Inline button (in dive parameters form)
+    const addTankInlineButton = document.getElementById('addTankInlineButton');
+    if (addTankInlineButton) {
+        addTankInlineButton.addEventListener('click', showAddTankModal);
     }
 
     const saveTankButton = document.getElementById('saveTankButton');
@@ -287,10 +316,16 @@ function setupDivePlanForm() {
         saveTankButton.addEventListener('click', saveTank);
     }
 
-    // Buddy modals
+    // Buddy modals - Original button
     const addBuddyButton = document.getElementById('addBuddyButton');
     if (addBuddyButton) {
         addBuddyButton.addEventListener('click', showAddBuddyModal);
+    }
+    
+    // Buddy modals - Inline button (in dive parameters form)
+    const addBuddyInlineButton = document.getElementById('addBuddyInlineButton');
+    if (addBuddyInlineButton) {
+        addBuddyInlineButton.addEventListener('click', showAddBuddyModal);
     }
 
     const saveBuddyButton = document.getElementById('saveBuddyButton');
@@ -2333,6 +2368,367 @@ function showExportGuide(e) {
 }
 
 /**
+ * Offline dive plan calculation for when API is not available
+ */
+function calculateOfflineDivePlan(planData) {
+    const depth = parseFloat(planData.depth);
+    const bottomTime = parseFloat(planData.bottomTime);
+    const sacRate = parseFloat(planData.sacRate);
+    
+    // Simple dive profile calculations
+    const descentRate = 20; // meters per minute
+    const ascentRate = 10;  // meters per minute
+    
+    const descentTime = depth / descentRate;
+    const ascentTime = depth / ascentRate;
+    const totalTime = descentTime + bottomTime + ascentTime;
+    
+    // Basic decompression check (simplified)
+    const decoStops = [];
+    if (depth > 18 && bottomTime > 20) {
+        // Simple safety stop
+        decoStops.push({ depth: 5, time: 3 });
+    }
+    if (depth > 30 && bottomTime > 15) {
+        // Additional decompression stop
+        decoStops.push({ depth: 15, time: 2 });
+    }
+    
+    return {
+        depth: depth,
+        bottomTime: bottomTime,
+        totalDiveTime: totalTime,
+        location: planData.location || '',
+        diveType: planData.diveType || 'recreational',
+        diveDate: planData.diveDate || '',
+        diveTime: planData.diveTime || '',
+        sacRate: sacRate,
+        profile: {
+            descentTime: descentTime,
+            bottomTime: bottomTime,
+            ascentTime: ascentTime,
+            totalTime: totalTime,
+            decoStops: decoStops
+        },
+        tanks: planData.tanks || [],
+        buddies: planData.buddies || []
+    };
+}
+
+/**
+ * Offline gas consumption calculation
+ */
+function calculateOfflineGasConsumption(planData) {
+    const results = [];
+    const depth = parseFloat(planData.depth);
+    const bottomTime = parseFloat(planData.bottomTime);
+    const sacRate = parseFloat(planData.sacRate) || 20;
+    
+    if (app.tanks && app.tanks.length > 0) {
+        app.tanks.forEach((tank, index) => {
+            const tankSize = parseFloat(tank.size) || 12;
+            const initialPressure = parseFloat(tank.pressure) || 200;
+            const atmosphericPressure = (depth / 10) + 1;
+            
+            // Calculate consumption
+            const consumptionAtDepth = sacRate * atmosphericPressure * bottomTime;
+            const descentConsumption = sacRate * (1 + atmosphericPressure) / 2 * 2; // Average pressure during descent
+            const ascentConsumption = sacRate * (atmosphericPressure + 1) / 2 * 3; // Average pressure during ascent
+            const totalConsumption = consumptionAtDepth + descentConsumption + ascentConsumption;
+            
+            // Calculate remaining pressure
+            const usedVolume = totalConsumption;
+            const usedPressure = usedVolume / tankSize;
+            const remainingPressure = initialPressure - usedPressure;
+            const safeRemainingPressure = remainingPressure - 50; // 50 bar reserve
+            
+            results.push({
+                tankIndex: index,
+                tankSize: tankSize,
+                initialPressure: initialPressure,
+                totalConsumption: totalConsumption.toFixed(0),
+                remainingPressure: remainingPressure.toFixed(0),
+                safeRemainingPressure: Math.max(0, safeRemainingPressure).toFixed(0),
+                gasType: tank.gasType || 'air',
+                o2: tank.o2Percentage || 21,
+                he: tank.hePercentage || 0
+            });
+        });
+    }
+    
+    return results;
+}
+
+/**
+ * Performance monitoring and error handling utilities
+ */
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = {};
+        this.errors = [];
+        this.initializeErrorBoundary();
+    }
+
+    initializeErrorBoundary() {
+        window.addEventListener('error', (event) => {
+            this.logError('JavaScript Error', event.error, {
+                filename: event.filename,
+                line: event.lineno,
+                column: event.colno
+            });
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            this.logError('Unhandled Promise Rejection', event.reason);
+        });
+    }
+
+    startTiming(operation) {
+        this.metrics[operation] = performance.now();
+    }
+
+    endTiming(operation) {
+        if (this.metrics[operation]) {
+            const duration = performance.now() - this.metrics[operation];
+            console.log(`⏱️ ${operation} completed in ${duration.toFixed(2)}ms`);
+            delete this.metrics[operation];
+            return duration;
+        }
+    }
+
+    logError(type, error, context = {}) {
+        const errorInfo = {
+            type,
+            message: error?.message || error,
+            stack: error?.stack,
+            timestamp: new Date().toISOString(),
+            context,
+            userAgent: navigator.userAgent,
+            url: window.location.href
+        };
+
+        this.errors.push(errorInfo);
+        console.error(`🔥 ${type}:`, errorInfo);
+
+        // Keep only last 50 errors
+        if (this.errors.length > 50) {
+            this.errors = this.errors.slice(-50);
+        }
+
+        // Show user-friendly error message  
+        if (typeof showAlert === 'function') {
+            showAlert('An error occurred. The app is still functional.', 'warning', 3000);
+        }
+    }
+
+    getMetrics() {
+        return {
+            errors: this.errors,
+            performance: performance.getEntriesByType('measure'),
+            memory: performance.memory ? {
+                used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+                total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024),
+                limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
+            } : null
+        };
+    }
+}
+
+/**
+ * Lazy loading utility for heavy components
+ */
+class LazyLoader {
+    static loadComponent(componentName, callback) {
+        console.log(`🔄 Lazy loading ${componentName}`);
+        
+        setTimeout(() => {
+            try {
+                if (callback && typeof callback === 'function') {
+                    callback();
+                    console.log(`✅ ${componentName} loaded successfully`);
+                }
+            } catch (error) {
+                console.error(`❌ Failed to load ${componentName}:`, error);
+                window.performanceMonitor?.logError(`Component Loading Error: ${componentName}`, error);
+            }
+        }, 50);
+    }
+
+    static preloadCriticalResources() {
+        const criticalResources = [
+            { href: '/static/js/unit-converter.js', as: 'script' },
+            { href: '/static/js/enhanced-ai-assistant.js', as: 'script' }
+        ];
+
+        criticalResources.forEach(resource => {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.href = resource.href;
+            link.as = resource.as;
+            document.head.appendChild(link);
+        });
+    }
+}
+
+/**
+ * Application state manager with persistence
+ */
+class AppStateManager {
+    constructor() {
+        this.state = this.loadState();
+        this.setupAutoSave();
+    }
+
+    loadState() {
+        try {
+            const saved = localStorage.getItem('scuplan_app_state');
+            return saved ? JSON.parse(saved) : this.getDefaultState();
+        } catch (error) {
+            console.warn('Could not load application state:', error);
+            return this.getDefaultState();
+        }
+    }
+
+    getDefaultState() {
+        return {
+            preferences: {
+                unitSystem: 'metric',
+                theme: 'light',
+                autoSave: true
+            },
+            lastUsed: {
+                depth: 18,
+                bottomTime: 45,
+                sacRate: 20
+            },
+            ui: {
+                chatOpen: false,
+                panelCollapsed: false
+            }
+        };
+    }
+
+    setState(key, value) {
+        this.state[key] = value;
+        this.saveState();
+        this.notifyStateChange(key, value);
+    }
+
+    getState(key) {
+        return this.state[key];
+    }
+
+    saveState() {
+        try {
+            localStorage.setItem('scuplan_app_state', JSON.stringify(this.state));
+        } catch (error) {
+            console.warn('Could not save application state:', error);
+        }
+    }
+
+    setupAutoSave() {
+        // Save on page unload
+        window.addEventListener('beforeunload', () => {
+            this.saveState();
+        });
+    }
+
+    notifyStateChange(key, value) {
+        const event = new CustomEvent('appStateChanged', {
+            detail: { key, value, state: this.state }
+        });
+        document.dispatchEvent(event);
+    }
+}
+
+/**
+ * Show offline storage modal for saved dive plans
+ */
+function showOfflineStorageModal() {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('offlineStorageModal');
+    if (!modal) {
+        const modalHtml = `
+            <div class="modal fade" id="offlineStorageModal" tabindex="-1" aria-labelledby="offlineStorageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title" id="offlineStorageModalLabel">
+                                <i class="fas fa-save me-2"></i>Saved Dive Plans
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Your dive plans are automatically saved in your browser's local storage.
+                            </div>
+                            <div id="savedPlansContainer">
+                                <p class="text-muted text-center">No saved dive plans found.</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" onclick="clearSavedPlans()">Clear All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        modal = document.getElementById('offlineStorageModal');
+    }
+
+    // Show modal
+    if (typeof bootstrap !== 'undefined') {
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+    } else {
+        console.warn('Bootstrap not available, cannot show modal');
+        alert('Saved Plans feature is not available without Bootstrap');
+    }
+}
+
+/**
+ * Clear all saved dive plans
+ */
+function clearSavedPlans() {
+    if (confirm('Are you sure you want to clear all saved dive plans? This action cannot be undone.')) {
+        try {
+            // Clear relevant localStorage items
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('scuplan_')) {
+                    keysToRemove.push(key);
+                }
+            }
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            if (typeof showAlert === 'function') {
+                showAlert('All saved plans have been cleared', 'success');
+            } else {
+                alert('All saved plans have been cleared');
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
+            if (modal) {
+                modal.hide();
+            }
+        } catch (error) {
+            console.error('Error clearing saved plans:', error);
+            if (typeof showAlert === 'function') {
+                showAlert('Error clearing saved plans', 'danger');
+            }
+        }
+    }
+}
+
+/**
  * Utility function to capitalize the first letter of a string
  */
 function capitalizeFirstLetter(string) {
@@ -2341,42 +2737,360 @@ function capitalizeFirstLetter(string) {
 }
 
 /**
+ * Metric/Imperial Toggle Functionality
+ */
+/**
+ * Initialize master unit toggle in navigation bar
+ */
+function initMasterUnitToggle() {
+    const masterMetric = document.getElementById('masterMetric');
+    const masterImperial = document.getElementById('masterImperial');
+    
+    if (masterMetric && masterImperial) {
+        // Load saved preference
+        const savedUnits = localStorage.getItem('scuplan_master_units') || 'metric';
+        
+        if (savedUnits === 'imperial') {
+            masterImperial.checked = true;
+        } else {
+            masterMetric.checked = true;
+        }
+        
+        // Sync with other systems
+        if (window.unitsManager) {
+            window.unitsManager.currentSystem = savedUnits;
+        }
+        
+        // Add event listeners
+        masterMetric.addEventListener('change', () => {
+            if (masterMetric.checked) {
+                localStorage.setItem('scuplan_master_units', 'metric');
+                if (window.unitsManager) {
+                    window.unitsManager.switchToSystem('metric');
+                }
+                syncAllToggles('metric');
+                console.log('Switched to metric system from master toggle');
+            }
+        });
+        
+        masterImperial.addEventListener('change', () => {
+            if (masterImperial.checked) {
+                localStorage.setItem('scuplan_master_units', 'imperial');
+                if (window.unitsManager) {
+                    window.unitsManager.switchToSystem('imperial');
+                }
+                syncAllToggles('imperial');
+                console.log('Switched to imperial system from master toggle');
+            }
+        });
+    }
+}
+
+
+/**
+ * Sync all unit toggles across the page
+ */
+function syncAllToggles(system) {
+    // Sync master toggle
+    const masterMetric = document.getElementById('masterMetric');
+    const masterImperial = document.getElementById('masterImperial');
+    
+    if (masterMetric && masterImperial) {
+        if (system === 'metric') {
+            masterMetric.checked = true;
+        } else {
+            masterImperial.checked = true;
+        }
+    }
+    
+    // Sync dive parameters toggle
+    const diveMetric = document.getElementById('diveMetric');
+    const diveImperial = document.getElementById('diveImperial');
+    
+    if (diveMetric && diveImperial) {
+        if (system === 'metric') {
+            diveMetric.checked = true;
+        } else {
+            diveImperial.checked = true;
+        }
+        
+        // Trigger conversion if dive parameters toggle exists
+        if (window.diveParamsUnitToggle) {
+            window.diveParamsUnitToggle.currentUnits = system;
+            window.diveParamsUnitToggle.convertAllInputs();
+        }
+    }
+}
+
+class DiveParametersUnitToggle {
+    constructor() {
+        this.currentUnits = 'metric'; // 'metric' or 'imperial'
+        this.conversions = {
+            depth: {
+                metricToImperial: (meters) => meters * 3.28084,
+                imperialToMetric: (feet) => feet / 3.28084,
+                metricUnit: 'm',
+                imperialUnit: 'ft'
+            },
+            volume: {
+                metricToImperial: (liters) => liters * 0.0353147,
+                imperialToMetric: (cuft) => cuft / 0.0353147,
+                metricUnit: 'L/min',
+                imperialUnit: 'cuft/min'
+            }
+        };
+        this.initializeToggle();
+    }
+
+    initializeToggle() {
+        const metricRadio = document.getElementById('diveMetric');
+        const imperialRadio = document.getElementById('diveImperial');
+        
+        if (metricRadio && imperialRadio) {
+            // Load saved preference
+            const savedUnits = localStorage.getItem('scuplan_dive_params_units');
+            if (savedUnits) {
+                this.currentUnits = savedUnits;
+                if (savedUnits === 'imperial') {
+                    imperialRadio.checked = true;
+                } else {
+                    metricRadio.checked = true;
+                }
+            }
+
+            // Add event listeners for radio buttons
+            metricRadio.addEventListener('change', () => {
+                if (metricRadio.checked) {
+                    this.currentUnits = 'metric';
+                    this.convertAllInputs();
+                    this.savePreference();
+                    console.log('Switched to metric units');
+                }
+            });
+
+            imperialRadio.addEventListener('change', () => {
+                if (imperialRadio.checked) {
+                    this.currentUnits = 'imperial';
+                    this.convertAllInputs();
+                    this.savePreference();
+                    console.log('Switched to imperial units');
+                }
+            });
+
+            // Initialize with current units
+            this.updateInputLabels();
+        }
+    }
+
+
+    convertAllInputs() {
+        // Convert depth input
+        const depthInput = document.getElementById('diveDepth');
+        if (depthInput && depthInput.value) {
+            const currentValue = parseFloat(depthInput.value);
+            if (!isNaN(currentValue)) {
+                let convertedValue;
+                if (this.currentUnits === 'imperial') {
+                    // Convert meters to feet
+                    convertedValue = this.conversions.depth.metricToImperial(currentValue);
+                } else {
+                    // Convert feet to meters  
+                    convertedValue = this.conversions.depth.imperialToMetric(currentValue);
+                }
+                depthInput.value = convertedValue.toFixed(1);
+            }
+        }
+
+        // Convert SAC rate input
+        const sacInput = document.getElementById('sacRate');
+        if (sacInput && sacInput.value) {
+            const currentValue = parseFloat(sacInput.value);
+            if (!isNaN(currentValue)) {
+                let convertedValue;
+                if (this.currentUnits === 'imperial') {
+                    // Convert L/min to cuft/min
+                    convertedValue = this.conversions.volume.metricToImperial(currentValue);
+                } else {
+                    // Convert cuft/min to L/min
+                    convertedValue = this.conversions.volume.imperialToMetric(currentValue);
+                }
+                sacInput.value = convertedValue.toFixed(1);
+            }
+        }
+
+        this.updateInputLabels();
+    }
+
+    updateInputLabels() {
+        // Update depth unit label
+        const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
+        if (depthUnitSpan) {
+            depthUnitSpan.textContent = this.conversions.depth[this.currentUnits + 'Unit'];
+        }
+
+        // Update SAC rate unit label
+        const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
+        if (volumeUnitSpan) {
+            volumeUnitSpan.textContent = this.conversions.volume[this.currentUnits + 'Unit'];
+        }
+
+        // Update input placeholders and limits
+        const depthInput = document.getElementById('diveDepth');
+        if (depthInput) {
+            if (this.currentUnits === 'imperial') {
+                depthInput.max = "492"; // 150m = ~492ft
+                depthInput.step = "1";
+                depthInput.placeholder = "e.g., 60";
+            } else {
+                depthInput.max = "150";
+                depthInput.step = "0.5";
+                depthInput.placeholder = "e.g., 18";
+            }
+        }
+
+        const sacInput = document.getElementById('sacRate');
+        if (sacInput) {
+            if (this.currentUnits === 'imperial') {
+                sacInput.min = "0.35"; // ~10 L/min
+                sacInput.max = "1.77"; // ~50 L/min  
+                sacInput.step = "0.1";
+                sacInput.placeholder = "e.g., 0.7";
+            } else {
+                sacInput.min = "10";
+                sacInput.max = "50";
+                sacInput.step = "1";
+                sacInput.placeholder = "e.g., 20";
+            }
+        }
+    }
+
+    savePreference() {
+        localStorage.setItem('scuplan_dive_params_units', this.currentUnits);
+    }
+
+    getCurrentUnits() {
+        return this.currentUnits;
+    }
+
+    convertValue(value, type, toSystem = null) {
+        const conversion = this.conversions[type];
+        if (!conversion) return value;
+
+        const targetSystem = toSystem || this.currentUnits;
+        const fromSystem = targetSystem === 'metric' ? 'imperial' : 'metric';
+
+        if (targetSystem === 'imperial') {
+            return conversion.metricToImperial(value);
+        } else {
+            return conversion.imperialToMetric(value);
+        }
+    }
+}
+
+/**
  * Initialize the application when the DOM is fully loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Set current year in footer
-    const currentYear = document.getElementById('currentYear');
-    if (currentYear) {
-        currentYear.textContent = new Date().getFullYear();
-    }
+    console.log('🚀 ScuPlan application initializing...');
+    
+    try {
+        // Initialize performance monitoring
+        window.performanceMonitor = new PerformanceMonitor();
+        window.performanceMonitor.startTiming('appInitialization');
 
-    // Check which page we're on
-    if (document.getElementById('divePlanForm')) {
-        initDivePlanner();
+        // Initialize state manager
+        window.appStateManager = new AppStateManager();
 
-        // Initialize date field with proper format (dd.mm.yyyy style)
-        const dateInput = document.getElementById('diveDate');
-        if (dateInput && !dateInput.value) {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            dateInput.value = `${year}-${month}-${day}`;
+        // Initialize lazy loader
+        LazyLoader.preloadCriticalResources();
+
+        // Set current year in footer
+        const currentYear = document.getElementById('currentYear');
+        if (currentYear) {
+            currentYear.textContent = new Date().getFullYear();
         }
 
-        // Initialize time field
-        const timeInput = document.getElementById('diveTime');
-        if (timeInput && !timeInput.value) {
-            timeInput.value = '10:00';
+        // Check which page we're on and initialize accordingly
+        if (document.getElementById('divePlanForm')) {
+            console.log('📊 Initializing dive planning page');
+            LazyLoader.loadComponent('divePlanning', () => {
+                initDivePlanner();
+
+                // Initialize date field with proper format
+                const dateInput = document.getElementById('diveDate');
+                if (dateInput && !dateInput.value) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    dateInput.value = `${year}-${month}-${day}`;
+                }
+
+                // Initialize time field
+                const timeInput = document.getElementById('diveTime');
+                if (timeInput && !timeInput.value) {
+                    timeInput.value = '10:00';
+                }
+
+                // Check for imported plan
+                if (typeof checkForImportedPlan === 'function') {
+                    checkForImportedPlan();
+                }
+            });
+        } else if (document.getElementById('checklistTabs')) {
+            console.log('📋 Initializing checklists page');
+            LazyLoader.loadComponent('checklists', () => {
+                initChecklists();
+            });
+        } else if (document.getElementById('sharedProfileChart')) {
+            console.log('📤 Initializing shared plan view');
+            LazyLoader.loadComponent('sharedPlan', () => {
+                initSharedPlanView();
+            });
+        } else {
+            console.log('📄 Basic page initialization');
         }
 
-        // Check for imported plan
-        if (typeof checkForImportedPlan === 'function') {
-            checkForImportedPlan();
+        // Initialize unit systems
+        if (typeof UnitConverter !== 'undefined') {
+            window.unitsManager = new UnitConverter();
+            console.log('🔄 Global unit conversion system initialized');
         }
-    } else if (document.getElementById('checklistTabs')) {
-        initChecklists();
-    } else if (document.getElementById('sharedProfileChart')) {
-        initSharedPlanView();
+
+        // Initialize dive parameters unit toggle
+        if (document.getElementById('diveMetric') || document.getElementById('diveImperial')) {
+            window.diveParamsUnitToggle = new DiveParametersUnitToggle();
+            console.log('🎯 Dive parameters unit toggle initialized');
+        }
+
+        // Initialize master unit toggle (in navigation)
+        if (document.getElementById('masterMetric') || document.getElementById('masterImperial')) {
+            initMasterUnitToggle();
+            console.log('🌍 Master unit toggle initialized');
+        }
+
+        // Initialize AI assistant if available  
+        if (window.aiAssistant) {
+            console.log('🤖 AI assistant ready');
+        }
+
+        window.performanceMonitor.endTiming('appInitialization');
+        console.log('✅ ScuPlan application initialized successfully');
+        
+        // Show success notification
+        setTimeout(() => {
+            if (typeof showAlert === 'function') {
+                showAlert('ScuPlan loaded successfully! 🤿', 'success', 2000);
+            }
+        }, 100);
+        
+    } catch (error) {
+        window.performanceMonitor?.logError('Application Initialization Error', error);
+        console.error('❌ Failed to initialize ScuPlan application:', error);
+        
+        // Show fallback UI or error message
+        if (typeof showAlert === 'function') {
+            showAlert('Application failed to load properly. Please refresh the page.', 'danger');
+        }
     }
 });
