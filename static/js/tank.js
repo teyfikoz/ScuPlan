@@ -4,22 +4,39 @@
  */
 
 /**
+ * Initialize tank management system
+ */
+function initTankManagement() {
+    console.log('Initializing tank management system');
+
+    const addTankBtn = document.getElementById('addTankInlineButton');
+    if (addTankBtn) {
+        addTankBtn.addEventListener('click', function() {
+            addTank();
+        });
+    }
+
+    // Update display on initialization
+    updateTanksDisplay();
+}
+
+/**
  * Initialize tank management functionality
  */
 function initTankManagement() {
     console.log('Initializing tank management module');
-    
+
     // Reset tanks array if needed
     if (!app.tanks) {
         app.tanks = [];
     }
-    
+
     // Set up gas type change handler
     const gasTypeSelect = document.getElementById('gasType');
     if (gasTypeSelect) {
         gasTypeSelect.addEventListener('change', handleGasTypeChange);
     }
-    
+
     // Display any existing tanks
     updateTanksDisplay();
 }
@@ -30,13 +47,13 @@ function initTankManagement() {
 function showAddTankModal() {
     // Reset the form
     document.getElementById('tankForm').reset();
-    
+
     // Reset modal title
     document.getElementById('tankModalLabel').textContent = 'Add Tank';
-    
+
     // Reset gas type display
     handleGasTypeChange();
-    
+
     // Show the modal
     const modal = new bootstrap.Modal(document.getElementById('tankModal'));
     modal.show();
@@ -50,27 +67,27 @@ function showAddTankModal() {
 function showEditTankModal(index) {
     // Get the tank data
     const tank = app.tanks[index];
-    
+
     // Fill the form with existing data
     document.getElementById('tankSize').value = tank.size;
     document.getElementById('tankPressure').value = tank.pressure;
     document.getElementById('gasType').value = tank.gasType;
-    
+
     // Set O2 and He values
     document.getElementById('oxygenPercentage').value = tank.o2;
     if (document.getElementById('heliumPercentage')) {
         document.getElementById('heliumPercentage').value = tank.he || 0;
     }
-    
+
     // Handle gas type display
     handleGasTypeChange();
-    
+
     // Set data attribute for the save button
     document.getElementById('saveTankButton').setAttribute('data-edit-index', index);
-    
+
     // Update modal title
     document.getElementById('tankModalLabel').textContent = 'Edit Tank';
-    
+
     // Show the modal
     const modal = new bootstrap.Modal(document.getElementById('tankModal'));
     modal.show();
@@ -83,26 +100,26 @@ function showEditTankModal(index) {
 function handleGasTypeChange() {
     const gasTypeSelect = document.getElementById('gasType');
     if (!gasTypeSelect) return; // Element doesn't exist
-    
+
     const gasType = gasTypeSelect.value;
     const heliumContainer = document.getElementById('heliumContainer');
     const oxygenInput = document.getElementById('oxygenPercentage');
     const helperContainer = document.getElementById('gasTypeHelper');
-    
+
     if (!heliumContainer || !oxygenInput) return; // Elements don't exist
-    
+
     // Show/hide helium input based on gas type
     if (gasType === 'trimix') {
         heliumContainer.style.display = 'block';
     } else {
         heliumContainer.style.display = 'none';
     }
-    
+
     // Reset helper text initially
     if (helperContainer) {
         helperContainer.innerHTML = '';
     }
-    
+
     // Set appropriate oxygen ranges based on gas type
     if (gasType === 'air') {
         oxygenInput.value = '21';
@@ -115,7 +132,7 @@ function handleGasTypeChange() {
         oxygenInput.min = '22';
         oxygenInput.max = '40';
         if (parseFloat(oxygenInput.value) < 22) oxygenInput.value = '32';
-        
+
         if (helperContainer) {
             helperContainer.innerHTML = '<small class="text-muted">Typical recreational nitrox mixes are 32% or 36% oxygen.</small>';
         }
@@ -124,7 +141,7 @@ function handleGasTypeChange() {
         oxygenInput.min = '5';
         oxygenInput.max = '30';
         if (parseFloat(oxygenInput.value) < 5 || parseFloat(oxygenInput.value) > 30) oxygenInput.value = '18';
-        
+
         if (helperContainer) {
             helperContainer.innerHTML = `
                 <small class="text-muted">
@@ -160,34 +177,34 @@ function saveTank() {
     const gasType = document.getElementById('gasType').value;
     const o2 = parseFloat(document.getElementById('oxygenPercentage').value);
     const he = gasType === 'trimix' ? parseFloat(document.getElementById('heliumPercentage').value) : 0;
-    
+
     // Validate inputs
     if (isNaN(size) || size <= 0) {
         showAlert('Please enter a valid tank size', 'warning');
         return;
     }
-    
+
     if (isNaN(pressure) || pressure <= 0) {
         showAlert('Please enter a valid tank pressure', 'warning');
         return;
     }
-    
+
     if (isNaN(o2) || o2 < 5 || o2 > 100) {
         showAlert('Please enter a valid oxygen percentage', 'warning');
         return;
     }
-    
+
     if (gasType === 'trimix' && (isNaN(he) || he < 0 || he > 95)) {
         showAlert('Please enter a valid helium percentage', 'warning');
         return;
     }
-    
+
     // Check total gas percentage for trimix
     if (gasType === 'trimix' && (o2 + he > 100)) {
         showAlert('Total gas percentage cannot exceed 100%', 'warning');
         return;
     }
-    
+
     // Create tank object
     const tank = {
         size: size,
@@ -196,18 +213,18 @@ function saveTank() {
         o2: o2,
         he: he
     };
-    
+
     // Check if we're editing or adding
     const saveButton = document.getElementById('saveTankButton');
     if (!saveButton) return;
-    
+
     const editIndex = saveButton.getAttribute('data-edit-index');
-    
+
     if (editIndex !== null && editIndex !== undefined) {
         // Update existing tank
         app.tanks[editIndex] = tank;
         saveButton.removeAttribute('data-edit-index');
-        
+
         const tankModalLabel = document.getElementById('tankModalLabel');
         if (tankModalLabel) {
             tankModalLabel.textContent = 'Add Tank';
@@ -216,10 +233,10 @@ function saveTank() {
         // Add new tank
         app.tanks.push(tank);
     }
-    
+
     // Update the display
     updateTanksDisplay();
-    
+
     // Close the modal
     if (app.modalInstance) {
         app.modalInstance.hide();
@@ -249,14 +266,14 @@ function calculateEND(depth, o2Percent, hePercent = 0) {
     const fO2 = o2Percent / 100;
     const fHe = hePercent / 100;
     const fN2 = 1 - fO2 - fHe;
-    
+
     // Calculate narcotic effect of nitrogen at depth
     const ambientPressure = (depth / 10) + 1; // in bars
     const n2Narcotic = fN2 * ambientPressure;
-    
+
     // Calculate END
     const end = ((n2Narcotic / 0.79) - 1) * 10;
-    
+
     // Round for display
     return Math.floor(end);
 }
@@ -267,12 +284,12 @@ function calculateEND(depth, o2Percent, hePercent = 0) {
 function updateTanksDisplay() {
     const container = document.getElementById('tanksContainer');
     const noMessage = document.getElementById('noTanksMessage');
-    
+
     if (!container || !noMessage) return; // Not on a page with tanks display
-    
+
     // Clear current content
     container.innerHTML = '';
-    
+
     // Show/hide the no tanks message
     if (app.tanks.length === 0) {
         noMessage.style.display = 'block';
@@ -280,16 +297,16 @@ function updateTanksDisplay() {
     } else {
         noMessage.style.display = 'none';
     }
-    
+
     // Get current depth for END calculations
     const depthInput = document.getElementById('diveDepth');
     const currentDepth = depthInput ? parseFloat(depthInput.value) : 30;
-    
+
     // Add each tank to the display
     app.tanks.forEach((tank, index) => {
         const tankElement = document.createElement('div');
         tankElement.className = 'tank-item mb-3 p-3 bg-light rounded';
-        
+
         // Get gas info string
         let gasInfo = '';
         if (tank.gasType === 'air') {
@@ -301,16 +318,16 @@ function updateTanksDisplay() {
         } else if (tank.gasType === 'oxygen') {
             gasInfo = 'Oxygen (100% O₂)';
         }
-        
+
         // Calculate technical diving values
         let techInfo = '';
-        
+
         // MOD for any gas with oxygen
         const mod = calculateMOD(tank.o2);
         techInfo += `<div class="small ${mod < currentDepth ? 'text-danger fw-bold' : ''}">
                       MOD: ${mod}m ${mod < currentDepth ? '⚠️' : ''}
                      </div>`;
-        
+
         // END for trimix
         if (tank.gasType === 'trimix') {
             const end = calculateEND(currentDepth, tank.o2, tank.he);
@@ -318,10 +335,10 @@ function updateTanksDisplay() {
                           END at ${currentDepth}m: ${end}m ${end > 30 ? '⚠️' : ''}
                          </div>`;
         }
-        
+
         // Tank volume calculation
         const totalVolume = tank.size * tank.pressure;
-        
+
         tankElement.innerHTML = `
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -340,10 +357,10 @@ function updateTanksDisplay() {
                 </div>
             </div>
         `;
-        
+
         container.appendChild(tankElement);
     });
-    
+
     // Add event listeners to the buttons
     document.querySelectorAll('.edit-tank-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -351,7 +368,7 @@ function updateTanksDisplay() {
             showEditTankModal(index);
         });
     });
-    
+
     document.querySelectorAll('.remove-tank-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index'));
@@ -369,10 +386,10 @@ function updateTanksDisplay() {
 function calculateMOD(o2Percent, ppO2Max = 1.4) {
     // Convert percentage to decimal
     const fO2 = o2Percent / 100;
-    
+
     // Calculate MOD: (ppO2Max / fO2) - 1 * 10
     const mod = ((ppO2Max / fO2) - 1) * 10;
-    
+
     // Round down to be conservative
     return Math.floor(mod);
 }
@@ -384,25 +401,25 @@ function suggestBestMix() {
     // Get the planned depth from the main form
     const mainDepthInput = document.getElementById('diveDepth') || document.getElementById('maxDepth');
     const depth = parseFloat(mainDepthInput ? mainDepthInput.value : 0);
-    
+
     if (isNaN(depth) || depth <= 0) {
         showAlert('Please enter a valid depth in the main dive planning form first', 'warning');
         return;
     }
-    
+
     // Show mini loading indicator in the button
     const suggestButton = document.querySelector('button[onclick="suggestBestMix()"]');
     if (suggestButton) {
         const originalContent = suggestButton.innerHTML;
         suggestButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Calculating...';
         suggestButton.disabled = true;
-        
+
         setTimeout(() => {
             suggestButton.innerHTML = originalContent;
             suggestButton.disabled = false;
         }, 2000); // Reset after 2 seconds if something goes wrong
     }
-    
+
     // Call API to get best mix
     fetch(`/api/technical/best-mix?depth=${depth}&max_po2=1.4&max_end=30`)
         .then(response => {
@@ -415,17 +432,17 @@ function suggestBestMix() {
             // Fill in the form with the calculated values
             const oxygenInput = document.getElementById('oxygenPercentage');
             const heliumInput = document.getElementById('heliumPercentage');
-            
+
             if (oxygenInput && heliumInput) {
                 oxygenInput.value = Math.round(data.o2_percentage);
                 heliumInput.value = Math.round(data.he_percentage);
-                
+
                 // Reset button
                 if (suggestButton) {
                     suggestButton.innerHTML = '<i class="fas fa-calculator me-1"></i> Suggest Mix';
                     suggestButton.disabled = false;
                 }
-                
+
                 // Show a success message with details
                 showAlert(`
                     <strong>Suggested Trimix for ${depth}m:</strong><br>
@@ -438,7 +455,7 @@ function suggestBestMix() {
         .catch(error => {
             console.error('Error:', error);
             showAlert('Failed to calculate best mix', 'danger');
-            
+
             // Reset button
             if (suggestButton) {
                 suggestButton.innerHTML = '<i class="fas fa-calculator me-1"></i> Suggest Mix';
@@ -460,31 +477,31 @@ function calculateTankConsumption(tank, depth, bottomTime, sacRate) {
     const pressureFactor = (depth / 10) + 1;  // Pressure at depth
     const descentRate = 18;                   // m/min
     const ascentRate = 9;                     // m/min
-    
+
     // Calculate times
     const descentTime = depth / descentRate;
     const ascentTime = depth / ascentRate;
-    
+
     // Gas volume in the tank (liters)
     const tankVolume = tank.size * tank.pressure;
-    
+
     // Consumption calculations
     const descentConsumption = sacRate * ((depth / 20) + 1) * descentTime;
     const bottomConsumption = sacRate * pressureFactor * bottomTime;
     const ascentConsumption = sacRate * ((depth / 20) + 1) * ascentTime;
-    
+
     // Total consumption
     const totalConsumption = descentConsumption + bottomConsumption + ascentConsumption;
-    
+
     // Remaining gas
     const remainingVolume = tankVolume - totalConsumption;
     const remainingPressure = remainingVolume / tank.size;
-    
+
     // Safety reserve (1/3 rule)
     const safetyReserve = totalConsumption / 3;
     const safeRemainingVolume = remainingVolume - safetyReserve;
     const safeRemainingPressure = safeRemainingVolume / tank.size;
-    
+
     // Return results
     return {
         tankVolume: tankVolume,

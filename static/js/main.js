@@ -18,9 +18,33 @@ const app = {
 function initDivePlanner() {
     console.log('Initializing ScuPlan Dive Planner');
 
+    // Initialize tank management
+    if (typeof initTankManagement === 'function') {
+        initTankManagement();
+    } else {
+        console.warn('initTankManagement function not found, initializing basic tank functionality');
+        initBasicTankManagement();
+    }
+
+    // Initialize buddy management
+    if (typeof initBuddyManagement === 'function') {
+        initBuddyManagement();
+    } else {
+        console.warn('initBuddyManagement function not found, initializing basic buddy functionality');
+        initBasicBuddyManagement();
+    }
+
+    // Initialize calculation logic
+    if (typeof initCalculationLogic === 'function') {
+        initCalculationLogic();
+    } else {
+        console.warn('initCalculationLogic function not found, initializing basic calculation functionality');
+        initBasicCalculationLogic();
+    }
+
     // Initialize all components
-    initTankManagement();
-    initBuddyManagement();
+    // initTankManagement(); // This line is now handled by the conditional logic above
+    // initBuddyManagement(); // This line is now handled by the conditional logic above
 
     // Initialize storage and donation features if they exist
     if (typeof initOfflineStorage === 'function') {
@@ -40,6 +64,48 @@ function initDivePlanner() {
     // Check if we're on the main page
     if (document.getElementById('divePlanForm')) {
         setupDivePlanForm();
+    }
+}
+
+// Basic tank management fallback
+function initBasicTankManagement() {
+    const addTankBtn = document.getElementById('addTankInlineButton');
+    if (addTankBtn) {
+        addTankBtn.addEventListener('click', function() {
+            if (typeof addTank === 'function') {
+                addTank();
+            } else {
+                console.warn('addTank function not available');
+            }
+        });
+    }
+}
+
+// Basic buddy management fallback
+function initBasicBuddyManagement() {
+    const addBuddyBtn = document.getElementById('addBuddyInlineButton');
+    if (addBuddyBtn) {
+        addBuddyBtn.addEventListener('click', function() {
+            if (typeof addBuddy === 'function') {
+                addBuddy();
+            } else {
+                console.warn('addBuddy function not available');
+            }
+        });
+    }
+}
+
+// Basic calculation logic fallback
+function initBasicCalculationLogic() {
+    const calculateBtn = document.getElementById('calculateButton');
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', function() {
+            if (typeof calculateDivePlan === 'function') {
+                calculateDivePlan();
+            } else {
+                console.warn('calculateDivePlan function not available');
+            }
+        });
     }
 }
 
@@ -304,7 +370,7 @@ function setupDivePlanForm() {
     if (addTankButton) {
         addTankButton.addEventListener('click', showAddTankModal);
     }
-    
+
     // Tank modals - Inline button (in dive parameters form)
     const addTankInlineButton = document.getElementById('addTankInlineButton');
     if (addTankInlineButton) {
@@ -321,7 +387,7 @@ function setupDivePlanForm() {
     if (addBuddyButton) {
         addBuddyButton.addEventListener('click', showAddBuddyModal);
     }
-    
+
     // Buddy modals - Inline button (in dive parameters form)
     const addBuddyInlineButton = document.getElementById('addBuddyInlineButton');
     if (addBuddyInlineButton) {
@@ -2374,15 +2440,15 @@ function calculateOfflineDivePlan(planData) {
     const depth = parseFloat(planData.depth);
     const bottomTime = parseFloat(planData.bottomTime);
     const sacRate = parseFloat(planData.sacRate);
-    
+
     // Simple dive profile calculations
     const descentRate = 20; // meters per minute
     const ascentRate = 10;  // meters per minute
-    
+
     const descentTime = depth / descentRate;
     const ascentTime = depth / ascentRate;
     const totalTime = descentTime + bottomTime + ascentTime;
-    
+
     // Basic decompression check (simplified)
     const decoStops = [];
     if (depth > 18 && bottomTime > 20) {
@@ -2393,7 +2459,7 @@ function calculateOfflineDivePlan(planData) {
         // Additional decompression stop
         decoStops.push({ depth: 15, time: 2 });
     }
-    
+
     return {
         depth: depth,
         bottomTime: bottomTime,
@@ -2423,25 +2489,25 @@ function calculateOfflineGasConsumption(planData) {
     const depth = parseFloat(planData.depth);
     const bottomTime = parseFloat(planData.bottomTime);
     const sacRate = parseFloat(planData.sacRate) || 20;
-    
+
     if (app.tanks && app.tanks.length > 0) {
         app.tanks.forEach((tank, index) => {
             const tankSize = parseFloat(tank.size) || 12;
             const initialPressure = parseFloat(tank.pressure) || 200;
             const atmosphericPressure = (depth / 10) + 1;
-            
+
             // Calculate consumption
             const consumptionAtDepth = sacRate * atmosphericPressure * bottomTime;
             const descentConsumption = sacRate * (1 + atmosphericPressure) / 2 * 2; // Average pressure during descent
             const ascentConsumption = sacRate * (atmosphericPressure + 1) / 2 * 3; // Average pressure during ascent
             const totalConsumption = consumptionAtDepth + descentConsumption + ascentConsumption;
-            
+
             // Calculate remaining pressure
             const usedVolume = totalConsumption;
             const usedPressure = usedVolume / tankSize;
             const remainingPressure = initialPressure - usedPressure;
             const safeRemainingPressure = remainingPressure - 50; // 50 bar reserve
-            
+
             results.push({
                 tankIndex: index,
                 tankSize: tankSize,
@@ -2455,7 +2521,7 @@ function calculateOfflineGasConsumption(planData) {
             });
         });
     }
-    
+
     return results;
 }
 
@@ -2540,7 +2606,7 @@ class PerformanceMonitor {
 class LazyLoader {
     static loadComponent(componentName, callback) {
         console.log(`🔄 Lazy loading ${componentName}`);
-        
+
         setTimeout(() => {
             try {
                 if (callback && typeof callback === 'function') {
@@ -2703,17 +2769,17 @@ function clearSavedPlans() {
                     keysToRemove.push(key);
                 }
             }
-            
+
             keysToRemove.forEach(key => {
                 localStorage.removeItem(key);
             });
-            
+
             if (typeof showAlert === 'function') {
                 showAlert('All saved plans have been cleared', 'success');
             } else {
                 alert('All saved plans have been cleared');
             }
-            
+
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('offlineStorageModal'));
             if (modal) {
@@ -2745,22 +2811,22 @@ function capitalizeFirstLetter(string) {
 function initMasterUnitToggle() {
     const masterMetric = document.getElementById('masterMetric');
     const masterImperial = document.getElementById('masterImperial');
-    
+
     if (masterMetric && masterImperial) {
         // Load saved preference
         const savedUnits = localStorage.getItem('scuplan_master_units') || 'metric';
-        
+
         if (savedUnits === 'imperial') {
             masterImperial.checked = true;
         } else {
             masterMetric.checked = true;
         }
-        
+
         // Sync with other systems
         if (window.unitsManager) {
             window.unitsManager.currentSystem = savedUnits;
         }
-        
+
         // Add event listeners
         masterMetric.addEventListener('change', () => {
             if (masterMetric.checked) {
@@ -2772,7 +2838,7 @@ function initMasterUnitToggle() {
                 console.log('Switched to metric system from master toggle');
             }
         });
-        
+
         masterImperial.addEventListener('change', () => {
             if (masterImperial.checked) {
                 localStorage.setItem('scuplan_master_units', 'imperial');
@@ -2794,7 +2860,7 @@ function syncAllToggles(system) {
     // Sync master toggle
     const masterMetric = document.getElementById('masterMetric');
     const masterImperial = document.getElementById('masterImperial');
-    
+
     if (masterMetric && masterImperial) {
         if (system === 'metric') {
             masterMetric.checked = true;
@@ -2802,18 +2868,18 @@ function syncAllToggles(system) {
             masterImperial.checked = true;
         }
     }
-    
+
     // Sync dive parameters toggle
     const diveMetric = document.getElementById('diveMetric');
     const diveImperial = document.getElementById('diveImperial');
-    
+
     if (diveMetric && diveImperial) {
         if (system === 'metric') {
             diveMetric.checked = true;
         } else {
             diveImperial.checked = true;
         }
-        
+
         // Trigger conversion if dive parameters toggle exists
         if (window.diveParamsUnitToggle) {
             window.diveParamsUnitToggle.currentUnits = system;
@@ -2845,7 +2911,7 @@ class DiveParametersUnitToggle {
     initializeToggle() {
         const metricRadio = document.getElementById('diveMetric');
         const imperialRadio = document.getElementById('diveImperial');
-        
+
         if (metricRadio && imperialRadio) {
             // Load saved preference
             const savedUnits = localStorage.getItem('scuplan_dive_params_units');
@@ -2992,7 +3058,7 @@ class DiveParametersUnitToggle {
  */
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 ScuPlan application initializing...');
-    
+
     try {
         // Initialize performance monitoring
         window.performanceMonitor = new PerformanceMonitor();
@@ -3076,18 +3142,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         window.performanceMonitor.endTiming('appInitialization');
         console.log('✅ ScuPlan application initialized successfully');
-        
+
         // Show success notification
         setTimeout(() => {
             if (typeof showAlert === 'function') {
                 showAlert('ScuPlan loaded successfully! 🤿', 'success', 2000);
             }
         }, 100);
-        
+
     } catch (error) {
         window.performanceMonitor?.logError('Application Initialization Error', error);
         console.error('❌ Failed to initialize ScuPlan application:', error);
-        
+
         // Show fallback UI or error message
         if (typeof showAlert === 'function') {
             showAlert('Application failed to load properly. Please refresh the page.', 'danger');
