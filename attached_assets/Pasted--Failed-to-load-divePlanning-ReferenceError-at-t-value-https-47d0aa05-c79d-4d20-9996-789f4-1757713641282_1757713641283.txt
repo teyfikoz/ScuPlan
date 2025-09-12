@@ -1,0 +1,63 @@
+❌ Failed to load divePlanning: 
+ReferenceError {}
+
+at t.value (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+🔥 Component Loading Error: divePlanning: 
+Object {type: "Component Loading Error: divePlanning", message: "initTankManagement is not defined", stack: "ReferenceError: initTankManagement is not defined↵    at initDivePlanner…", timestamp: "2025-09-12T21:46:37.702Z", context: {…}, …}
+context: Object
+message: "initTankManagement is not defined"
+stack: "ReferenceError: initTankManagement is not defined↵ at initDivePlanner (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/main.js:22:5)↵ at https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/main.js:3017:17↵ at https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/main.js:2547:21"
+timestamp: "2025-09-12T21:46:37.702Z"
+type: "Component Loading Error: divePlanning"
+url: "https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/"
+userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+[[Prototype]]: Object
+constructor: ƒ Object()
+assign: ƒ assign()
+create: ƒ create()
+defineProperties: ƒ defineProperties()
+defineProperty: ƒ defineProperty()
+entries: ƒ entries()
+freeze: ƒ freeze()
+fromEntries: ƒ fromEntries()
+getOwnPropertyDescriptor: ƒ getOwnPropertyDescriptor()
+getOwnPropertyDescriptors: ƒ getOwnPropertyDescriptors()
+getOwnPropertyNames: ƒ getOwnPropertyNames()
+getOwnPropertySymbols: ƒ getOwnPropertySymbols()
+getPrototypeOf: ƒ getPrototypeOf()
+groupBy: ƒ groupBy()
+hasOwn: ƒ hasOwn()
+is: ƒ is()
+isExtensible: ƒ isExtensible()
+isFrozen: ƒ isFrozen()
+isSealed: ƒ isSealed()
+keys: ƒ keys()
+length: 1
+name: "Object"
+preventExtensions: ƒ preventExtensions()
+prototype: Object
+seal: ƒ seal()
+setPrototypeOf: ƒ setPrototypeOf()
+values: ƒ values()
+[[Prototype]]: ƒ ()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: Object
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+
+at t.value (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
