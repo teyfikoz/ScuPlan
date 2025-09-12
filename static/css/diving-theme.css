@@ -1,0 +1,40 @@
+
+/* Diving Theme Styles */
+:root {
+    --deep-blue: #0066cc;
+    --ocean-blue: #0099ff;
+    --coral-orange: #ff6b35;
+    --sea-green: #20b2aa;
+    --sandy-beige: #f5deb3;
+}
+
+.bg-ocean {
+    background: linear-gradient(135deg, var(--deep-blue) 0%, var(--ocean-blue) 100%);
+}
+
+.text-ocean {
+    color: var(--ocean-blue);
+}
+
+.btn-ocean {
+    background-color: var(--ocean-blue);
+    border-color: var(--ocean-blue);
+    color: white;
+}
+
+.btn-ocean:hover {
+    background-color: var(--deep-blue);
+    border-color: var(--deep-blue);
+}
+
+.card-diving {
+    border-left: 4px solid var(--sea-green);
+}
+
+.depth-indicator {
+    background: linear-gradient(45deg, var(--deep-blue), var(--sea-green));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
