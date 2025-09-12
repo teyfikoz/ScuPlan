@@ -6,6 +6,24 @@
     --coral-orange: #ff6b35;
     --sea-green: #20b2aa;
     --sandy-beige: #f5deb3;
+    --primary-blue: #007bff;
+}
+
+/* Navbar Consistency */
+.navbar-dark.bg-primary {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--ocean-blue) 100%) !important;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
 }
 
 .bg-ocean {
@@ -37,4 +55,13 @@
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-weight: bold;
+}
+
+/* Card Headers Consistency */
+.card-header.bg-primary {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--ocean-blue) 100%) !important;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, var(--sea-green) 100%) !important;
 }

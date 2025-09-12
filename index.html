@@ -25,51 +25,30 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Unit Conversion Toggle -->
-                <div class="navbar-nav me-3">
-                    <div class="nav-item">
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Unit system toggle">
-                            <input type="radio" class="btn-check" name="unitSystem" id="metricSystem" autocomplete="off" checked>
-                            <label class="btn btn-outline-light" for="metricSystem" title="Metric System (m, bar, °C, L, kg)">
-                                <i class="fas fa-ruler me-1"></i>Metric
-                            </label>
-                            <input type="radio" class="btn-check" name="unitSystem" id="imperialSystem" autocomplete="off">
-                            <label class="btn btn-outline-light" for="imperialSystem" title="Imperial System (ft, PSI, °F, cuft, lbs)">
-                                <i class="fas fa-flag-usa me-1"></i>Imperial
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/index.html" id="homeLink">
+                        <a class="nav-link active" href="/" id="homeLink">
                             <i class="fas fa-calculator me-1"></i> Dive Planner
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/templates/checklist.html" id="checklistLink">
+                        <a class="nav-link" href="/checklist" id="checklistLink">
                             <i class="fas fa-tasks me-1"></i> Checklists
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/technical.html" id="technicalLink">
+                        <a class="nav-link" href="/technical" id="technicalLink">
                             <i class="fas fa-flask me-1"></i> Technical Diving
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/templates/dive_routes.html" id="diveRoutesLink">
+                        <a class="nav-link" href="/dive_routes" id="diveRoutesLink">
                             <i class="fas fa-map-marked-alt me-1"></i> Dive Routes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/templates/dive_education.html" id="diveEducationLink">
+                        <a class="nav-link" href="/dive_education" id="diveEducationLink">
                             <i class="fas fa-graduation-cap me-1"></i> Dive Education
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="aboutMeLink">
-                            <i class="fas fa-user me-1"></i> About Me
                         </a>
                     </li>
                     <li class="nav-item">
@@ -77,9 +56,14 @@
                             <i class="fas fa-save me-1"></i> Saved Plans
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="aboutMeLink">
+                            <i class="fas fa-user me-1"></i> About Me
+                        </a>
+                    </li>
                 </ul>
                 
-                <!-- Unit Conversion Toggle - Master Menu -->
+                <!-- Unit Conversion Toggle - Single Master Menu -->
                 <div class="navbar-nav me-3">
                     <div class="nav-item">
                         <div class="btn-group btn-group-sm" role="group" aria-label="Unit system toggle">
@@ -436,6 +420,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <!-- App Scripts -->
     <script src="/static/js/unit-converter.js"></script>
+    <script src="/static/js/marine-life-tooltips.js"></script>
+    <script src="/static/js/ambient-sounds.js"></script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/enhanced-ai-assistant.js"></script>
 </body>

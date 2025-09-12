@@ -3174,3 +3174,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Initialize marine life and ambient sounds on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're not on the dive education page (to avoid conflicts)
+    if (!window.location.pathname.includes('dive-education')) {
+        window.unitConverter = new MinimalUnitConverter();
+        console.log('Minimal Unit Converter initialized');
+    }
+
+    // Initialize marine life tooltips and ambient sounds
+    if (typeof MarineLifeTooltips !== 'undefined') {
+        window.marineLifeTooltips = new MarineLifeTooltips();
+        console.log('Marine Life Tooltips initialized');
+    }
+
+    if (typeof AmbientSounds !== 'undefined') {
+        window.ambientSounds = new AmbientSounds();
+        console.log('Ambient Sounds initialized');
+    }
+});
+
+
+// Initialize the application (check if app already exists)
+if (typeof window.scuPlanApp === 'undefined') {
+    window.scuPlanApp = new ScuPlanApp();
+}
