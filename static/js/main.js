@@ -72,10 +72,10 @@ function initBasicTankManagement() {
     const addTankBtn = document.getElementById('addTankInlineButton');
     if (addTankBtn) {
         addTankBtn.addEventListener('click', function() {
-            if (typeof addTank === 'function') {
-                addTank();
+            if (typeof showAddTankModal === 'function') {
+                showAddTankModal();
             } else {
-                console.warn('addTank function not available');
+                console.warn('showAddTankModal function not available');
             }
         });
     }
@@ -86,12 +86,26 @@ function initBasicBuddyManagement() {
     const addBuddyBtn = document.getElementById('addBuddyInlineButton');
     if (addBuddyBtn) {
         addBuddyBtn.addEventListener('click', function() {
-            if (typeof addBuddy === 'function') {
-                addBuddy();
+            if (typeof showAddBuddyModal === 'function') {
+                showAddBuddyModal();
             } else {
-                console.warn('addBuddy function not available');
+                console.warn('showAddBuddyModal function not available');
             }
         });
+    }
+}
+
+// Add tank function
+function addTank() {
+    if (typeof showAddTankModal === 'function') {
+        showAddTankModal();
+    }
+}
+
+// Add buddy function
+function addBuddy() {
+    if (typeof showAddBuddyModal === 'function') {
+        showAddBuddyModal();
     }
 }
 

@@ -4,31 +4,24 @@
  */
 
 /**
- * Initialize buddy management system
- */
-function initBuddyManagement() {
-    console.log('Initializing buddy management system');
-
-    const addBuddyBtn = document.getElementById('addBuddyInlineButton');
-    if (addBuddyBtn) {
-        addBuddyBtn.addEventListener('click', function() {
-            addBuddy();
-        });
-    }
-
-    // Update display on initialization
-    updateBuddiesDisplay();
-}
-
-/**
  * Initialize buddy management functionality
  */
 function initBuddyManagement() {
     console.log('Initializing buddy management module');
 
     // Reset buddies array if needed
-    if (!app.buddies) {
-        app.buddies = [];
+    if (!window.app) {
+        window.app = {};
+    }
+    if (!window.app.buddies) {
+        window.app.buddies = [];
+    }
+
+    const addBuddyBtn = document.getElementById('addBuddyInlineButton');
+    if (addBuddyBtn) {
+        addBuddyBtn.addEventListener('click', function() {
+            addBuddy();
+        });
     }
 
     // Display any existing buddies
@@ -136,7 +129,7 @@ function saveBuddy() {
 
     if (editIndex !== null && editIndex !== undefined) {
         // Update existing buddy
-        app.buddies[editIndex] = buddy;
+        window.app.buddies[editIndex] = buddy;
         saveBuddyButton.removeAttribute('data-edit-index');
 
         if (buddyModalLabel) {
@@ -144,7 +137,7 @@ function saveBuddy() {
         }
     } else {
         // Add new buddy
-        app.buddies.push(buddy);
+        window.app.buddies.push(buddy);
     }
 
     // Update the display
@@ -161,8 +154,8 @@ function saveBuddy() {
  * @param {number} index - Index of the buddy to remove
  */
 function removeBuddy(index) {
-    if (index >= 0 && index < app.buddies.length) {
-        app.buddies.splice(index, 1);
+    if (index >= 0 && index < window.app.buddies.length) {
+        window.app.buddies.splice(index, 1);
         updateBuddiesDisplay();
     }
 }
@@ -180,7 +173,7 @@ function updateBuddiesDisplay() {
     container.innerHTML = '';
 
     // Show/hide the no buddies message
-    if (app.buddies.length === 0) {
+    if (!window.app.buddies || window.app.buddies.length === 0) {
         noMessage.style.display = 'block';
         return;
     } else {
@@ -188,7 +181,7 @@ function updateBuddiesDisplay() {
     }
 
     // Add each buddy to the display
-    app.buddies.forEach((buddy, index) => {
+    window.app.buddies.forEach((buddy, index) => {
         const buddyElement = document.createElement('div');
         buddyElement.className = 'buddy-item';
 
@@ -311,7 +304,7 @@ function getBuddyRecommendations(depth, isDecoNeeded) {
  * @param {Object} plan - The current dive plan
  */
 function showBuddyCompatibilityWarnings(plan) {
-    if (!plan || !app.buddies || app.buddies.length === 0) return;
+    if (!plan || !window.app.buddies || window.app.buddies.length === 0) return;
 
     const depth = plan.depth;
     const isDecoNeeded = plan.profile.decoStops && plan.profile.decoStops.length > 0;
@@ -324,7 +317,7 @@ function showBuddyCompatibilityWarnings(plan) {
     // Check each buddy against the recommendations
     let warnings = [];
 
-    app.buddies.forEach(buddy => {
+    window.app.buddies.forEach(buddy => {
         const buddyLevelIndex = levelOrder.indexOf(buddy.skillLevel);
         const recommendedLevelIndex = levelOrder.indexOf(recommendations.level);
 
@@ -357,7 +350,4 @@ function showAlert(message, type = 'info', duration = 3000) {
     // In a real app, this would display a toast or similar notification
 }
 
-// Placeholder for app object if it's not defined elsewhere
-if (typeof app === 'undefined') {
-    var app = {};
-}
+// App object will be defined in main.js

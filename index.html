@@ -292,6 +292,101 @@
         </button>
     </div>
 
+    <!-- Tank Modal -->
+    <div class="modal fade" id="tankModal" tabindex="-1" aria-labelledby="tankModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tankModalLabel">Add Tank</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tankForm">
+                        <div class="mb-3">
+                            <label for="tankSize" class="form-label">Tank Size (L)</label>
+                            <input type="number" class="form-control" id="tankSize" min="5" max="30" step="1" value="12">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tankPressure" class="form-label">Tank Pressure (bar)</label>
+                            <input type="number" class="form-control" id="tankPressure" min="50" max="300" step="10" value="200">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gasType" class="form-label">Gas Type</label>
+                            <select class="form-select" id="gasType">
+                                <option value="air">Air</option>
+                                <option value="nitrox">Nitrox</option>
+                                <option value="trimix">Trimix</option>
+                                <option value="oxygen">Oxygen</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="oxygenPercentage" class="form-label">Oxygen Percentage (%)</label>
+                            <input type="number" class="form-control" id="oxygenPercentage" min="5" max="100" step="1" value="21">
+                        </div>
+                        <div class="mb-3" id="heliumContainer" style="display: none;">
+                            <label for="heliumPercentage" class="form-label">Helium Percentage (%)</label>
+                            <input type="number" class="form-control" id="heliumPercentage" min="0" max="95" step="1" value="0">
+                        </div>
+                        <div id="gasTypeHelper"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveTankButton">Save Tank</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buddy Modal -->
+    <div class="modal fade" id="buddyModal" tabindex="-1" aria-labelledby="buddyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="buddyModalLabel">Add Dive Buddy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="buddyForm">
+                        <div class="mb-3">
+                            <label for="buddyName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="buddyName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="buddyCertification" class="form-label">Certification</label>
+                            <input type="text" class="form-control" id="buddyCertification" placeholder="e.g., PADI Advanced Open Water">
+                        </div>
+                        <div class="mb-3">
+                            <label for="buddySkillLevel" class="form-label">Skill Level</label>
+                            <select class="form-select" id="buddySkillLevel">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="professional">Professional</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="buddySpecialty" class="form-label">Specialty</label>
+                            <select class="form-select" id="buddySpecialty">
+                                <option value="none">No Specialty</option>
+                                <option value="wreck">Wreck Diving</option>
+                                <option value="deep">Deep Diving</option>
+                                <option value="night">Night Diving</option>
+                                <option value="rescue">Rescue Diver</option>
+                                <option value="technical">Technical Diving</option>
+                                <option value="underwater_photography">Underwater Photography</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveBuddyButton">Save Buddy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- About Me Modal -->
     <div class="modal fade" id="aboutMeModal" tabindex="-1" aria-labelledby="aboutMeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">

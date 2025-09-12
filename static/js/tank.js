@@ -4,31 +4,24 @@
  */
 
 /**
- * Initialize tank management system
- */
-function initTankManagement() {
-    console.log('Initializing tank management system');
-
-    const addTankBtn = document.getElementById('addTankInlineButton');
-    if (addTankBtn) {
-        addTankBtn.addEventListener('click', function() {
-            addTank();
-        });
-    }
-
-    // Update display on initialization
-    updateTanksDisplay();
-}
-
-/**
  * Initialize tank management functionality
  */
 function initTankManagement() {
     console.log('Initializing tank management module');
 
     // Reset tanks array if needed
-    if (!app.tanks) {
-        app.tanks = [];
+    if (!window.app) {
+        window.app = {};
+    }
+    if (!window.app.tanks) {
+        window.app.tanks = [];
+    }
+
+    const addTankBtn = document.getElementById('addTankInlineButton');
+    if (addTankBtn) {
+        addTankBtn.addEventListener('click', function() {
+            addTank();
+        });
     }
 
     // Set up gas type change handler
@@ -222,7 +215,7 @@ function saveTank() {
 
     if (editIndex !== null && editIndex !== undefined) {
         // Update existing tank
-        app.tanks[editIndex] = tank;
+        window.app.tanks[editIndex] = tank;
         saveButton.removeAttribute('data-edit-index');
 
         const tankModalLabel = document.getElementById('tankModalLabel');
@@ -231,7 +224,7 @@ function saveTank() {
         }
     } else {
         // Add new tank
-        app.tanks.push(tank);
+        window.app.tanks.push(tank);
     }
 
     // Update the display
@@ -248,8 +241,8 @@ function saveTank() {
  * @param {number} index - Index of the tank to remove
  */
 function removeTank(index) {
-    if (index >= 0 && index < app.tanks.length) {
-        app.tanks.splice(index, 1);
+    if (index >= 0 && index < window.app.tanks.length) {
+        window.app.tanks.splice(index, 1);
         updateTanksDisplay();
     }
 }
@@ -291,7 +284,7 @@ function updateTanksDisplay() {
     container.innerHTML = '';
 
     // Show/hide the no tanks message
-    if (app.tanks.length === 0) {
+    if (!window.app.tanks || window.app.tanks.length === 0) {
         noMessage.style.display = 'block';
         return;
     } else {
@@ -303,7 +296,7 @@ function updateTanksDisplay() {
     const currentDepth = depthInput ? parseFloat(depthInput.value) : 30;
 
     // Add each tank to the display
-    app.tanks.forEach((tank, index) => {
+    window.app.tanks.forEach((tank, index) => {
         const tankElement = document.createElement('div');
         tankElement.className = 'tank-item mb-3 p-3 bg-light rounded';
 
