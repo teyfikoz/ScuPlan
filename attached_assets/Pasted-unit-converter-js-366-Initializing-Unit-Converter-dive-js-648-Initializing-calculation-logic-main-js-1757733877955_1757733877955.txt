@@ -1,0 +1,40 @@
+unit-converter.js:366 Initializing Unit Converter
+dive.js:648 Initializing calculation logic
+main.js:2891 🚀 ScuPlan application initializing...
+main.js:2938 📋 Initializing checklists page
+main.js:2641 🔄 Lazy loading checklists
+main.js:2954 🔄 Global unit conversion system initialized
+main.js:2852 Unit system initialized: metric only
+main.js:2592 ⏱️ appInitialization completed in 0.20ms
+main.js:2966 ✅ ScuPlan application initialized successfully
+main.js:2991 Marine Life Tooltips initialized
+main.js:2996 Ambient Sounds initialized
+enhanced-ai-assistant.js:37 Enhanced AI Assistant: Chat elements not found
+setupChatInterface @ enhanced-ai-assistant.js:37
+setupInterface @ enhanced-ai-assistant.js:24
+initializeInterface @ enhanced-ai-assistant.js:19
+EnhancedDivingAssistant @ enhanced-ai-assistant.js:12
+(anonymous) @ enhanced-ai-assistant.js:789
+enhanced-ai-assistant.js:60 Chat container not found, skipping quick actions setup
+setupQuickActionButtons @ enhanced-ai-assistant.js:60
+setupInterface @ enhanced-ai-assistant.js:25
+initializeInterface @ enhanced-ai-assistant.js:19
+EnhancedDivingAssistant @ enhanced-ai-assistant.js:12
+(anonymous) @ enhanced-ai-assistant.js:789
+enhanced-ai-assistant.js:124 Input container not found, skipping preset templates setup
+setupPresetTemplates @ enhanced-ai-assistant.js:124
+setupInterface @ enhanced-ai-assistant.js:26
+initializeInterface @ enhanced-ai-assistant.js:19
+EnhancedDivingAssistant @ enhanced-ai-assistant.js:12
+(anonymous) @ enhanced-ai-assistant.js:789
+enhanced-ai-assistant.js:133 Chat input not found, skipping voice input setup
+setupVoiceInput @ enhanced-ai-assistant.js:133
+setupInterface @ enhanced-ai-assistant.js:27
+initializeInterface @ enhanced-ai-assistant.js:19
+EnhancedDivingAssistant @ enhanced-ai-assistant.js:12
+(anonymous) @ enhanced-ai-assistant.js:789
+enhanced-ai-assistant.js:790 Enhanced AI Diving Assistant v2.0 initialized
+main.js:207 Initializing Checklists
+main.js:207 Initializing Checklists
+main.js:2647 ✅ checklists loaded successfully
+favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
