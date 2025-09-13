@@ -340,17 +340,36 @@ function setupEventListeners() {
                 // Use Bootstrap's modal instance or create new one
                 const aboutModal = document.getElementById('aboutMeModal');
                 if (aboutModal) {
-                    // Check if modal instance already exists
-                    let modal = bootstrap.Modal.getInstance(aboutModal);
-                    if (!modal) {
-                        modal = new bootstrap.Modal(aboutModal, {
-                            backdrop: true,
-                            keyboard: true,
-                            focus: true
+                    // Ensure Bootstrap is available
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        // Check if modal instance already exists
+                        let modal = bootstrap.Modal.getInstance(aboutModal);
+                        if (!modal) {
+                            modal = new bootstrap.Modal(aboutModal, {
+                                backdrop: true,
+                                keyboard: true,
+                                focus: true
+                            });
+                        }
+                        modal.show();
+                        console.log('About Me modal shown successfully');
+                    } else {
+                        console.error('Bootstrap Modal not available');
+                        // Fallback: show modal directly
+                        aboutModal.style.display = 'block';
+                        aboutModal.classList.add('show');
+                        document.body.classList.add('modal-open');
+                        
+                        // Add close functionality
+                        const closeButtons = aboutModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+                        closeButtons.forEach(btn => {
+                            btn.onclick = function() {
+                                aboutModal.style.display = 'none';
+                                aboutModal.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                            };
                         });
                     }
-                    modal.show();
-                    console.log('About Me modal shown successfully');
                 } else {
                     console.error('About Me modal element not found');
                     if (typeof showAlert === 'function') {
@@ -3177,12 +3196,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize marine life and ambient sounds on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize if we're not on the dive education page (to avoid conflicts)
-    if (!window.location.pathname.includes('dive-education')) {
-        window.unitConverter = new MinimalUnitConverter();
-        console.log('Minimal Unit Converter initialized');
-    }
-
     // Initialize marine life tooltips and ambient sounds
     if (typeof MarineLifeTooltips !== 'undefined') {
         window.marineLifeTooltips = new MarineLifeTooltips();
@@ -3196,7 +3209,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Initialize the application (check if app already exists)
-if (typeof window.scuPlanApp === 'undefined') {
-    window.scuPlanApp = new ScuPlanApp();
-}
+// Remove duplicate ScuPlanApp initialization - not needed
