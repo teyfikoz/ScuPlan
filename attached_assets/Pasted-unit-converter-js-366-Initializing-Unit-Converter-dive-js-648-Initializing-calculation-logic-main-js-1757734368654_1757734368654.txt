@@ -1,0 +1,32 @@
+unit-converter.js:366 Initializing Unit Converter
+dive.js:648 Initializing calculation logic
+main.js:2891 🚀 ScuPlan application initializing...
+main.js:2912 📊 Initializing dive planning page
+main.js:2641 🔄 Lazy loading divePlanning
+main.js:2954 🔄 Global unit conversion system initialized
+main.js:2852 Unit system initialized: metric only
+main.js:2592 ⏱️ appInitialization completed in 0.20ms
+main.js:2966 ✅ ScuPlan application initialized successfully
+enhanced-ai-assistant.js:790 Enhanced AI Diving Assistant v2.0 initialized
+main.js:19 Initializing ScuPlan Dive Planner
+tank.js:10 Initializing tank management module
+buddy.js:10 Initializing buddy management module
+dive.js:648 Initializing calculation logic
+main.js:333 Setting up About Me link
+main.js:2647 ✅ divePlanning loaded successfully
+main.js:2610 🔥 JavaScript Error: {type: 'JavaScript Error', message: "Cannot read properties of null (reading 'reset')", stack: 'TypeError: Cannot read properties of null (reading…1shjn.janeway.replit.dev/static/js/tank.js:23:13)', timestamp: '2025-09-13T03:32:26.186Z', context: {…}, …}context: {filename: 'https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/tank.js', line: 42, column: 40}message: "Cannot read properties of null (reading 'reset')"stack: "TypeError: Cannot read properties of null (reading 'reset')\n    at showAddTankModal (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/tank.js:42:40)\n    at addTank (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/main.js:101:9)\n    at HTMLButtonElement.<anonymous> (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/tank.js:23:13)"timestamp: "2025-09-13T03:32:26.186Z"type: "JavaScript Error"url: "https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/"userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+logError @ main.js:2610
+(anonymous) @ main.js:2573
+tank.js:42 Uncaught TypeError: Cannot read properties of null (reading 'reset')
+    at showAddTankModal (tank.js:42:40)
+    at addTank (main.js:101:9)
+    at HTMLButtonElement.<anonymous> (tank.js:23:13)
+showAddTankModal @ tank.js:42
+addTank @ main.js:101
+(anonymous) @ tank.js:23
+main.js:2610 🔥 JavaScript Error: {type: 'JavaScript Error', message: "Cannot read properties of null (reading 'reset')", stack: 'TypeError: Cannot read properties of null (reading…1shjn.janeway.replit.dev/static/js/tank.js:42:40)', timestamp: '2025-09-13T03:32:26.187Z', context: {…}, …}context: {filename: 'https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/tank.js', line: 42, column: 40}message: "Cannot read properties of null (reading 'reset')"stack: "TypeError: Cannot read properties of null (reading 'reset')\n    at HTMLButtonElement.showAddTankModal (https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/static/js/tank.js:42:40)"timestamp: "2025-09-13T03:32:26.187Z"type: "JavaScript Error"url: "https://47d0aa05-c79d-4d20-9996-789f4d5ae79a-00-65qmeyb1shjn.janeway.replit.dev/"userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"[[Prototype]]: Object
+logError @ main.js:2610
+(anonymous) @ main.js:2573
+tank.js:42 Uncaught TypeError: Cannot read properties of null (reading 'reset')
+    at HTMLButtonElement.showAddTankModal (tank.js:42:40)
+showAddTankModal @ tank.js:42

@@ -20,7 +20,7 @@ function initBuddyManagement() {
     const addBuddyBtn = document.getElementById('addBuddyInlineButton');
     if (addBuddyBtn) {
         addBuddyBtn.addEventListener('click', function() {
-            addBuddy();
+            showAddBuddyModal();
         });
     }
 

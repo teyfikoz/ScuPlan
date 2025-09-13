@@ -20,7 +20,7 @@ function initTankManagement() {
     const addTankBtn = document.getElementById('addTankInlineButton');
     if (addTankBtn) {
         addTankBtn.addEventListener('click', function() {
-            addTank();
+            showAddTankModal();
         });
     }
 
