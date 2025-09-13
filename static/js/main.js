@@ -280,6 +280,7 @@ function setupEventListeners() {
                 showOfflineGuide(e);
             } catch (error) {
                 console.error('Error showing offline guide:', error);
+                showAlert('Offline guide is not available at the moment', 'info');
             }
         });
     }
@@ -295,6 +296,7 @@ function setupEventListeners() {
                 showExportGuide(e);
             } catch (error) {
                 console.error('Error showing export guide:', error);
+                showAlert('Export guide is not available at the moment', 'info');
             }
         });
     }
@@ -2999,3 +3001,134 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Remove duplicate ScuPlanApp initialization - not needed
+
+/**
+ * Show offline guide modal
+ */
+function showOfflineGuide() {
+    const modalHtml = `
+        <div class="modal fade" id="offlineGuideModal" tabindex="-1" aria-labelledby="offlineGuideModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="offlineGuideModalLabel">
+                            <i class="fas fa-wifi me-2"></i>Offline Usage Guide
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            ScuPlan works offline! Here's how to make the most of it:
+                        </div>
+                        
+                        <h6><i class="fas fa-save me-2"></i>Saving Data Offline</h6>
+                        <ul>
+                            <li>Dive plans are automatically saved to your browser's local storage</li>
+                            <li>Checklists can be saved for offline use</li>
+                            <li>All calculations work without internet connection</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-download me-2"></i>Accessing Saved Data</h6>
+                        <ul>
+                            <li>Click "Saved Plans" in the navigation to view offline data</li>
+                            <li>Use the checklist tab to access saved checklists</li>
+                            <li>Data persists between browser sessions</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Limitations</h6>
+                        <ul>
+                            <li>Data is stored locally on this device only</li>
+                            <li>Clearing browser data will remove saved plans</li>
+                            <li>Some features may require internet connection</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('offlineGuideModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('offlineGuideModal'));
+    modal.show();
+}
+
+/**
+ * Show export guide modal
+ */
+function showExportGuide() {
+    const modalHtml = `
+        <div class="modal fade" id="exportGuideModal" tabindex="-1" aria-labelledby="exportGuideModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exportGuideModalLabel">
+                            <i class="fas fa-download me-2"></i>Export & Print Guide
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Multiple ways to export and print your dive plans:
+                        </div>
+                        
+                        <h6><i class="fas fa-print me-2"></i>Printing Dive Plans</h6>
+                        <ul>
+                            <li>Use your browser's print function (Ctrl+P / Cmd+P)</li>
+                            <li>Plans are optimized for printing</li>
+                            <li>Include dive profile charts and all details</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-file-pdf me-2"></i>Saving as PDF</h6>
+                        <ul>
+                            <li>Use your browser's "Print to PDF" option</li>
+                            <li>Perfect for digital storage and sharing</li>
+                            <li>Includes all calculations and charts</li>
+                        </ul>
+                        
+                        <h6><i class="fas fa-share me-2"></i>Sharing Plans</h6>
+                        <ul>
+                            <li>Each plan has a unique sharing link</li>
+                            <li>Share with dive buddies and dive masters</li>
+                            <li>Links work offline if previously loaded</li>
+                        </ul>
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Always verify:</strong> Print and review your plans before diving!
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('exportGuideModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('exportGuideModal'));
+    modal.show();
+}
