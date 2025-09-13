@@ -2839,250 +2839,48 @@ function capitalizeFirstLetter(string) {
  * Metric/Imperial Toggle Functionality
  */
 /**
- * Initialize master unit toggle in navigation bar
+ * Initialize unit system - simplified metric-only version
  */
-function initMasterUnitToggle() {
-    const masterMetric = document.getElementById('masterMetric');
-    const masterImperial = document.getElementById('masterImperial');
-
-    if (masterMetric && masterImperial) {
-        // Load saved preference
-        const savedUnits = localStorage.getItem('scuplan_master_units') || 'metric';
-
-        if (savedUnits === 'imperial') {
-            masterImperial.checked = true;
-        } else {
-            masterMetric.checked = true;
-        }
-
-        // Sync with other systems
-        if (window.unitsManager) {
-            window.unitsManager.currentSystem = savedUnits;
-        }
-
-        // Add event listeners
-        masterMetric.addEventListener('change', () => {
-            if (masterMetric.checked) {
-                localStorage.setItem('scuplan_master_units', 'metric');
-                if (window.unitsManager) {
-                    window.unitsManager.switchToSystem('metric');
-                }
-                syncAllToggles('metric');
-                console.log('Switched to metric system from master toggle');
-            }
-        });
-
-        masterImperial.addEventListener('change', () => {
-            if (masterImperial.checked) {
-                localStorage.setItem('scuplan_master_units', 'imperial');
-                if (window.unitsManager) {
-                    window.unitsManager.switchToSystem('imperial');
-                }
-                syncAllToggles('imperial');
-                console.log('Switched to imperial system from master toggle');
-            }
-        });
+function initUnitSystem() {
+    // Set metric as default and only system
+    localStorage.setItem('scuplan_units', 'metric');
+    
+    if (window.unitsManager) {
+        window.unitsManager.currentSystem = 'metric';
     }
+    
+    console.log('Unit system initialized: metric only');
 }
-
 
 /**
- * Sync all unit toggles across the page
+ * Simplified metric-only unit system
  */
-function syncAllToggles(system) {
-    // Sync master toggle
-    const masterMetric = document.getElementById('masterMetric');
-    const masterImperial = document.getElementById('masterImperial');
-
-    if (masterMetric && masterImperial) {
-        if (system === 'metric') {
-            masterMetric.checked = true;
-        } else {
-            masterImperial.checked = true;
-        }
+function updateInputLabels() {
+    // Set all labels to metric
+    const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
+    if (depthUnitSpan) {
+        depthUnitSpan.textContent = 'meters';
     }
 
-    // Sync dive parameters toggle
-    const diveMetric = document.getElementById('diveMetric');
-    const diveImperial = document.getElementById('diveImperial');
-
-    if (diveMetric && diveImperial) {
-        if (system === 'metric') {
-            diveMetric.checked = true;
-        } else {
-            diveImperial.checked = true;
-        }
-
-        // Trigger conversion if dive parameters toggle exists
-        if (window.diveParamsUnitToggle) {
-            window.diveParamsUnitToggle.currentUnits = system;
-            window.diveParamsUnitToggle.convertAllInputs();
-        }
-    }
-}
-
-class DiveParametersUnitToggle {
-    constructor() {
-        this.currentUnits = 'metric'; // 'metric' or 'imperial'
-        this.conversions = {
-            depth: {
-                metricToImperial: (meters) => meters * 3.28084,
-                imperialToMetric: (feet) => feet / 3.28084,
-                metricUnit: 'm',
-                imperialUnit: 'ft'
-            },
-            volume: {
-                metricToImperial: (liters) => liters * 0.0353147,
-                imperialToMetric: (cuft) => cuft / 0.0353147,
-                metricUnit: 'L/min',
-                imperialUnit: 'cuft/min'
-            }
-        };
-        this.initializeToggle();
+    const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
+    if (volumeUnitSpan) {
+        volumeUnitSpan.textContent = 'L/min';
     }
 
-    initializeToggle() {
-        const metricRadio = document.getElementById('diveMetric');
-        const imperialRadio = document.getElementById('diveImperial');
-
-        if (metricRadio && imperialRadio) {
-            // Load saved preference
-            const savedUnits = localStorage.getItem('scuplan_dive_params_units');
-            if (savedUnits) {
-                this.currentUnits = savedUnits;
-                if (savedUnits === 'imperial') {
-                    imperialRadio.checked = true;
-                } else {
-                    metricRadio.checked = true;
-                }
-            }
-
-            // Add event listeners for radio buttons
-            metricRadio.addEventListener('change', () => {
-                if (metricRadio.checked) {
-                    this.currentUnits = 'metric';
-                    this.convertAllInputs();
-                    this.savePreference();
-                    console.log('Switched to metric units');
-                }
-            });
-
-            imperialRadio.addEventListener('change', () => {
-                if (imperialRadio.checked) {
-                    this.currentUnits = 'imperial';
-                    this.convertAllInputs();
-                    this.savePreference();
-                    console.log('Switched to imperial units');
-                }
-            });
-
-            // Initialize with current units
-            this.updateInputLabels();
-        }
+    // Set metric input limits
+    const depthInput = document.getElementById('diveDepth');
+    if (depthInput) {
+        depthInput.max = "150";
+        depthInput.step = "0.5";
+        depthInput.placeholder = "e.g., 18";
     }
 
-
-    convertAllInputs() {
-        // Convert depth input
-        const depthInput = document.getElementById('diveDepth');
-        if (depthInput && depthInput.value) {
-            const currentValue = parseFloat(depthInput.value);
-            if (!isNaN(currentValue)) {
-                let convertedValue;
-                if (this.currentUnits === 'imperial') {
-                    // Convert meters to feet
-                    convertedValue = this.conversions.depth.metricToImperial(currentValue);
-                } else {
-                    // Convert feet to meters  
-                    convertedValue = this.conversions.depth.imperialToMetric(currentValue);
-                }
-                depthInput.value = convertedValue.toFixed(1);
-            }
-        }
-
-        // Convert SAC rate input
-        const sacInput = document.getElementById('sacRate');
-        if (sacInput && sacInput.value) {
-            const currentValue = parseFloat(sacInput.value);
-            if (!isNaN(currentValue)) {
-                let convertedValue;
-                if (this.currentUnits === 'imperial') {
-                    // Convert L/min to cuft/min
-                    convertedValue = this.conversions.volume.metricToImperial(currentValue);
-                } else {
-                    // Convert cuft/min to L/min
-                    convertedValue = this.conversions.volume.imperialToMetric(currentValue);
-                }
-                sacInput.value = convertedValue.toFixed(1);
-            }
-        }
-
-        this.updateInputLabels();
-    }
-
-    updateInputLabels() {
-        // Update depth unit label
-        const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
-        if (depthUnitSpan) {
-            depthUnitSpan.textContent = this.conversions.depth[this.currentUnits + 'Unit'];
-        }
-
-        // Update SAC rate unit label
-        const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
-        if (volumeUnitSpan) {
-            volumeUnitSpan.textContent = this.conversions.volume[this.currentUnits + 'Unit'];
-        }
-
-        // Update input placeholders and limits
-        const depthInput = document.getElementById('diveDepth');
-        if (depthInput) {
-            if (this.currentUnits === 'imperial') {
-                depthInput.max = "492"; // 150m = ~492ft
-                depthInput.step = "1";
-                depthInput.placeholder = "e.g., 60";
-            } else {
-                depthInput.max = "150";
-                depthInput.step = "0.5";
-                depthInput.placeholder = "e.g., 18";
-            }
-        }
-
-        const sacInput = document.getElementById('sacRate');
-        if (sacInput) {
-            if (this.currentUnits === 'imperial') {
-                sacInput.min = "0.35"; // ~10 L/min
-                sacInput.max = "1.77"; // ~50 L/min  
-                sacInput.step = "0.1";
-                sacInput.placeholder = "e.g., 0.7";
-            } else {
-                sacInput.min = "10";
-                sacInput.max = "50";
-                sacInput.step = "1";
-                sacInput.placeholder = "e.g., 20";
-            }
-        }
-    }
-
-    savePreference() {
-        localStorage.setItem('scuplan_dive_params_units', this.currentUnits);
-    }
-
-    getCurrentUnits() {
-        return this.currentUnits;
-    }
-
-    convertValue(value, type, toSystem = null) {
-        const conversion = this.conversions[type];
-        if (!conversion) return value;
-
-        const targetSystem = toSystem || this.currentUnits;
-        const fromSystem = targetSystem === 'metric' ? 'imperial' : 'metric';
-
-        if (targetSystem === 'imperial') {
-            return conversion.metricToImperial(value);
-        } else {
-            return conversion.imperialToMetric(value);
-        }
+    const sacInput = document.getElementById('sacRate');
+    if (sacInput) {
+        sacInput.min = "10";
+        sacInput.max = "50";
+        sacInput.step = "1";
+        sacInput.placeholder = "e.g., 20";
     }
 }
 
@@ -3156,17 +2954,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('🔄 Global unit conversion system initialized');
         }
 
-        // Initialize dive parameters unit toggle
-        if (document.getElementById('diveMetric') || document.getElementById('diveImperial')) {
-            window.diveParamsUnitToggle = new DiveParametersUnitToggle();
-            console.log('🎯 Dive parameters unit toggle initialized');
-        }
-
-        // Initialize master unit toggle (in navigation)
-        if (document.getElementById('masterMetric') || document.getElementById('masterImperial')) {
-            initMasterUnitToggle();
-            console.log('🌍 Master unit toggle initialized');
-        }
+        // Initialize unit system (metric only)
+        initUnitSystem();
 
         // Initialize AI assistant if available  
         if (window.aiAssistant) {

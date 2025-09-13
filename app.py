@@ -113,13 +113,13 @@ def share():
     return render_template('share.html')
 
 # Dive routes sayfası rotası
-@app.route('/dive-routes')
+@app.route('/dive_routes')
 def dive_routes():
     """World-famous dive routes and locations"""
     return render_template('dive_routes.html')
 
-# Dive education sayfası rotası
-@app.route('/dive-education')
+# Dive education sayfası rotası  
+@app.route('/dive_education')
 def dive_education():
     """Dive education and calculations with AI assistant"""
     return render_template('dive_education.html')

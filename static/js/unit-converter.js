@@ -78,6 +78,7 @@ class UnitConverter {
         const metricToggle = document.getElementById('metricSystem');
         const imperialToggle = document.getElementById('imperialSystem');
 
+        // Add null checks to prevent errors when elements don't exist
         if (metricToggle) {
             metricToggle.addEventListener('change', () => {
                 if (metricToggle.checked) {
@@ -132,7 +133,7 @@ class UnitConverter {
         }
 
         const sourceSystem = fromSystem || (this.currentSystem === 'metric' ? 'imperial' : 'metric');
-        
+
         if (this.currentSystem === 'metric' && sourceSystem === 'imperial') {
             return parseFloat(conversion.toMetric(value).toFixed(conversion.precision));
         } else if (this.currentSystem === 'imperial' && sourceSystem === 'metric') {
@@ -190,10 +191,10 @@ class UnitConverter {
     updateAllUnits() {
         // Update unit labels
         this.updateUnitLabels();
-        
+
         // Update input values if they exist
         this.updateInputValues();
-        
+
         // Update result displays
         this.updateResultDisplays();
 
@@ -213,7 +214,7 @@ class UnitConverter {
     updateUnitLabels() {
         // Update elements with data-unit attributes
         const unitElements = document.querySelectorAll('[data-unit]');
-        
+
         unitElements.forEach(element => {
             const unitType = element.dataset.unit;
             const unit = this.getUnit(unitType);
@@ -277,17 +278,17 @@ class UnitConverter {
             const savedSystem = localStorage.getItem('scuplan_unit_system');
             if (savedSystem && (savedSystem === 'metric' || savedSystem === 'imperial')) {
                 this.currentSystem = savedSystem;
-                
+
                 // Update toggle buttons
                 const metricToggle = document.getElementById('metricSystem');
                 const imperialToggle = document.getElementById('imperialSystem');
-                
+
                 if (savedSystem === 'metric' && metricToggle) {
                     metricToggle.checked = true;
                 } else if (savedSystem === 'imperial' && imperialToggle) {
                     imperialToggle.checked = true;
                 }
-                
+
                 // Update UI to reflect saved preference
                 setTimeout(() => this.updateAllUnits(), 100);
             }
@@ -324,7 +325,7 @@ class UnitConverter {
     /**
      * Helper methods for specific conversions commonly used in diving
      */
-    
+
     // Convert depth with proper precision
     convertDepth(meters, targetSystem = null) {
         const system = targetSystem || this.currentSystem;

@@ -1,4 +1,5 @@
-/* Ocean Depth Color Palette - Global */
+
+/* Ocean Depth Color Palette - Global Application Theme */
 :root {
     --deep-ocean: #0B2447;
     --mid-ocean: #19376D;
@@ -13,15 +14,23 @@
     --success-green: #81C784;
     --info-blue: #64B5F6;
 
-    /* Bootstrap overrides for consistency */
+    /* Bootstrap overrides for consistency across all pages */
     --bs-primary: #576CBC;
+    --bs-primary-rgb: 87, 108, 188;
     --bs-secondary: #19376D;
+    --bs-secondary-rgb: 25, 55, 109;
     --bs-success: #81C784;
+    --bs-success-rgb: 129, 199, 132;
     --bs-info: #64B5F6;
+    --bs-info-rgb: 100, 181, 246;
     --bs-warning: #FFB74D;
+    --bs-warning-rgb: 255, 183, 77;
     --bs-danger: #E57373;
+    --bs-danger-rgb: 229, 115, 115;
     --bs-light: #A5D7E8;
+    --bs-light-rgb: 165, 215, 232;
     --bs-dark: #0B2447;
+    --bs-dark-rgb: 11, 36, 71;
 }
 
 /* Global page styling for consistency */
@@ -29,167 +38,235 @@ body {
     background: linear-gradient(135deg, var(--surface-blue) 0%, var(--shallow-water) 100%);
     min-height: 100vh;
     color: var(--deep-ocean);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/*Navbar consistency */
-.navbar-dark {
+/* Navbar consistency across all pages */
+.navbar-dark, .navbar {
     background: linear-gradient(90deg, var(--deep-ocean) 0%, var(--mid-ocean) 100%) !important;
+    border-bottom: 2px solid var(--shallow-water);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .navbar-nav .nav-link {
     color: rgba(255, 255, 255, 0.9) !important;
     transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 0 2px;
 }
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active {
     color: white !important;
     background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    transform: translateY(-1px);
 }
 
-.bg-ocean {
-    background: linear-gradient(135deg, var(--deep-blue) 0%, var(--ocean-blue) 100%);
-}
-
-.text-ocean {
-    color: var(--ocean-blue);
-}
-
-.btn-ocean {
-    background-color: var(--ocean-blue);
-    border-color: var(--ocean-blue);
-    color: white;
-}
-
-.btn-ocean:hover {
-    background-color: var(--deep-blue);
-    border-color: var(--deep-blue);
-}
-
-.card-diving {
-    border-left: 4px solid var(--sea-green);
-}
-
-.depth-indicator {
-    background: linear-gradient(45deg, var(--deep-blue), var(--sea-green));
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-/* Card consistency */
+/* Card consistency across all pages */
 .card {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(87, 108, 188, 0.2);
     box-shadow: 0 4px 15px rgba(11, 36, 71, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
 }
 
 .card-header {
     background: linear-gradient(90deg, var(--shallow-water) 0%, var(--mid-ocean) 100%);
     color: white;
     border-bottom: 1px solid rgba(87, 108, 188, 0.3);
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: 600;
 }
 
-/* Button consistency */
+.card-header h5, .card-header h6 {
+    margin-bottom: 0;
+    color: white;
+}
+
+/* Button consistency across all pages */
 .btn-primary {
     background: linear-gradient(135deg, var(--shallow-water) 0%, var(--mid-ocean) 100%);
     border-color: var(--shallow-water);
+    color: white;
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--mid-ocean) 0%, var(--deep-ocean) 100%);
     border-color: var(--mid-ocean);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(87, 108, 188, 0.3);
 }
 
 .btn-success {
     background: linear-gradient(135deg, var(--success-green) 0%, #66BB6A 100%);
     border-color: var(--success-green);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(129, 199, 132, 0.3);
 }
 
 .btn-info {
     background: linear-gradient(135deg, var(--info-blue) 0%, #42A5F5 100%);
     border-color: var(--info-blue);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #42A5F5 0%, #2196F3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(100, 181, 246, 0.3);
 }
 
 .btn-warning {
     background: linear-gradient(135deg, var(--warning-orange) 0%, #FFA726 100%);
     border-color: var(--warning-orange);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
 }
 
 .btn-danger {
     background: linear-gradient(135deg, var(--danger-red) 0%, #EF5350 100%);
     border-color: var(--danger-red);
+    color: white;
 }
 
-/* Modal consistency */
+.btn-danger:hover {
+    background: linear-gradient(135deg, #EF5350 0%, #F44336 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 115, 115, 0.3);
+}
+
+/* Modal consistency across all pages */
 .modal-content {
     background: rgba(255, 255, 255, 0.98);
     border: 1px solid rgba(87, 108, 188, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(15px);
 }
 
 .modal-header {
     background: linear-gradient(90deg, var(--shallow-water) 0%, var(--mid-ocean) 100%);
     color: white;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 2px solid var(--shallow-water);
 }
 
-/* Alert consistency */
+.modal-title {
+    color: white;
+    font-weight: 600;
+}
+
+/* Alert consistency across all pages */
 .alert-info {
-    background: linear-gradient(135deg, rgba(100, 181, 246, 0.1) 0%, rgba(165, 215, 232, 0.1) 100%);
-    border-color: var(--info-blue);
+    background: linear-gradient(135deg, rgba(100, 181, 246, 0.15) 0%, rgba(165, 215, 232, 0.15) 100%);
+    border: 1px solid var(--info-blue);
+    border-left: 4px solid var(--info-blue);
     color: var(--deep-ocean);
 }
 
 .alert-success {
-    background: linear-gradient(135deg, rgba(129, 199, 132, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
-    border-color: var(--success-green);
+    background: linear-gradient(135deg, rgba(129, 199, 132, 0.15) 0%, rgba(78, 205, 196, 0.15) 100%);
+    border: 1px solid var(--success-green);
+    border-left: 4px solid var(--success-green);
     color: var(--deep-ocean);
 }
 
 .alert-warning {
-    background: linear-gradient(135deg, rgba(255, 183, 77, 0.1) 0%, rgba(247, 231, 206, 0.1) 100%);
-    border-color: var(--warning-orange);
+    background: linear-gradient(135deg, rgba(255, 183, 77, 0.15) 0%, rgba(247, 231, 206, 0.15) 100%);
+    border: 1px solid var(--warning-orange);
+    border-left: 4px solid var(--warning-orange);
     color: var(--deep-ocean);
 }
 
 .alert-danger {
-    background: linear-gradient(135deg, rgba(229, 115, 115, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
-    border-color: var(--danger-red);
+    background: linear-gradient(135deg, rgba(229, 115, 115, 0.15) 0%, rgba(255, 107, 107, 0.15) 100%);
+    border: 1px solid var(--danger-red);
+    border-left: 4px solid var(--danger-red);
     color: var(--deep-ocean);
 }
 
 /* Form elements consistency */
-.form-control:focus {
-    border-color: var(--shallow-water);
-    box-shadow: 0 0 0 0.2rem rgba(87, 108, 188, 0.25);
+.form-control, .form-select {
+    border: 2px solid rgba(87, 108, 188, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-.form-select:focus {
+.form-control:focus, .form-select:focus {
     border-color: var(--shallow-water);
-    box-shadow: 0 0 0 0.2rem rgba(87, 108, 188, 0.25);
+    box-shadow: 0 0 0 0.25rem rgba(87, 108, 188, 0.25);
+    transform: translateY(-1px);
 }
 
-/* Tab consistency */
+/* Tab consistency across all pages */
+.nav-tabs {
+    border-bottom: 2px solid var(--shallow-water);
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: var(--mid-ocean);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
 .nav-tabs .nav-link.active {
-    background: var(--shallow-water);
+    background: linear-gradient(135deg, var(--shallow-water) 0%, var(--mid-ocean) 100%);
     color: white;
-    border-color: var(--shallow-water);
+    border-radius: 8px 8px 0 0;
+    transform: translateY(-2px);
 }
 
-.nav-tabs .nav-link:hover {
+.nav-tabs .nav-link:hover:not(.active) {
     background: rgba(87, 108, 188, 0.1);
-    border-color: var(--shallow-water);
+    border-radius: 8px 8px 0 0;
+    transform: translateY(-1px);
 }
 
-/* Table consistency */
+/* Table consistency across all pages */
+.table {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
 .table th {
-    background: linear-gradient(90deg, var(--surface-blue) 0%, rgba(165, 215, 232, 0.5) 100%);
+    background: linear-gradient(90deg, var(--surface-blue) 0%, rgba(165, 215, 232, 0.7) 100%);
     color: var(--deep-ocean);
     border-color: rgba(87, 108, 188, 0.2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
-/* Badge consistency */
+.table td {
+    border-color: rgba(87, 108, 188, 0.1);
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(165, 215, 232, 0.1);
+}
+
+/* Badge consistency across all pages */
 .badge.bg-primary {
     background: var(--shallow-water) !important;
 }
@@ -208,4 +285,59 @@ body {
 
 .badge.bg-danger {
     background: var(--danger-red) !important;
+}
+
+/* Footer consistency */
+.footer {
+    background: linear-gradient(90deg, var(--deep-ocean) 0%, var(--mid-ocean) 100%);
+    color: white;
+    border-top: 2px solid var(--shallow-water);
+}
+
+/* Special elements */
+.depth-indicator {
+    background: linear-gradient(45deg, var(--deep-ocean), var(--seaweed-green));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.stat-value {
+    color: var(--mid-ocean);
+    font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar-nav {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-top: 10px;
+        padding: 10px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Animation enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .alert, .modal-content {
+    animation: fadeInUp 0.3s ease-out;
 }
