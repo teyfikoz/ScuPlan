@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>ScuPlan - Advanced Dive Planning & Safety Tools</title>
+    <meta name="description" content="Professional dive planning application with decompression calculations, technical diving tools, MOD/END/CNS calculators, multi-tank gas management, and offline support.">
+    <meta name="keywords" content="dive planner, scuba diving, decompression, MOD calculator, END calculator, CNS tracker, Best Mix, technical diving, dive safety">
+    <meta name="author" content="Teyfik ÖZ">
+    <link rel="canonical" href="https://scuplan.com">
+    
+    <!-- OpenGraph Meta Tags -->
+    <meta property="og:title" content="ScuPlan - Advanced Dive Planning">
+    <meta property="og:description" content="Professional dive planning with technical calculators, multi-tank management, and offline support">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://scuplan.com">
+    <meta property="og:image" content="https://scuplan.com/assets/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ScuPlan - Advanced Dive Planning">
+    <meta name="twitter:description" content="Professional dive planning application for recreational and technical divers">
+    <meta name="twitter:image" content="https://scuplan.com/assets/og-image.png">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0056b3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/icons/icon-192.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ScuPlan",
+        "description": "Advanced dive planning application for recreational and technical divers",
+        "applicationCategory": "SportApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Teyfik ÖZ",
+            "email": "teyfikoz@yahoo.com"
+        }
+    }
+    </script>
+    
+    <style>
+        /* Tailwind Configuration */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        
+        /* Custom CSS Variables */
+        :root {
+            --primary: #0056b3;
+            --secondary: #6c757d;
+            --accent: #ffc107;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Underwater Theme */
+        body.underwater {
+            background: linear-gradient(180deg, #001a33 0%, #003d66 50%, #006699 100%);
+            color: #e0f7ff;
+        }
+        
+        /* Dark Theme */
+        body.dark {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        /* Light Theme (default) */
+        body.light {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Transition Effects */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Dive Profile Canvas */
+        #diveProfileCanvas {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Active Navigation */
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="light">
+    
+    <!-- Navigation Header -->
+    <header id="site-header" class="fixed top-0 left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-water text-3xl"></i>
+                    <h1 class="text-2xl font-bold">ScuPlan</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-2">
+                    <a href="#dive-planner" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-calculator mr-1"></i> Dive Planner
+                    </a>
+                    <a href="#checklist" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-tasks mr-1"></i> Checklist
+                    </a>
+                    <a href="#technical-diving" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-flask mr-1"></i> Technical
+                    </a>
+                    <a href="#dive-routes" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-map-marked-alt mr-1"></i> Routes
+                    </a>
+                    <a href="#dive-education" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-graduation-cap mr-1"></i> Education
+                    </a>
+                    <a href="#saved-plans" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-save mr-1"></i> Saved
+                    </a>
+                    <button onclick="showAboutModal()" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                        <i class="fas fa-user mr-1"></i> About
+                    </button>
+                </nav>
+                
+                <!-- Unit Toggle & Theme Selector -->
+                <div class="flex items-center space-x-3">
+                    <!-- Unit Toggle -->
+                    <div id="unit-toggle" class="flex bg-blue-700 rounded-lg p-1">
+                        <button data-unit="metric" class="unit-btn px-3 py-1 rounded transition-all text-sm">
+                            Metric
+                        </button>
+                        <button data-unit="imperial" class="unit-btn px-3 py-1 rounded transition-all text-sm">
+                            Imperial
+                        </button>
+                    </div>
+                    
+                    <!-- Theme Selector -->
+                    <select id="theme-selector" class="bg-blue-700 text-white rounded px-2 py-1 text-sm">
+                        <option value="light">☀️ Light</option>
+                        <option value="dark">🌙 Dark</option>
+                        <option value="underwater">🌊 Underwater</option>
+                    </select>
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button id="mobile-menu-toggle" class="md:hidden">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="#dive-planner" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-calculator mr-2"></i> Dive Planner
+                </a>
+                <a href="#checklist" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-tasks mr-2"></i> Checklist
+                </a>
+                <a href="#technical-diving" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-flask mr-2"></i> Technical Diving
+                </a>
+                <a href="#dive-routes" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-map-marked-alt mr-2"></i> Dive Routes
+                </a>
+                <a href="#dive-education" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-graduation-cap mr-2"></i> Dive Education
+                </a>
+                <a href="#saved-plans" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-save mr-2"></i> Saved Plans
+                </a>
+                <button onclick="showAboutModal()" class="block w-full text-left nav-link px-4 py-2 rounded hover:bg-blue-700">
+                    <i class="fas fa-user mr-2"></i> About Me
+                </button>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Ad Slot: Header -->
+    <div id="ad-header" class="mt-20 py-4 bg-gray-100 text-center">
+        <div class="container mx-auto">
+            <!-- AdSense Header Slot -->
+            <div class="text-gray-500 text-sm">Advertisement</div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="pt-6 pb-20">
+        
+        <!-- Section: Dive Planner -->
+        <section id="dive-planner" class="container mx-auto px-4 py-8 animate-fade-in">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-calculator text-blue-600 mr-3"></i>
+                Dive Planner
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Input Panel -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Dive Parameters</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Dive Location
+                            </label>
+                            <input type="text" id="dive-location" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., Great Barrier Reef">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-arrows-alt-v mr-1"></i>
+                                Maximum Depth <span class="depth-unit">(m)</span>
+                            </label>
+                            <input type="number" id="max-depth" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="18" min="1" max="100">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-clock mr-1"></i>
+                                Bottom Time (minutes)
+                            </label>
+                            <input type="number" id="bottom-time" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="30" min="1" max="200">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-wind mr-1"></i>
+                                SAC Rate <span class="sac-unit">(L/min)</span>
+                            </label>
+                            <input type="number" id="sac-rate" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="20" min="5" max="50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-tint mr-1"></i>
+                                Tank Size <span class="volume-unit">(L)</span>
+                            </label>
+                            <select id="tank-size" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="10">10 L</option>
+                                <option value="12" selected>12 L</option>
+                                <option value="15">15 L</option>
+                                <option value="80">80 cuft</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1">
+                                <i class="fas fa-compress-arrows-alt mr-1"></i>
+                                Starting Pressure <span class="pressure-unit">(bar)</span>
+                            </label>
+                            <input type="number" id="start-pressure" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="200" min="50" max="300">
+                        </div>
+                        
+                        <button onclick="calculateDivePlan()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Calculate Dive Plan
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Results Panel -->
+                <div id="dive-results" class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Dive Profile & Results</h3>
+                    
+                    <div id="results-placeholder" class="text-center py-12 text-gray-400">
+                        <i class="fas fa-chart-area text-6xl mb-4"></i>
+                        <p>Calculate a dive plan to see results</p>
+                    </div>
+                    
+                    <div id="results-content" class="hidden space-y-4">
+                        <!-- Canvas for Dive Profile -->
+                        <canvas id="diveProfileCanvas" width="400" height="300"></canvas>
+                        
+                        <!-- Statistics -->
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div class="bg-blue-50 p-3 rounded">
+                                <div class="text-sm text-gray-600">Total Dive Time</div>
+                                <div id="total-time" class="text-2xl font-bold text-blue-600">--</div>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded">
+                                <div class="text-sm text-gray-600">Air Consumed</div>
+                                <div id="air-consumed" class="text-2xl font-bold text-green-600">--</div>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded">
+                                <div class="text-sm text-gray-600">Air Remaining</div>
+                                <div id="air-remaining" class="text-2xl font-bold text-yellow-600">--</div>
+                            </div>
+                            <div class="bg-red-50 p-3 rounded">
+                                <div class="text-sm text-gray-600">Safety Stop</div>
+                                <div id="safety-stop" class="text-2xl font-bold text-red-600">--</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Decompression Stops -->
+                        <div id="deco-stops" class="hidden">
+                            <h4 class="font-semibold text-red-600 mb-2">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Decompression Required
+                            </h4>
+                            <div id="deco-stops-list" class="space-y-2"></div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="saveDivePlan()" class="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-all">
+                                <i class="fas fa-save mr-1"></i> Save
+                            </button>
+                            <button onclick="exportPDF()" class="flex-1 bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition-all">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF
+                            </button>
+                            <button onclick="shareQR()" class="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-all">
+                                <i class="fas fa-qrcode mr-1"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Checklist -->
+        <section id="checklist" class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-tasks text-green-600 mr-3"></i>
+                Dive Checklists
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Pre-Dive Checklist -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">
+                        <i class="fas fa-clipboard-check mr-2"></i>
+                        Pre-Dive
+                    </h3>
+                    <div id="pre-dive-checklist" class="space-y-2"></div>
+                </div>
+                
+                <!-- Post-Dive Checklist -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-600">
+                        <i class="fas fa-clipboard mr-2"></i>
+                        Post-Dive
+                    </h3>
+                    <div id="post-dive-checklist" class="space-y-2"></div>
+                </div>
+                
+                <!-- Emergency Checklist -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-red-600">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Emergency
+                    </h3>
+                    <div id="emergency-checklist" class="space-y-2"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Technical Diving -->
+        <section id="technical-diving" class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-flask text-purple-600 mr-3"></i>
+                Technical Diving Calculators
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- MOD Calculator -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">MOD Calculator</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Oxygen % (FO₂)</label>
+                            <input type="number" id="mod-o2" class="w-full px-3 py-2 border rounded" value="21" min="5" max="100">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Max PO₂ (bar)</label>
+                            <select id="mod-po2" class="w-full px-3 py-2 border rounded">
+                                <option value="1.4">1.4 (Working)</option>
+                                <option value="1.6">1.6 (Deco)</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateMOD()" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">
+                            Calculate MOD
+                        </button>
+                        <div id="mod-result" class="mt-3 p-3 bg-purple-50 rounded hidden">
+                            <div class="font-semibold">Maximum Operating Depth:</div>
+                            <div id="mod-value" class="text-2xl font-bold text-purple-600">--</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- END Calculator -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">END Calculator</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Depth <span class="depth-unit">(m)</span></label>
+                            <input type="number" id="end-depth" class="w-full px-3 py-2 border rounded" value="40">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Oxygen % (FO₂)</label>
+                            <input type="number" id="end-o2" class="w-full px-3 py-2 border rounded" value="32">
+                        </div>
+                        <button onclick="calculateEND()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+                            Calculate END
+                        </button>
+                        <div id="end-result" class="mt-3 p-3 bg-indigo-50 rounded hidden">
+                            <div class="font-semibold">Equivalent Narcotic Depth:</div>
+                            <div id="end-value" class="text-2xl font-bold text-indigo-600">--</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CNS Calculator -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">CNS Oxygen Tracker</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">PO₂ (bar)</label>
+                            <input type="number" id="cns-po2" class="w-full px-3 py-2 border rounded" value="1.4" step="0.1">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Exposure Time (minutes)</label>
+                            <input type="number" id="cns-time" class="w-full px-3 py-2 border rounded" value="30">
+                        </div>
+                        <button onclick="calculateCNS()" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">
+                            Calculate CNS
+                        </button>
+                        <div id="cns-result" class="mt-3 p-3 bg-red-50 rounded hidden">
+                            <div class="font-semibold">CNS Oxygen Exposure:</div>
+                            <div id="cns-value" class="text-2xl font-bold text-red-600">--</div>
+                            <div id="cns-warning" class="text-sm mt-2 hidden text-red-600"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Best Mix Calculator -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Best Mix Calculator</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Target Depth <span class="depth-unit">(m)</span></label>
+                            <input type="number" id="bestmix-depth" class="w-full px-3 py-2 border rounded" value="30">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Max PO₂ (bar)</label>
+                            <select id="bestmix-po2" class="w-full px-3 py-2 border rounded">
+                                <option value="1.4">1.4 (Working)</option>
+                                <option value="1.6">1.6 (Deco)</option>
+                            </select>
+                        </div>
+                        <button onclick="calculateBestMix()" class="w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700">
+                            Calculate Best Mix
+                        </button>
+                        <div id="bestmix-result" class="mt-3 p-3 bg-teal-50 rounded hidden">
+                            <div class="font-semibold">Optimal Gas Mix:</div>
+                            <div id="bestmix-value" class="text-2xl font-bold text-teal-600">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ad Slot: Middle -->
+        <div id="ad-middle" class="py-6 bg-gray-100">
+            <div class="container mx-auto text-center">
+                <div class="text-gray-500 text-sm">Advertisement</div>
+            </div>
+        </div>
+        
+        <!-- Section: Dive Routes -->
+        <section id="dive-routes" class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-map-marked-alt text-orange-600 mr-3"></i>
+                World Dive Routes
+            </h2>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div id="map-container" style="height: 500px;" class="rounded-lg overflow-hidden"></div>
+                
+                <div class="mt-6">
+                    <h3 class="text-xl font-semibold mb-4">Featured Dive Sites</h3>
+                    <div id="dive-sites-list" class="grid md:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Dive Education -->
+        <section id="dive-education" class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-graduation-cap text-blue-600 mr-3"></i>
+                Dive Education & Theory
+            </h2>
+            
+            <div class="space-y-4">
+                <!-- Physics of Diving -->
+                <div class="bg-white rounded-lg shadow-lg">
+                    <button onclick="toggleAccordion('physics')" class="w-full p-6 text-left flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">
+                            <i class="fas fa-atom mr-2"></i>
+                            Physics of Diving
+                        </h3>
+                        <i class="fas fa-chevron-down transition-transform" id="physics-icon"></i>
+                    </button>
+                    <div id="physics-content" class="hidden p-6 pt-0">
+                        <div class="space-y-4" id="physics-laws"></div>
+                    </div>
+                </div>
+                
+                <!-- Decompression Theory -->
+                <div class="bg-white rounded-lg shadow-lg">
+                    <button onclick="toggleAccordion('decompression')" class="w-full p-6 text-left flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">
+                            <i class="fas fa-lungs mr-2"></i>
+                            Decompression Theory
+                        </h3>
+                        <i class="fas fa-chevron-down transition-transform" id="decompression-icon"></i>
+                    </button>
+                    <div id="decompression-content" class="hidden p-6 pt-0">
+                        <p class="text-gray-700">Understanding nitrogen absorption, tissue compartments, and safe ascent procedures...</p>
+                    </div>
+                </div>
+                
+                <!-- Dive Planning Essentials -->
+                <div class="bg-white rounded-lg shadow-lg">
+                    <button onclick="toggleAccordion('planning')" class="w-full p-6 text-left flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">
+                            <i class="fas fa-clipboard-list mr-2"></i>
+                            Dive Planning Essentials
+                        </h3>
+                        <i class="fas fa-chevron-down transition-transform" id="planning-icon"></i>
+                    </button>
+                    <div id="planning-content" class="hidden p-6 pt-0">
+                        <p class="text-gray-700">Essential steps for safe dive planning, gas management, and emergency procedures...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section: Saved Plans -->
+        <section id="saved-plans" class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 flex items-center">
+                <i class="fas fa-save text-green-600 mr-3"></i>
+                Saved Dive Plans
+            </h2>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div id="saved-plans-list">
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-folder-open text-6xl mb-4"></i>
+                        <p>No saved dive plans yet</p>
+                        <p class="text-sm mt-2">Create and save a dive plan to see it here</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Ad Slot: Footer -->
+    <div id="ad-footer" class="py-6 bg-gray-100">
+        <div class="container mx-auto text-center">
+            <div class="text-gray-500 text-sm">Advertisement</div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer id="site-footer" class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <!-- Donation Section -->
+            <div class="mb-8 text-center">
+                <h3 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-heart mr-2 text-red-500"></i>
+                    Support ScuPlan Development
+                </h3>
+                <p class="mb-4 text-gray-300">Help us keep ScuPlan free and improve features</p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="text-sm text-gray-400 mb-1">XRP Address</div>
+                        <div class="flex items-center gap-2">
+                            <code class="text-xs bg-gray-800 px-2 py-1 rounded">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</code>
+                            <button onclick="copyToClipboard('rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV')" class="text-blue-400 hover:text-blue-300">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="text-sm text-gray-400 mb-1">USDT (TRC20)</div>
+                        <div class="flex items-center gap-2">
+                            <code class="text-xs bg-gray-800 px-2 py-1 rounded">TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ</code>
+                            <button onclick="copyToClipboard('TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ')" class="text-blue-400 hover:text-blue-300">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Affiliate Links -->
+            <div class="mb-8 text-center">
+                <h3 class="text-lg font-semibold mb-3">Recommended Dive Gear</h3>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="#" class="text-blue-400 hover:text-blue-300">
+                        <i class="fas fa-shopping-cart mr-1"></i> Dive Computers
+                    </a>
+                    <a href="#" class="text-blue-400 hover:text-blue-300">
+                        <i class="fas fa-tint mr-1"></i> Regulators
+                    </a>
+                    <a href="#" class="text-blue-400 hover:text-blue-300">
+                        <i class="fas fa-vest mr-1"></i> BCDs
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer Links -->
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div>
+                    <h4 class="font-semibold mb-3">About ScuPlan</h4>
+                    <p class="text-sm text-gray-400">Advanced dive planning application for recreational and technical divers worldwide.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#dive-planner" class="text-gray-400 hover:text-white">Dive Planner</a></li>
+                        <li><a href="#technical-diving" class="text-gray-400 hover:text-white">Technical Calculators</a></li>
+                        <li><a href="#dive-education" class="text-gray-400 hover:text-white">Dive Education</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-3">Contact</h4>
+                    <p class="text-sm text-gray-400">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <a href="mailto:teyfikoz@yahoo.com" class="hover:text-white">teyfikoz@yahoo.com</a>
+                    </p>
+                    <p class="text-sm text-gray-400 mt-2">
+                        <i class="fab fa-linkedin mr-2"></i>
+                        <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" class="hover:text-white">LinkedIn Profile</a>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
+                <p>&copy; <span id="current-year">2025</span> ScuPlan. Created by Teyfik ÖZ. All rights reserved.</p>
+                <p class="mt-2">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    This application is for planning purposes only. Always use proper dive computers and follow safe diving practices.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Modal: About Me -->
+    <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full mx-4 animate-fade-in">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">
+                        <i class="fas fa-user-circle mr-2 text-blue-600"></i>
+                        About Me - Teyfik ÖZ
+                    </h3>
+                    <button onclick="closeModal('about')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 max-h-96 overflow-y-auto">
+                <p class="mb-4">Hi, I'm <strong>Teyfik ÖZ</strong></p>
+                <p class="text-gray-700 mb-4">
+                    With extensive experience in Airline Revenue Management, CRM, Data Analytics, Reporting, Sales & Marketing, 
+                    and Corporate Sales, I've had the privilege to contribute to diverse projects across various industries.
+                </p>
+                <p class="text-gray-700 mb-4">
+                    My passion for diving and technology led me to create ScuPlan - a comprehensive dive planning application 
+                    that combines safety, precision, and accessibility for divers worldwide.
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2">Contact Information</h4>
+                    <p class="text-sm">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Email: <a href="mailto:teyfikoz@yahoo.com" class="text-blue-600 hover:underline">teyfikoz@yahoo.com</a>
+                    </p>
+                    <p class="text-sm mt-2">
+                        <i class="fab fa-linkedin mr-2"></i>
+                        LinkedIn: <a href="https://linkedin.com/in/teyfik-ö-a3953935" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/teyfik-ö-a3953935</a>
+                    </p>
+                </div>
+            </div>
+            <div class="p-6 border-t">
+                <button onclick="closeModal('about')" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: QR Code Share -->
+    <div id="modal-qr" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold">Share Dive Plan</h3>
+                    <button onclick="closeModal('qr')" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 text-center">
+                <div id="qrcode" class="flex justify-center mb-4"></div>
+                <p class="text-sm text-gray-600">Scan this QR code to view the dive plan</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg animate-slide-in">
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // CONFIGURATION & DATA
+        // ============================================
+        
+        // White-label configuration
+        window.siteConfig = {
+            title: "ScuPlan",
+            tagline: "Advanced Dive Planning",
+            theme: {
+                primary: "#0056b3",
+                secondary: "#6c757d",
+                accent: "#ffc107"
+            },
+            email: "teyfikoz@yahoo.com",
+            linkedin: "https://linkedin.com/in/teyfik-ö-a3953935",
+            wallets: {
+                xrp: "rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV",
+                usdt_trc20: "TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ"
+            }
+        };
+        
+        // Dive Sites Data
+        const diveSites = [
+            { id: 1, name: "Great Barrier Reef", country: "Australia", city: "Cairns", lat: -16.2861, lon: 145.7781, depth: "5-40m", difficulty: "All levels" },
+            { id: 2, name: "Blue Hole", country: "Belize", city: "Lighthouse Reef", lat: 17.3167, lon: -87.5353, depth: "40-124m", difficulty: "Advanced" },
+            { id: 3, name: "Cenote Dos Ojos", country: "Mexico", city: "Tulum", lat: 20.3167, lon: -87.3667, depth: "5-30m", difficulty: "Intermediate" },
+            { id: 4, name: "SS Thistlegorm", country: "Egypt", city: "Red Sea", lat: 27.8167, lon: 33.9167, depth: "16-30m", difficulty: "Intermediate" },
+            { id: 5, name: "Raja Ampat", country: "Indonesia", city: "West Papua", lat: -0.2333, lon: 130.5167, depth: "5-40m", difficulty: "All levels" },
+            { id: 6, name: "Sipadan Island", country: "Malaysia", city: "Sabah", lat: 4.1167, lon: 118.6333, depth: "5-40m", difficulty: "All levels" },
+            { id: 7, name: "Galapagos Islands", country: "Ecuador", city: "Pacific Ocean", lat: -0.9538, lon: -90.9656, depth: "10-40m", difficulty: "Advanced" },
+            { id: 8, name: "Maldives", country: "Maldives", city: "Male Atoll", lat: 4.1755, lon: 73.5093, depth: "5-30m", difficulty: "All levels" }
+        ];
+        
+        // Checklists Data
+        const checklists = {
+            "pre-dive": [
+                { id: 1, text: "Check air pressure in tank", completed: false },
+                { id: 2, text: "Test regulator and alternate air source", completed: false },
+                { id: 3, text: "Check BCD inflation/deflation", completed: false },
+                { id: 4, text: "Verify depth gauge and dive computer", completed: false },
+                { id: 5, text: "Review dive plan with buddy", completed: false },
+                { id: 6, text: "Check weights and buoyancy", completed: false },
+                { id: 7, text: "Verify emergency signals", completed: false }
+            ],
+            "post-dive": [
+                { id: 8, text: "Log dive details", completed: false },
+                { id: 9, text: "Rinse all equipment with fresh water", completed: false },
+                { id: 10, text: "Check for equipment damage", completed: false },
+                { id: 11, text: "Store equipment properly", completed: false },
+                { id: 12, text: "Plan surface interval for next dive", completed: false }
+            ],
+            "emergency": [
+                { id: 13, text: "Know location of nearest hyperbaric chamber", completed: false },
+                { id: 14, text: "Have emergency contact numbers", completed: false },
+                { id: 15, text: "Review emergency ascent procedures", completed: false },
+                { id: 16, text: "Identify dive emergency officer", completed: false },
+                { id: 17, text: "Check oxygen kit availability", completed: false }
+            ]
+        };
+        
+        // Physics Laws Data
+        const physicsLaws = {
+            boyles: {
+                name: "Boyle's Law",
+                formula: "P₁ × V₁ = P₂ × V₂",
+                description: "At constant temperature, the volume of a gas is inversely proportional to pressure.",
+                example: "Air in your lungs expands as you ascend - never hold your breath!"
+            },
+            daltons: {
+                name: "Dalton's Law",
+                formula: "Ptotal = P₁ + P₂ + P₃...",
+                description: "Total pressure is the sum of partial pressures of all gases.",
+                example: "Used to calculate partial pressure of oxygen in nitrox mixes."
+            },
+            henrys: {
+                name: "Henry's Law",
+                formula: "C = k × P",
+                description: "Amount of gas dissolved in liquid is proportional to partial pressure.",
+                example: "Explains nitrogen absorption in tissues during diving."
+            },
+            archimedes: {
+                name: "Archimedes' Principle",
+                formula: "FB = ρ × V × g",
+                description: "Buoyant force equals weight of displaced fluid.",
+                example: "Foundation of buoyancy control in diving."
+            }
+        };
+        
+        // Conversion Factors
+        const conversions = {
+            depth: { m_to_ft: 3.28084, ft_to_m: 0.3048 },
+            pressure: { bar_to_psi: 14.5038, psi_to_bar: 0.0689476 },
+            volume: { l_to_cuft: 0.0353147, cuft_to_l: 28.3168 },
+            weight: { kg_to_lbs: 2.20462, lbs_to_kg: 0.453592 }
+        };
+        
+        // ============================================
+        // UNIT CONVERTER MODULE
+        // ============================================
+        
+        class UnitConverter {
+            constructor() {
+                this.currentUnit = localStorage.getItem('preferredUnit') || 'metric';
+                this.init();
+            }
+            
+            init() {
+                // Set active button
+                this.updateToggleButtons();
+                this.updateAllLabels();
+                
+                // Event listeners
+                document.querySelectorAll('.unit-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.currentUnit = btn.dataset.unit;
+                        localStorage.setItem('preferredUnit', this.currentUnit);
+                        this.updateToggleButtons();
+                        this.updateAllLabels();
+                        this.convertAllInputs();
+                        window.dispatchEvent(new CustomEvent('unitchange', { detail: this.currentUnit }));
+                    });
+                });
+            }
+            
+            updateToggleButtons() {
+                document.querySelectorAll('.unit-btn').forEach(btn => {
+                    if (btn.dataset.unit === this.currentUnit) {
+                        btn.classList.add('bg-blue-500', 'text-white');
+                        btn.classList.remove('text-gray-300');
+                    } else {
+                        btn.classList.remove('bg-blue-500', 'text-white');
+                        btn.classList.add('text-gray-300');
+                    }
+                });
+            }
+            
+            updateAllLabels() {
+                const labels = {
+                    metric: { depth: 'm', pressure: 'bar', volume: 'L', sac: 'L/min', weight: 'kg' },
+                    imperial: { depth: 'ft', pressure: 'psi', volume: 'cuft', sac: 'cuft/min', weight: 'lbs' }
+                };
+                
+                document.querySelectorAll('.depth-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].depth})`);
+                document.querySelectorAll('.pressure-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].pressure})`);
+                document.querySelectorAll('.volume-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].volume})`);
+                document.querySelectorAll('.sac-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].sac})`);
+            }
+            
+            convertAllInputs() {
+                // Convert input values when unit changes
+                const depthInput = document.getElementById('max-depth');
+                const pressureInput = document.getElementById('start-pressure');
+                
+                if (depthInput && depthInput.value) {
+                    const value = parseFloat(depthInput.value);
+                    if (this.currentUnit === 'imperial') {
+                        depthInput.value = (value * conversions.depth.m_to_ft).toFixed(1);
+                    } else {
+                        depthInput.value = (value * conversions.depth.ft_to_m).toFixed(1);
+                    }
+                }
+                
+                if (pressureInput && pressureInput.value) {
+                    const value = parseFloat(pressureInput.value);
+                    if (this.currentUnit === 'imperial') {
+                        pressureInput.value = (value * conversions.pressure.bar_to_psi).toFixed(0);
+                    } else {
+                        pressureInput.value = (value * conversions.pressure.psi_to_bar).toFixed(0);
+                    }
+                }
+            }
+            
+            convert(value, type, toImperial = true) {
+                if (toImperial) {
+                    switch(type) {
+                        case 'depth': return value * conversions.depth.m_to_ft;
+                        case 'pressure': return value * conversions.pressure.bar_to_psi;
+                        case 'volume': return value * conversions.volume.l_to_cuft;
+                        default: return value;
+                    }
+                } else {
+                    switch(type) {
+                        case 'depth': return value * conversions.depth.ft_to_m;
+                        case 'pressure': return value * conversions.pressure.psi_to_bar;
+                        case 'volume': return value * conversions.volume.cuft_to_l;
+                        default: return value;
+                    }
+                }
+            }
+            
+            getLabel(type) {
+                const labels = {
+                    metric: { depth: 'm', pressure: 'bar', volume: 'L' },
+                    imperial: { depth: 'ft', pressure: 'psi', volume: 'cuft' }
+                };
+                return labels[this.currentUnit][type];
+            }
+        }
+        
+        // Initialize Unit Converter
+        const unitConverter = new UnitConverter();
+        
+        // ============================================
+        // ROUTER MODULE
+        // ============================================
+        
+        class Router {
+            constructor() {
+                this.routes = ['dive-planner', 'checklist', 'technical-diving', 'dive-routes', 'dive-education', 'saved-plans'];
+                this.init();
+            }
+            
+            init() {
+                // Handle hash changes
+                window.addEventListener('hashchange', () => this.navigate());
+                
+                // Intercept nav clicks
+                document.querySelectorAll('a[href^="#"]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const hash = link.getAttribute('href').slice(1);
+                        this.navigate(hash);
+                    });
+                });
+                
+                // Initial navigation
+                const hash = window.location.hash.slice(1) || 'dive-planner';
+                this.navigate(hash);
+            }
+            
+            navigate(hash) {
+                if (!hash) hash = window.location.hash.slice(1) || 'dive-planner';
+                
+                // Update URL
+                history.replaceState(null, null, `#${hash}`);
+                
+                // Scroll to section
+                const section = document.getElementById(hash);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                
+                // Update active nav state
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${hash}`) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Close mobile menu
+                document.getElementById('mobile-menu').classList.add('hidden');
+            }
+        }
+        
+        // Initialize Router
+        const router = new Router();
+        
+        // ============================================
+        // STORAGE MANAGER
+        // ============================================
+        
+        class StorageManager {
+            constructor() {
+                this.dbName = 'ScuPlanDB';
+                this.version = 1;
+                this.db = null;
+            }
+            
+            async init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
+                    
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        this.db = request.result;
+                        resolve(this.db);
+                    };
+                    
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('divePlans')) {
+                            db.createObjectStore('divePlans', { keyPath: 'id', autoIncrement: true });
+                        }
+                    };
+                });
+            }
+            
+            async savePlan(plan) {
+                if (!this.db) await this.init();
+                
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['divePlans'], 'readwrite');
+                    const store = transaction.objectStore('divePlans');
+                    const request = store.add({ ...plan, savedAt: new Date().toISOString() });
+                    
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+            
+            async getPlans() {
+                if (!this.db) await this.init();
+                
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['divePlans'], 'readonly');
+                    const store = transaction.objectStore('divePlans');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+            
+            async deletePlan(id) {
+                if (!this.db) await this.init();
+                
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['divePlans'], 'readwrite');
+                    const store = transaction.objectStore('divePlans');
+                    const request = store.delete(id);
+                    
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+        
+        const storageManager = new StorageManager();
+        
+        // ============================================
+        // DIVE PLANNER CALCULATOR
+        // ============================================
+        
+        window.calculateDivePlan = function() {
+            const depth = parseFloat(document.getElementById('max-depth').value);
+            const bottomTime = parseFloat(document.getElementById('bottom-time').value);
+            const sacRate = parseFloat(document.getElementById('sac-rate').value);
+            const tankSize = parseFloat(document.getElementById('tank-size').value);
+            const startPressure = parseFloat(document.getElementById('start-pressure').value);
+            
+            // Convert to metric if needed
+            let depthMetric = depth;
+            let pressureMetric = startPressure;
+            
+            if (unitConverter.currentUnit === 'imperial') {
+                depthMetric = depth * conversions.depth.ft_to_m;
+                pressureMetric = startPressure * conversions.pressure.psi_to_bar;
+            }
+            
+            // Calculate absolute pressure at depth
+            const ambientPressure = (depthMetric / 10) + 1;
+            
+            // Calculate gas consumption
+            const gasConsumption = sacRate * ambientPressure * bottomTime;
+            
+            // Calculate remaining air
+            const totalAir = tankSize * pressureMetric;
+            const airRemaining = totalAir - gasConsumption;
+            const remainingPressure = airRemaining / tankSize;
+            
+            // Safety stop calculation
+            const needsSafetyStop = depthMetric > 10;
+            const safetyStopDepth = 5; // meters
+            const safetyStopTime = 3; // minutes
+            
+            // Total dive time
+            const descentRate = 18; // m/min
+            const ascentRate = 9; // m/min
+            const descentTime = depthMetric / descentRate;
+            const ascentTime = depthMetric / ascentRate;
+            const totalTime = descentTime + bottomTime + ascentTime + (needsSafetyStop ? safetyStopTime : 0);
+            
+            // Display results
+            document.getElementById('results-placeholder').classList.add('hidden');
+            document.getElementById('results-content').classList.remove('hidden');
+            
+            document.getElementById('total-time').textContent = `${Math.round(totalTime)} min`;
+            document.getElementById('air-consumed').textContent = `${Math.round(gasConsumption)} ${unitConverter.getLabel('volume')}`;
+            document.getElementById('air-remaining').textContent = `${Math.round(airRemaining)} ${unitConverter.getLabel('volume')}`;
+            document.getElementById('safety-stop').textContent = needsSafetyStop ? `${safetyStopTime} min @ ${safetyStopDepth}m` : 'Not Required';
+            
+            // Draw dive profile
+            drawDiveProfile(depthMetric, bottomTime, descentTime, ascentTime, needsSafetyStop);
+            
+            // Store current plan
+            window.currentDivePlan = {
+                location: document.getElementById('dive-location').value,
+                depth: depthMetric,
+                bottomTime,
+                totalTime,
+                gasConsumption,
+                airRemaining
+            };
+            
+            showToast('Dive plan calculated successfully!');
+        };
+        
+        // ============================================
+        // DIVE PROFILE CHART
+        // ============================================
+        
+        function drawDiveProfile(depth, bottomTime, descentTime, ascentTime, hasSafetyStop) {
+            const canvas = document.getElementById('diveProfileCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Set dimensions
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            // Calculate time points
+            const times = [0, descentTime, descentTime + bottomTime];
+            const depths = [0, depth, depth];
+            
+            if (hasSafetyStop) {
+                times.push(descentTime + bottomTime + (depth - 5) / 9);
+                depths.push(5);
+                times.push(times[times.length - 1] + 3);
+                depths.push(5);
+            }
+            
+            times.push(times[times.length - 1] + 5 / 9);
+            depths.push(0);
+            
+            const maxTime = Math.max(...times);
+            const maxDepth = Math.max(...depths);
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+            
+            // Draw depth profile
+            ctx.strokeStyle = '#0056b3';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            times.forEach((time, i) => {
+                const x = padding + (time / maxTime) * (width - 2 * padding);
+                const y = height - padding - (depths[i] / maxDepth) * (height - 2 * padding);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Draw labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('Time (min)', width / 2 - 30, height - 10);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText(`Depth (${unitConverter.getLabel('depth')})`, -30, 0);
+            ctx.restore();
+        }
+        
+        // ============================================
+        // TECHNICAL CALCULATORS
+        // ============================================
+        
+        window.calculateMOD = function() {
+            const o2Percent = parseFloat(document.getElementById('mod-o2').value);
+            const maxPO2 = parseFloat(document.getElementById('mod-po2').value);
+            
+            // MOD = ((maxPO2 / (O2% / 100)) - 1) * 10
+            const mod = ((maxPO2 / (o2Percent / 100)) - 1) * 10;
+            
+            document.getElementById('mod-result').classList.remove('hidden');
+            document.getElementById('mod-value').textContent = `${mod.toFixed(1)} ${unitConverter.getLabel('depth')}`;
+        };
+        
+        window.calculateEND = function() {
+            let depth = parseFloat(document.getElementById('end-depth').value);
+            const o2Percent = parseFloat(document.getElementById('end-o2').value);
+            
+            if (unitConverter.currentUnit === 'imperial') {
+                depth = depth * conversions.depth.ft_to_m;
+            }
+            
+            // END = ((Depth + 10) * (1 - O2% / 100) * 0.79) - 10
+            const nitrogenPercent = 100 - o2Percent;
+            const end = ((depth + 10) * (nitrogenPercent / 100) / 0.79) - 10;
+            
+            document.getElementById('end-result').classList.remove('hidden');
+            document.getElementById('end-value').textContent = `${end.toFixed(1)} ${unitConverter.getLabel('depth')}`;
+        };
+        
+        window.calculateCNS = function() {
+            const po2 = parseFloat(document.getElementById('cns-po2').value);
+            const time = parseFloat(document.getElementById('cns-time').value);
+            
+            // Simplified CNS calculation
+            let cnsPerMin = 0;
+            if (po2 >= 1.6) cnsPerMin = 1.43;
+            else if (po2 >= 1.5) cnsPerMin = 0.83;
+            else if (po2 >= 1.4) cnsPerMin = 0.56;
+            else if (po2 >= 1.3) cnsPerMin = 0.36;
+            else cnsPerMin = 0.22;
+            
+            const totalCNS = cnsPerMin * time;
+            
+            document.getElementById('cns-result').classList.remove('hidden');
+            document.getElementById('cns-value').textContent = `${totalCNS.toFixed(1)}%`;
+            
+            if (totalCNS > 80) {
+                document.getElementById('cns-warning').classList.remove('hidden');
+                document.getElementById('cns-warning').textContent = '⚠️ CNS exposure exceeds safe limits!';
+            } else {
+                document.getElementById('cns-warning').classList.add('hidden');
+            }
+        };
+        
+        window.calculateBestMix = function() {
+            let depth = parseFloat(document.getElementById('bestmix-depth').value);
+            const maxPO2 = parseFloat(document.getElementById('bestmix-po2').value);
+            
+            if (unitConverter.currentUnit === 'imperial') {
+                depth = depth * conversions.depth.ft_to_m;
+            }
+            
+            // Best Mix = (maxPO2 / ((depth / 10) + 1)) * 100
+            const bestMix = (maxPO2 / ((depth / 10) + 1)) * 100;
+            
+            document.getElementById('bestmix-result').classList.remove('hidden');
+            document.getElementById('bestmix-value').textContent = `EAN${Math.round(bestMix)}`;
+        };
+        
+        // ============================================
+        // CHECKLIST MANAGER
+        // ============================================
+        
+        function initializeChecklists() {
+            Object.keys(checklists).forEach(type => {
+                const container = document.getElementById(`${type}-checklist`);
+                checklists[type].forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center space-x-2';
+                    div.innerHTML = `
+                        <input type="checkbox" id="check-${item.id}" class="w-4 h-4" ${item.completed ? 'checked' : ''}>
+                        <label for="check-${item.id}" class="text-sm cursor-pointer">${item.text}</label>
+                    `;
+                    container.appendChild(div);
+                    
+                    // Save state to localStorage
+                    div.querySelector('input').addEventListener('change', (e) => {
+                        item.completed = e.target.checked;
+                        localStorage.setItem(`checklist-${item.id}`, item.completed);
+                    });
+                });
+            });
+        }
+        
+        // ============================================
+        // MAP MANAGER
+        // ============================================
+        
+        function initializeMap() {
+            const map = L.map('map-container').setView([0, 0], 2);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add markers
+            diveSites.forEach(site => {
+                const marker = L.marker([site.lat, site.lon]).addTo(map);
+                marker.bindPopup(`
+                    <strong>${site.name}</strong><br>
+                    ${site.city}, ${site.country}<br>
+                    Depth: ${site.depth}<br>
+                    Difficulty: ${site.difficulty}
+                `);
+            });
+            
+            // Populate dive sites list
+            const listContainer = document.getElementById('dive-sites-list');
+            diveSites.forEach(site => {
+                const div = document.createElement('div');
+                div.className = 'bg-blue-50 p-4 rounded-lg';
+                div.innerHTML = `
+                    <h4 class="font-semibold text-blue-600">${site.name}</h4>
+                    <p class="text-sm text-gray-600">${site.city}, ${site.country}</p>
+                    <p class="text-xs text-gray-500">Depth: ${site.depth} | ${site.difficulty}</p>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+        
+        // ============================================
+        // DIVE EDUCATION
+        // ============================================
+        
+        function initializeEducation() {
+            const container = document.getElementById('physics-laws');
+            Object.values(physicsLaws).forEach(law => {
+                const div = document.createElement('div');
+                div.className = 'bg-blue-50 p-4 rounded-lg';
+                div.innerHTML = `
+                    <h4 class="font-semibold text-blue-600">${law.name}</h4>
+                    <p class="text-sm font-mono mt-1">${law.formula}</p>
+                    <p class="text-sm text-gray-700 mt-2">${law.description}</p>
+                    <p class="text-xs text-gray-600 mt-1"><i class="fas fa-lightbulb mr-1"></i>${law.example}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        window.toggleAccordion = function(id) {
+            const content = document.getElementById(`${id}-content`);
+            const icon = document.getElementById(`${id}-icon`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        };
+        
+        // ============================================
+        // PDF EXPORT
+        // ============================================
+        
+        window.exportPDF = function() {
+            if (!window.currentDivePlan) {
+                showToast('Please calculate a dive plan first', 'error');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(20);
+            doc.text('ScuPlan - Dive Plan', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.text(`Location: ${window.currentDivePlan.location || 'Not specified'}`, 20, 40);
+            doc.text(`Maximum Depth: ${window.currentDivePlan.depth.toFixed(1)} m`, 20, 50);
+            doc.text(`Bottom Time: ${window.currentDivePlan.bottomTime} min`, 20, 60);
+            doc.text(`Total Dive Time: ${window.currentDivePlan.totalTime.toFixed(1)} min`, 20, 70);
+            doc.text(`Gas Consumed: ${window.currentDivePlan.gasConsumption.toFixed(0)} L`, 20, 80);
+            doc.text(`Air Remaining: ${window.currentDivePlan.airRemaining.toFixed(0)} L`, 20, 90);
+            
+            doc.save('dive-plan.pdf');
+            showToast('PDF exported successfully!');
+        };
+        
+        // ============================================
+        // QR CODE SHARE
+        // ============================================
+        
+        window.shareQR = function() {
+            if (!window.currentDivePlan) {
+                showToast('Please calculate a dive plan first', 'error');
+                return;
+            }
+            
+            const planData = JSON.stringify(window.currentDivePlan);
+            const url = `${window.location.origin}${window.location.pathname}?plan=${btoa(planData)}`;
+            
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 200,
+                height: 200
+            });
+            
+            showModal('qr');
+        };
+        
+        // ============================================
+        // SAVE DIVE PLAN
+        // ============================================
+        
+        window.saveDivePlan = async function() {
+            if (!window.currentDivePlan) {
+                showToast('Please calculate a dive plan first', 'error');
+                return;
+            }
+            
+            try {
+                await storageManager.savePlan(window.currentDivePlan);
+                showToast('Dive plan saved successfully!');
+                loadSavedPlans();
+            } catch (error) {
+                showToast('Error saving dive plan', 'error');
+            }
+        };
+        
+        async function loadSavedPlans() {
+            const plans = await storageManager.getPlans();
+            const container = document.getElementById('saved-plans-list');
+            
+            if (plans.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-folder-open text-6xl mb-4"></i>
+                        <p>No saved dive plans yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            plans.forEach(plan => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-4 rounded-lg shadow mb-3';
+                div.innerHTML = `
+                    <h4 class="font-semibold">${plan.location || 'Unnamed Dive'}</h4>
+                    <p class="text-sm text-gray-600">Depth: ${plan.depth.toFixed(1)}m | Time: ${plan.totalTime.toFixed(0)} min</p>
+                    <p class="text-xs text-gray-500">Saved: ${new Date(plan.savedAt).toLocaleDateString()}</p>
+                    <button onclick="deletePlan(${plan.id})" class="text-red-600 text-sm mt-2">
+                        <i class="fas fa-trash mr-1"></i>Delete
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        window.deletePlan = async function(id) {
+            if (confirm('Delete this dive plan?')) {
+                await storageManager.deletePlan(id);
+                loadSavedPlans();
+                showToast('Plan deleted');
+            }
+        };
+        
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        
+        window.showModal = function(id) {
+            document.getElementById(`modal-${id}`).classList.remove('hidden');
+            document.getElementById(`modal-${id}`).classList.add('flex');
+        };
+        
+        window.closeModal = function(id) {
+            document.getElementById(`modal-${id}`).classList.add('hidden');
+            document.getElementById(`modal-${id}`).classList.remove('flex');
+        };
+        
+        window.showAboutModal = function() {
+            showModal('about');
+        };
+        
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        };
+        
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Copied to clipboard!');
+        };
+        
+        // ============================================
+        // THEME MANAGER
+        // ============================================
+        
+        document.getElementById('theme-selector').addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        });
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.className = savedTheme;
+        document.getElementById('theme-selector').value = savedTheme;
+        
+        // ============================================
+        // MOBILE MENU TOGGLE
+        // ============================================
+        
+        document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChecklists();
+            initializeMap();
+            initializeEducation();
+            loadSavedPlans();
+            
+            // Set current year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            }
+        });
+        
+    </script>
+</body>
+</html>
