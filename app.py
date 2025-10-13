@@ -91,6 +91,27 @@ def index():
     """Ana sayfa"""
     return render_template('index.html')
 
+# SPA route
+@app.route('/spa.html')
+def spa():
+    """Single Page Application"""
+    with open('spa.html', 'r') as f:
+        return f.read()
+
+# Manifest route
+@app.route('/manifest.json')
+def manifest():
+    """PWA Manifest"""
+    with open('manifest.json', 'r') as f:
+        return f.read(), 200, {'Content-Type': 'application/json'}
+
+# Service Worker route
+@app.route('/service-worker.js')
+def service_worker():
+    """Service Worker"""
+    with open('service-worker.js', 'r') as f:
+        return f.read(), 200, {'Content-Type': 'application/javascript'}
+
 # Kontrol listesi sayfası rotası
 @app.route('/checklist')
 def checklist():
