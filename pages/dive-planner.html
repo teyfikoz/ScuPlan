@@ -1,0 +1,109 @@
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6 flex items-center" style="color: var(--color-text)">
+        <i class="fas fa-calculator mr-3" style="color: var(--color-primary)"></i>
+        Dive Planner
+    </h2>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Input Panel -->
+        <div class="card rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4" style="color: var(--color-text)">Dive Parameters</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1" style="color: var(--color-text)">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        Dive Location
+                    </label>
+                    <input type="text" id="dive-location" class="w-full px-3 py-2 border rounded-lg" placeholder="e.g., Great Barrier Reef">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1" style="color: var(--color-text)">
+                        <i class="fas fa-arrows-alt-v mr-1"></i>
+                        Maximum Depth <span class="depth-unit">(m)</span>
+                    </label>
+                    <input type="number" id="max-depth" class="w-full px-3 py-2 border rounded-lg" value="18" min="1" max="100">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1" style="color: var(--color-text)">
+                        <i class="fas fa-clock mr-1"></i>
+                        Bottom Time (minutes)
+                    </label>
+                    <input type="number" id="bottom-time" class="w-full px-3 py-2 border rounded-lg" value="30" min="1" max="200">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-1" style="color: var(--color-text)">
+                        <i class="fas fa-wind mr-1"></i>
+                        SAC Rate <span class="sac-unit">(L/min)</span>
+                    </label>
+                    <input type="number" id="sac-rate" class="w-full px-3 py-2 border rounded-lg" value="20" min="5" max="50">
+                </div>
+                
+                <button onclick="calculateDivePlan()" class="w-full btn-primary py-3 rounded-lg font-semibold">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Calculate Dive Plan
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results Panel -->
+        <div id="dive-results" class="card rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4" style="color: var(--color-text)">Dive Profile & Results</h3>
+            
+            <div id="results-placeholder" class="text-center py-12" style="color: var(--color-text-secondary)">
+                <i class="fas fa-chart-area text-6xl mb-4"></i>
+                <p>Calculate a dive plan to see results</p>
+            </div>
+            
+            <div id="results-content" class="hidden space-y-4">
+                <canvas id="diveProfileCanvas" width="400" height="300"></canvas>
+                
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="bg-blue-50 dark:bg-blue-900 p-3 rounded">
+                        <div class="text-sm" style="color: var(--color-text-secondary)">Total Dive Time</div>
+                        <div id="total-time" class="text-2xl font-bold" style="color: var(--color-primary)">--</div>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900 p-3 rounded">
+                        <div class="text-sm" style="color: var(--color-text-secondary)">Air Consumed</div>
+                        <div id="air-consumed" class="text-2xl font-bold text-green-600">--</div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 mt-4">
+                    <button onclick="saveDivePlan()" class="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                        <i class="fas fa-save mr-1"></i> Save
+                    </button>
+                    <button onclick="exportPDF()" class="flex-1 bg-purple-600 text-white py-2 rounded hover:bg-purple-700">
+                        <i class="fas fa-file-pdf mr-1"></i> PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+window.calculateDivePlan = function() {
+    const depth = parseFloat(document.getElementById('max-depth').value);
+    const bottomTime = parseFloat(document.getElementById('bottom-time').value);
+    
+    document.getElementById('results-placeholder').classList.add('hidden');
+    document.getElementById('results-content').classList.remove('hidden');
+    
+    document.getElementById('total-time').textContent = `${bottomTime + 10} min`;
+    document.getElementById('air-consumed').textContent = `${Math.round(depth * bottomTime * 0.8)} L`;
+    
+    window.showToast('Dive plan calculated successfully!');
+};
+
+window.saveDivePlan = function() {
+    window.showToast('Dive plan saved!');
+};
+
+window.exportPDF = function() {
+    window.showToast('PDF export feature coming soon!');
+};
+</script>

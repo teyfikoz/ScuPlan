@@ -98,6 +98,23 @@ def spa():
     with open('spa.html', 'r') as f:
         return f.read()
 
+# Multi-page routed app
+@app.route('/routed')
+def routed_app():
+    """Multi-page routed application"""
+    with open('index-routed.html', 'r') as f:
+        return f.read()
+
+# Page routes
+@app.route('/pages/<page_name>')
+def serve_page(page_name):
+    """Serve individual page HTML"""
+    try:
+        with open(f'pages/{page_name}', 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "Page not found", 404
+
 # Manifest route
 @app.route('/manifest.json')
 def manifest():

@@ -1,0 +1,44 @@
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6" style="color: var(--color-text)">
+        <i class="fas fa-tasks mr-3" style="color: var(--color-primary)"></i>
+        Dive Checklists
+    </h2>
+    
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="card rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 text-blue-600">Pre-Dive</h3>
+            <div id="pre-dive-checklist" class="space-y-2"></div>
+        </div>
+        
+        <div class="card rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 text-green-600">Post-Dive</h3>
+            <div id="post-dive-checklist" class="space-y-2"></div>
+        </div>
+        
+        <div class="card rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 text-red-600">Emergency</h3>
+            <div id="emergency-checklist" class="space-y-2"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const checklists = {
+    "pre-dive": ["Check air pressure", "Test regulator", "Check BCD", "Review dive plan"],
+    "post-dive": ["Rinse equipment", "Log dive", "Check for damage"],
+    "emergency": ["Know emergency contacts", "Review ascent procedures", "Check oxygen kit"]
+};
+
+Object.keys(checklists).forEach(type => {
+    const container = document.getElementById(`${type}-checklist`);
+    checklists[type].forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center space-x-2';
+        div.innerHTML = `
+            <input type="checkbox" id="check-${type}-${i}" class="w-4 h-4">
+            <label for="check-${type}-${i}" class="text-sm cursor-pointer" style="color: var(--color-text)">${item}</label>
+        `;
+        container.appendChild(div);
+    });
+});
+</script>

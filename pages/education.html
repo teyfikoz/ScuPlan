@@ -1,0 +1,54 @@
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6" style="color: var(--color-text)">
+        <i class="fas fa-graduation-cap mr-3" style="color: var(--color-primary)"></i>
+        Dive Education & Theory
+    </h2>
+    
+    <div class="space-y-4">
+        <div class="card rounded-lg shadow-lg">
+            <button onclick="toggleSection('physics')" class="w-full p-6 text-left flex justify-between items-center">
+                <h3 class="text-xl font-semibold" style="color: var(--color-text)">
+                    <i class="fas fa-atom mr-2"></i>
+                    Physics of Diving
+                </h3>
+                <i class="fas fa-chevron-down" id="physics-icon"></i>
+            </button>
+            <div id="physics-content" class="hidden p-6 pt-0">
+                <div class="space-y-4">
+                    <div class="card p-4 rounded-lg">
+                        <h4 class="font-semibold" style="color: var(--color-primary)">Boyle's Law</h4>
+                        <p class="text-sm font-mono mt-1">P₁ × V₁ = P₂ × V₂</p>
+                        <p class="text-sm mt-2" style="color: var(--color-text-secondary)">Volume inversely proportional to pressure</p>
+                    </div>
+                    <div class="card p-4 rounded-lg">
+                        <h4 class="font-semibold" style="color: var(--color-primary)">Dalton's Law</h4>
+                        <p class="text-sm font-mono mt-1">Ptotal = P₁ + P₂ + P₃...</p>
+                        <p class="text-sm mt-2" style="color: var(--color-text-secondary)">Total pressure equals sum of partial pressures</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card rounded-lg shadow-lg">
+            <button onclick="toggleSection('deco')" class="w-full p-6 text-left flex justify-between items-center">
+                <h3 class="text-xl font-semibold" style="color: var(--color-text)">
+                    <i class="fas fa-lungs mr-2"></i>
+                    Decompression Theory
+                </h3>
+                <i class="fas fa-chevron-down" id="deco-icon"></i>
+            </button>
+            <div id="deco-content" class="hidden p-6 pt-0">
+                <p style="color: var(--color-text-secondary)">Understanding nitrogen absorption, tissue compartments, and safe ascent procedures...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+window.toggleSection = function(id) {
+    const content = document.getElementById(`${id}-content`);
+    const icon = document.getElementById(`${id}-icon`);
+    content.classList.toggle('hidden');
+    icon.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+};
+</script>

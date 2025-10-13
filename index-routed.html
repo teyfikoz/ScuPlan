@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>ScuPlan - Advanced Dive Planning & Safety Tools</title>
+    <meta name="description" content="Professional dive planning application with decompression calculations, technical diving tools, and offline support.">
+    <meta name="keywords" content="dive planner, scuba diving, decompression, MOD calculator, technical diving">
+    
+    <!-- OpenGraph -->
+    <meta property="og:title" content="ScuPlan - Advanced Dive Planning">
+    <meta property="og:description" content="Professional dive planning with technical calculators and offline support">
+    <meta property="og:type" content="website">
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#0056b3">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230056b3' width='100' height='100'/%3E%3Cpath fill='%23fff' d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 48c-9.9 0-18-8.1-18-18s8.1-18 18-18 18 8.1 18 18-8.1 18-18 18z'/%3E%3Ccircle fill='%23fff' cx='50' cy='50' r='10'/%3E%3C/svg%3E">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/navigo@8.11.1/lib/navigo.min.js"></script>
+    
+    <style>
+        /* CSS Custom Properties for Themes */
+        :root {
+            /* Light Theme (Default) */
+            --bg-primary: #f5f7fa;
+            --bg-surface: #ffffff;
+            --color-primary: #0b6bff;
+            --color-primary-hover: #0952cc;
+            --color-text: #1b1f24;
+            --color-text-secondary: #6b7280;
+            --color-border: #e5e7eb;
+        }
+        
+        body.dark {
+            --bg-primary: #0e1218;
+            --bg-surface: #1b2430;
+            --color-primary: #4da3ff;
+            --color-primary-hover: #2d8aff;
+            --color-text: #f1f5f9;
+            --color-text-secondary: #94a3b8;
+            --color-border: #334155;
+        }
+        
+        body.underwater {
+            --bg-primary: #012b39;
+            --bg-surface: #033d52;
+            --color-primary: #00a6c7;
+            --color-primary-hover: #008fa8;
+            --color-secondary: #ff7b73;
+            --color-text: #e3faff;
+            --color-text-secondary: #9dd4e0;
+            --color-border: #056280;
+        }
+        
+        /* Base Styles */
+        body {
+            background: var(--bg-primary);
+            color: var(--color-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .surface {
+            background: var(--bg-surface);
+            border-color: var(--color-border);
+        }
+        
+        .text-primary {
+            color: var(--color-primary) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--color-primary) !important;
+        }
+        
+        .bg-primary:hover {
+            background-color: var(--color-primary-hover) !important;
+        }
+        
+        .border-color {
+            border-color: var(--color-border);
+        }
+        
+        /* Navigation Styles */
+        .nav-link {
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Page Transitions */
+        .page-view {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Input Styles */
+        input, select, textarea {
+            background: var(--bg-surface);
+            color: var(--color-text);
+            border-color: var(--color-border);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(11, 107, 255, 0.1);
+        }
+        
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-primary);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary-hover);
+        }
+    </style>
+</head>
+<body class="light">
+    
+    <!-- Fixed Navigation Header -->
+    <header id="site-header" class="fixed top-0 left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-water text-3xl"></i>
+                    <h1 class="text-2xl font-bold">ScuPlan</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-2">
+                    <a href="#/" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-calculator mr-1"></i> Dive Planner
+                    </a>
+                    <a href="#/checklist" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-tasks mr-1"></i> Checklist
+                    </a>
+                    <a href="#/technical" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-flask mr-1"></i> Technical
+                    </a>
+                    <a href="#/routes" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-map-marked-alt mr-1"></i> Routes
+                    </a>
+                    <a href="#/education" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-graduation-cap mr-1"></i> Education
+                    </a>
+                    <a href="#/saved" class="nav-link px-4 py-2 rounded" data-navigo>
+                        <i class="fas fa-save mr-1"></i> Saved
+                    </a>
+                </nav>
+                
+                <!-- Unit Toggle & Theme Selector -->
+                <div class="flex items-center space-x-3">
+                    <!-- Unit Toggle -->
+                    <div id="unit-toggle" class="flex bg-blue-700 rounded-lg p-1">
+                        <button data-unit="metric" class="unit-btn px-3 py-1 rounded transition-all text-sm bg-blue-500 text-white">
+                            Metric
+                        </button>
+                        <button data-unit="imperial" class="unit-btn px-3 py-1 rounded transition-all text-sm text-gray-300">
+                            Imperial
+                        </button>
+                    </div>
+                    
+                    <!-- Theme Selector -->
+                    <select id="theme-selector" class="bg-blue-700 text-white rounded px-2 py-1 text-sm border-0">
+                        <option value="light">☀️ Light</option>
+                        <option value="dark">🌙 Dark</option>
+                        <option value="underwater">🌊 Underwater</option>
+                    </select>
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button id="mobile-menu-toggle" class="md:hidden">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="#/" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-calculator mr-2"></i> Dive Planner
+                </a>
+                <a href="#/checklist" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-tasks mr-2"></i> Checklist
+                </a>
+                <a href="#/technical" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-flask mr-2"></i> Technical
+                </a>
+                <a href="#/routes" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-map-marked-alt mr-2"></i> Routes
+                </a>
+                <a href="#/education" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-graduation-cap mr-2"></i> Education
+                </a>
+                <a href="#/saved" class="block nav-link px-4 py-2 rounded" data-navigo>
+                    <i class="fas fa-save mr-2"></i> Saved
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Route View Container -->
+    <main id="route-view" class="pt-24 pb-20 min-h-screen">
+        <!-- Pages will be dynamically loaded here -->
+        <div class="container mx-auto px-4">
+            <div class="text-center py-12">
+                <div class="spinner border-4 border-blue-600 border-t-transparent rounded-full w-12 h-12 animate-spin mx-auto"></div>
+                <p class="mt-4 text-gray-500">Loading...</p>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3">
+                    <i class="fas fa-heart text-red-500 mr-2"></i>
+                    Support ScuPlan
+                </h3>
+                <div class="flex justify-center gap-4 flex-wrap text-sm">
+                    <div class="bg-gray-700 rounded px-3 py-2">
+                        <span class="text-gray-400">XRP:</span>
+                        <code class="text-xs ml-2">rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV</code>
+                    </div>
+                    <div class="bg-gray-700 rounded px-3 py-2">
+                        <span class="text-gray-400">USDT:</span>
+                        <code class="text-xs ml-2">TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ</code>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-400">
+                &copy; <span id="current-year">2025</span> ScuPlan by Teyfik ÖZ. All rights reserved.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+        <div class="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg">
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // ROUTER CONFIGURATION
+        // ============================================
+        
+        const router = new Navigo('/', { hash: true });
+        const routeView = document.getElementById('route-view');
+        
+        // Current page cleanup function
+        let currentCleanup = null;
+        
+        // Page loader function
+        async function loadPage(pageId, initFn) {
+            // Cleanup previous page
+            if (currentCleanup) {
+                currentCleanup();
+                currentCleanup = null;
+            }
+            
+            // Show loading
+            routeView.innerHTML = `
+                <div class="container mx-auto px-4">
+                    <div class="text-center py-12">
+                        <div class="spinner border-4 border-blue-600 border-t-transparent rounded-full w-12 h-12 animate-spin mx-auto"></div>
+                        <p class="mt-4" style="color: var(--color-text-secondary)">Loading ${pageId}...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Simulate async page load
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Load page content
+            const response = await fetch(`/pages/${pageId}.html`);
+            const html = await response.text();
+            
+            routeView.innerHTML = `<div class="page-view">${html}</div>`;
+            
+            // Initialize page
+            if (initFn) {
+                currentCleanup = initFn();
+            }
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href');
+                if ((href === '#/' && pageId === 'dive-planner') || 
+                    href.includes(pageId)) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Close mobile menu
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+        
+        // Define routes
+        router
+            .on('/', () => loadPage('dive-planner', initDivePlanner))
+            .on('/checklist', () => loadPage('checklist', initChecklist))
+            .on('/technical', () => loadPage('technical', initTechnical))
+            .on('/routes', () => loadPage('dive-routes', initDiveRoutes))
+            .on('/education', () => loadPage('education', initEducation))
+            .on('/saved', () => loadPage('saved-plans', initSavedPlans))
+            .resolve();
+        
+        // ============================================
+        // PAGE INITIALIZERS (placeholders)
+        // ============================================
+        
+        function initDivePlanner() {
+            console.log('Dive Planner initialized');
+            return () => console.log('Dive Planner cleanup');
+        }
+        
+        function initChecklist() {
+            console.log('Checklist initialized');
+            return () => console.log('Checklist cleanup');
+        }
+        
+        function initTechnical() {
+            console.log('Technical initialized');
+            return () => console.log('Technical cleanup');
+        }
+        
+        function initDiveRoutes() {
+            console.log('Dive Routes initialized');
+            return () => console.log('Dive Routes cleanup');
+        }
+        
+        function initEducation() {
+            console.log('Education initialized');
+            return () => console.log('Education cleanup');
+        }
+        
+        function initSavedPlans() {
+            console.log('Saved Plans initialized');
+            return () => console.log('Saved Plans cleanup');
+        }
+        
+        // ============================================
+        // THEME MANAGER
+        // ============================================
+        
+        const themeSelector = document.getElementById('theme-selector');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        
+        document.body.className = savedTheme;
+        themeSelector.value = savedTheme;
+        
+        themeSelector.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        });
+        
+        // ============================================
+        // UNIT CONVERTER
+        // ============================================
+        
+        const unitBtns = document.querySelectorAll('.unit-btn');
+        const savedUnit = localStorage.getItem('unit') || 'metric';
+        
+        unitBtns.forEach(btn => {
+            if (btn.dataset.unit === savedUnit) {
+                btn.classList.add('bg-blue-500', 'text-white');
+                btn.classList.remove('text-gray-300');
+            }
+            
+            btn.addEventListener('click', () => {
+                const unit = btn.dataset.unit;
+                localStorage.setItem('unit', unit);
+                
+                unitBtns.forEach(b => {
+                    b.classList.remove('bg-blue-500', 'text-white');
+                    b.classList.add('text-gray-300');
+                });
+                
+                btn.classList.add('bg-blue-500', 'text-white');
+                btn.classList.remove('text-gray-300');
+                
+                window.dispatchEvent(new CustomEvent('unitchange', { detail: unit }));
+            });
+        });
+        
+        // ============================================
+        // MOBILE MENU
+        // ============================================
+        
+        document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        // ============================================
+        // UTILITIES
+        // ============================================
+        
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        window.showToast = function(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        };
+        
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
