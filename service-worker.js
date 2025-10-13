@@ -137,8 +137,7 @@ async function syncDivePlans() {
 self.addEventListener('push', event => {
   const options = {
     body: event.data ? event.data.text() : 'New dive plan update',
-    icon: '/assets/icons/icon-192.png',
-    badge: '/assets/icons/icon-72.png',
+    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%230056b3' width='192' height='192'/%3E%3Cpath fill='%23fff' d='M96 40c-30.9 0-56 25.1-56 56s25.1 56 56 56 56-25.1 56-56-25.1-56-56-56zm0 96c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/%3E%3Ccircle fill='%23fff' cx='96' cy='96' r='20'/%3E%3C/svg%3E",
     vibrate: [200, 100, 200],
     tag: 'scuplan-notification',
     requireInteraction: false
