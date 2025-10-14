@@ -47,6 +47,11 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
   
+  // Only handle http and https requests (skip chrome-extension://, chrome://, etc.)
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+  
   // Skip cross-origin requests for external CDNs initially
   if (url.origin !== self.location.origin) {
     // Cache external resources after first fetch (runtime caching)
