@@ -4,9 +4,15 @@ const RUNTIME_CACHE = 'scuplan-runtime';
 
 // Files to cache immediately
 const PRECACHE_URLS = [
-  '/spa.html',
+  '/routed',
   '/manifest.json',
   '/',
+  '/pages/dive-planner.html',
+  '/pages/checklist.html',
+  '/pages/technical.html',
+  '/pages/dive-routes.html',
+  '/pages/education.html',
+  '/pages/saved-plans.html',
   // External CDN resources will be cached on first use
 ];
 
@@ -113,7 +119,7 @@ self.addEventListener('fetch', event => {
       }).catch(() => {
         // Network failed, return offline page
         if (request.destination === 'document') {
-          return caches.match('/spa.html');
+          return caches.match('/routed');
         }
         
         return new Response('Offline', {
@@ -158,7 +164,7 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
   
   event.waitUntil(
-    clients.openWindow('/spa.html')
+    clients.openWindow('/routed')
   );
 });
 
