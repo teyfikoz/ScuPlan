@@ -3,13 +3,29 @@
 ## Project Overview
 ScuPlan is a comprehensive diving application that provides advanced dive planning, safety tools, and community-driven features for divers of all skill levels, with enhanced international and technical diving capabilities.
 
+## Application Architecture
+- **Multi-Page SPA with Routing** (/routed): Modern single-page application with client-side routing using Navigo
+- **Original SPA** (/spa.html): Legacy single-file application (maintained for compatibility)
+- **Traditional Multi-Page** (/): Original Flask-rendered templates
+
+### Routed Application Features:
+✅ **Client-Side Routing**: Hash-based navigation with Navigo router
+✅ **Page Components**: Separate HTML files for each section (dive-planner, checklist, technical, routes, education, saved-plans)
+✅ **Fade-In Transitions**: Smooth page transitions with CSS animations
+✅ **Fixed Navigation**: Persistent header with mobile-responsive menu
+✅ **Offline Support**: Service worker caches all pages for offline access
+✅ **PWA Ready**: Manifest and service worker for progressive web app functionality
+
 ## Current Technology Stack
 - **Backend**: Flask (Python)
-- **Frontend**: JavaScript (ES6+), HTML5, CSS3
+- **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
+- **Routing**: Navigo (lightweight hash router)
 - **Database**: PostgreSQL (with fallback mechanism)
-- **Styling**: Bootstrap 5
+- **Styling**: Tailwind CSS (CDN), Bootstrap 5
 - **Charts**: Chart.js
 - **Icons**: Font Awesome
+- **Maps**: Leaflet.js
+- **PWA**: Service Worker + Manifest
 - **Deployment**: Gunicorn on Replit
 
 ## Current Features (Fully Working)
@@ -74,6 +90,26 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **Print & Offline Support**: 
   - Printable dive plans
   - Offline functionality with localStorage
+
+## Latest Update (October 2025)
+✅ **Multi-Page Routing Architecture**: 
+  - Converted SPA to routed multi-page application
+  - Navigo hash router with 6 separate page components
+  - Only one page visible at a time with smooth transitions
+  - Fixed navigation header persistent across routes
+  
+✅ **Enhanced Theme System**:
+  - CSS custom properties for all 3 themes (Light, Dark, Underwater)
+  - WCAG AA/AAA contrast ratios for accessibility
+  - Improved Dark theme: Better background/foreground balance
+  - Enhanced Underwater theme: Teal (#00a6c7), coral (#ff7b73) accents
+  - Hover/focus/active states for all interactive elements
+  
+✅ **Offline & PWA Support**:
+  - Service worker updated for routed architecture
+  - All pages precached for offline access
+  - Fixed chrome-extension protocol filtering
+  - Push notification support ready
 
 ## Recent Technical Fixes (August 2025)
 ✓ Fixed Multi-Level Planning redirecting to MOD Calculation
