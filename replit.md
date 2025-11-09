@@ -91,7 +91,36 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
   - Printable dive plans
   - Offline functionality with localStorage
 
-## Latest Update (October 2025)
+## Latest Update (November 2025)
+✅ **Multi-Language Support (i18n)**:
+  - Turkish and English languages fully supported
+  - Language switcher in header (persistent preference)
+  - All UI elements translated via data-i18n system
+  - Offline dictionary caching for PWA support
+  - Extensible to additional languages
+
+✅ **Comprehensive SEO Optimization**:
+  - Dynamic meta tags per route (title, description, keywords)
+  - Open Graph tags for social media sharing
+  - Twitter Card integration
+  - JSON-LD structured data (Organization, WebApplication, BreadcrumbList)
+  - Sitemap.xml generation at /sitemap.xml
+  - Canonical URLs for each route
+
+✅ **Google AdSense Integration**:
+  - Route-aware ad refresh (TOS compliant)
+  - Responsive ad units (top, in-content, footer)
+  - Offline mode support (ads disabled when offline)
+  - CLS prevention with fixed-height containers
+  - Configurable via config/adsense.json
+
+✅ **White Label Configuration System**:
+  - Complete branding customization without code changes
+  - Environment variable support (11 vars: BRAND_NAME, BRAND_LOGO_URL, etc.)
+  - Client-specific configs in config/clients/
+  - Dynamic theme color updates
+  - Logo, copyright, crypto addresses all configurable
+
 ✅ **Multi-Page Routing Architecture**: 
   - Converted SPA to routed multi-page application
   - Navigo hash router with 6 separate page components
@@ -110,6 +139,12 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
   - All pages precached for offline access
   - Fixed chrome-extension protocol filtering
   - Push notification support ready
+
+✅ **Metric/Imperial Unit System**:
+  - User-selectable toggle (persistent preference)
+  - Live conversion: meters ↔ feet, bar ↔ PSI, liters ↔ cubic feet
+  - Dynamic chart axis updates
+  - Comprehensive depth, pressure, and volume conversions
 
 ## Recent Technical Fixes (August 2025)
 ✓ Fixed Multi-Level Planning redirecting to MOD Calculation
