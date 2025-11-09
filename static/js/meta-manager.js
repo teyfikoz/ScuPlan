@@ -31,19 +31,51 @@ class MetaManager {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            this.seoData = data || {};
+            this.seoData = data || this.getDefaultSeoData();
             console.log('Meta Manager: SEO data loaded successfully');
         } catch (error) {
             console.error('Meta Manager: Failed to load SEO data:', error);
             // Provide fallback SEO data
-            this.seoData = {
-                '/': {
-                    title: 'ScuPlan - Professional Dive Planning',
-                    description: 'Advanced dive planning calculator with gas management, decompression calculations, and technical diving support.',
-                    keywords: 'dive planning, scuba diving, decompression, nitrox, trimix'
-                }
-            };
+            this.seoData = this.getDefaultSeoData();
         }
+    }
+
+    /**
+     * Get default SEO data structure
+     */
+    getDefaultSeoData() {
+        return {
+            '/': {
+                title: 'ScuPlan - Professional Dive Planning',
+                description: 'Advanced dive planning calculator with gas management, decompression calculations, and technical diving support.',
+                keywords: 'dive planning, scuba diving, decompression, nitrox, trimix'
+            },
+            'checklist': {
+                title: 'Dive Checklists | ScuPlan',
+                description: 'Pre-dive, post-dive and emergency checklists for safe diving',
+                keywords: 'dive checklist, pre-dive, post-dive, safety'
+            },
+            'technical': {
+                title: 'Technical Diving Calculators | ScuPlan',
+                description: 'MOD, EAD, Best Mix calculators for technical diving',
+                keywords: 'technical diving, MOD, EAD, nitrox, trimix'
+            },
+            'routes': {
+                title: 'World Dive Sites | ScuPlan',
+                description: 'Explore famous dive sites around the world',
+                keywords: 'dive sites, dive locations, dive routes'
+            },
+            'education': {
+                title: 'Dive Education | ScuPlan',
+                description: 'Learn diving physics, physiology and theory',
+                keywords: 'dive education, diving theory, dive physics'
+            },
+            'saved': {
+                title: 'Saved Dive Plans | ScuPlan',
+                description: 'Access your saved dive plans',
+                keywords: 'saved plans, dive log, dive history'
+            }
+        };
     }
 
     /**
@@ -54,13 +86,7 @@ class MetaManager {
         // Ensure seoData exists and has routes
         if (!this.seoData || typeof this.seoData !== 'object') {
             console.warn('Meta Manager: SEO data not loaded, using defaults');
-            this.seoData = {
-                '/': {
-                    title: 'ScuPlan - Professional Dive Planning',
-                    description: 'Advanced dive planning calculator with gas management, decompression calculations, and technical diving support.',
-                    keywords: 'dive planning, scuba diving, decompression, nitrox, trimix'
-                }
-            };
+            this.seoData = this.getDefaultSeoData();
         }
 
         // Normalize route - remove hash and leading slash for consistency in lookup
@@ -69,6 +95,12 @@ class MetaManager {
         const lookupRoute = normalizedRoute === '' ? '/' : normalizedRoute;
 
         console.log(`Meta Manager: Updating meta tags for route: ${lookupRoute}`);
+
+        // Ensure seoData is not null
+        if (!this.seoData) {
+            console.error('Meta Manager: SEO data is null');
+            this.seoData = this.getDefaultSeoData();
+        }
 
         // Get SEO data for this route, fallback to '/' if not found
         const metaData = this.seoData[lookupRoute] || this.seoData['/'] || {

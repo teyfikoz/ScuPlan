@@ -1,6 +1,6 @@
 {
   "clientId": "ca-pub-0000000000000000",
-  "enabled": true,
+  "enabled": false,
   "testMode": true,
   "adUnits": {
     "topLeaderboard": {
