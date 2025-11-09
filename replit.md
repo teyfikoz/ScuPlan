@@ -91,12 +91,31 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
   - Printable dive plans
   - Offline functionality with localStorage
 
-## Latest Update (November 2025)
+## Latest Update (November 9, 2025)
+
+### Critical Fixes:
+✅ **Routed SPA Functionality Restored**:
+  - Fixed Navigo router base path from '/' to '/routed'
+  - Removed `type="module"` from main script (was causing scope isolation)
+  - All dive planner modules now load centrally (tank.js, buddy.js, dive.js, checklist.js, main.js)
+  - Router init functions now call real functions from main.js (not placeholders)
+  - Turkish translation corrected: "İmperyal" (not "İmparatorluk")
+  - Service worker cache updated to v1.0.1
+
+✅ **Button Functionality Working**:
+  - Language selector (TR/EN) fully functional with auto-detection
+  - Metric/Imperial toggle working with localStorage persistence
+  - Add Tank / Add Buddy buttons operational
+  - Calculate Dive Plan button active
+  - All theme selector options working
+  - Mobile menu toggle functional
+
 ✅ **Multi-Language Support (i18n)**:
   - Turkish and English languages fully supported
   - Language switcher in header (persistent preference)
   - All UI elements translated via data-i18n system
   - Offline dictionary caching for PWA support
+  - Auto-initialization with existing HTML elements
   - Extensible to additional languages
 
 ✅ **Comprehensive SEO Optimization**:
