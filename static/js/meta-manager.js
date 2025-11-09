@@ -83,10 +83,19 @@ class MetaManager {
      * @param {string} route - The route path (e.g., '/', '/checklist')
      */
     updateMeta(route) {
-        // Ensure seoData exists and has routes
-        if (!this.seoData || typeof this.seoData !== 'object') {
-            console.warn('Meta Manager: SEO data not loaded, using defaults');
-            this.seoData = this.getDefaultSeoData();
+        if (!this.seoData || !this.seoData.pages) {
+            console.warn('Meta Manager: SEO data not loaded');
+            return;
+        }
+
+        // Get page data for the route, default to home page if not found
+        let pageData = this.seoData.pages[route];
+        if (!pageData && this.seoData.pages['/']) {
+            pageData = this.seoData.pages['/'];
+        }
+        if (!pageData) {
+            console.warn('Meta Manager: No page data found for route:', route);
+            return;
         }
 
         // Normalize route - remove hash and leading slash for consistency in lookup
