@@ -2948,13 +2948,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('📄 Basic page initialization');
         }
 
-        // Initialize unit systems
-        if (typeof UnitConverter !== 'undefined') {
+        // Initialize unit system (metric only - single instance)
+        if (typeof UnitConverter !== 'undefined' && !window.unitsManager) {
             window.unitsManager = new UnitConverter();
             console.log('🔄 Global unit conversion system initialized');
         }
-
-        // Initialize unit system (metric only)
+        
         initUnitSystem();
 
         // Initialize AI assistant if available  

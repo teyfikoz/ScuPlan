@@ -53,8 +53,14 @@ class MetaManager {
     updateMeta(route) {
         // Ensure seoData exists and has routes
         if (!this.seoData || typeof this.seoData !== 'object') {
-            console.error('Meta Manager: SEO data not loaded properly');
-            return;
+            console.warn('Meta Manager: SEO data not loaded, using defaults');
+            this.seoData = {
+                '/': {
+                    title: 'ScuPlan - Professional Dive Planning',
+                    description: 'Advanced dive planning calculator with gas management, decompression calculations, and technical diving support.',
+                    keywords: 'dive planning, scuba diving, decompression, nitrox, trimix'
+                }
+            };
         }
 
         // Normalize route - remove hash and leading slash for consistency in lookup
@@ -65,10 +71,14 @@ class MetaManager {
         console.log(`Meta Manager: Updating meta tags for route: ${lookupRoute}`);
 
         // Get SEO data for this route, fallback to '/' if not found
-        const metaData = this.seoData[lookupRoute] || this.seoData['/'];
+        const metaData = this.seoData[lookupRoute] || this.seoData['/'] || {
+            title: 'ScuPlan - Dive Planning',
+            description: 'Professional dive planning tools',
+            keywords: 'dive planning, scuba'
+        };
 
         if (!metaData) {
-            console.warn(`Meta Manager: No SEO data found for route: ${lookupRoute} or fallback '/'`);
+            console.warn(`Meta Manager: No SEO data found for route: ${lookupRoute}`);
             return;
         }
 

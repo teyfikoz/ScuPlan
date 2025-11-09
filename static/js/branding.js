@@ -66,17 +66,16 @@ class BrandingManager {
         try {
             const response = await fetch('/config/branding.json');
             if (!response.ok) {
-                const errorMsg = `HTTP ${response.status} ${response.statusText}`;
-                console.error(`Failed to load branding config: ${errorMsg}`);
-                throw new Error(errorMsg);
+                console.warn(`Branding config not found (${response.status}), using defaults`);
+                this.useFallbackConfig();
+                return;
             }
             this.defaultConfig = await response.json();
             this.config = JSON.parse(JSON.stringify(this.defaultConfig)); // Deep copy
             console.log('Default branding config loaded:', this.config);
         } catch (error) {
-            const errorMessage = error.message || error.toString() || 'Unknown error';
-            console.error('Error loading branding.json:', errorMessage, error);
-            throw error;
+            console.warn('Error loading branding.json, using defaults:', error.message);
+            this.useFallbackConfig();
         }
     }
 
