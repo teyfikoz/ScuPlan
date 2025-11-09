@@ -19,7 +19,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "scuplan-secret-key")
+app.secret_key = os.environ.get("SESSION_SECRET")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///diveplan.db")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
@@ -230,19 +230,25 @@ def inject_branding_config(html_content):
         return html_content
 
 
-# Ana sayfa rotası
+# Ana sayfa rotası - Redirect to production SPA
 @app.route('/')
 def index():
-    """Ana sayfa - SPA with AdSense and Branding"""
-    with open('index-routed.html', 'r') as f:
+    """Redirect to production-ready SPA (CDN-free)"""
+    return redirect(url_for('spa'))
+
+# SPA route (legacy)
+@app.route('/spa.html')
+def spa_old():
+    """Legacy Single Page Application with Branding"""
+    with open('spa.html', 'r') as f:
         html_content = f.read()
     return inject_branding_config(html_content)
 
-# SPA route
-@app.route('/spa.html')
+# New SPA route (CDN-free, production-ready)
+@app.route('/spa')
 def spa():
-    """Single Page Application with Branding"""
-    with open('spa.html', 'r') as f:
+    """Production-ready Single Page Application (no CDN dependencies)"""
+    with open('index-spa.html', 'r') as f:
         html_content = f.read()
     return inject_branding_config(html_content)
 

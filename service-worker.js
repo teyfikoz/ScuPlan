@@ -1,19 +1,22 @@
 // ScuPlan Service Worker - Offline-First PWA
-const CACHE_NAME = 'scuplan-v1.0.1';
+const CACHE_NAME = 'scuplan-v1.0.2';
 const RUNTIME_CACHE = 'scuplan-runtime';
 
 // Files to cache immediately
 const PRECACHE_URLS = [
-  '/routed',
-  '/manifest.json',
   '/',
+  '/routed',
+  '/spa',
+  '/manifest.json',
+  '/static/js/vendor.bundle.js',
+  '/static/css/utility.min.css',
+  '/static/icons/sprite.svg',
   '/pages/dive-planner.html',
   '/pages/checklist.html',
   '/pages/technical.html',
   '/pages/dive-routes.html',
   '/pages/education.html',
-  '/pages/saved-plans.html',
-  // External CDN resources will be cached on first use
+  '/pages/saved-plans.html'
 ];
 
 // Install event - precache critical files
