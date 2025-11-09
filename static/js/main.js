@@ -2840,50 +2840,85 @@ function capitalizeFirstLetter(string) {
 }
 
 /**
- * Initialize unit system - simplified metric-only version
+ * Initialize unit system
  */
 function initUnitSystem() {
-    // Set metric as default and only system
-    localStorage.setItem('scuplan_units', 'metric');
-
+    // Load user preference or default to metric
+    const savedSystem = localStorage.getItem('scuplan_unit_system') || 'metric';
+    
     if (window.unitsManager) {
-        window.unitsManager.currentSystem = 'metric';
+        window.unitsManager.currentSystem = savedSystem;
+        console.log('Unit system initialized:', savedSystem);
+        
+        // Update UI elements
+        setTimeout(() => {
+            updateInputLabels();
+            window.unitsManager.updateAllUnits();
+        }, 200);
     }
-
-    console.log('Unit system initialized: metric only');
 }
 
 /**
- * Simplified metric-only unit system
+ * Update input labels based on current unit system
  */
 function updateInputLabels() {
-    // Set all labels to metric
-    const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
-    if (depthUnitSpan) {
-        depthUnitSpan.textContent = 'meters';
-    }
+    if (!window.unitsManager) return;
+    
+    const units = window.unitsManager.getUnits();
+    
+    // Update depth unit labels
+    const depthUnitSpans = document.querySelectorAll('[data-unit="depth"]');
+    depthUnitSpans.forEach(span => {
+        span.textContent = units.depth;
+    });
 
-    const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
-    if (volumeUnitSpan) {
-        volumeUnitSpan.textContent = 'L/min';
-    }
+    // Update pressure unit labels
+    const pressureUnitSpans = document.querySelectorAll('[data-unit="pressure"]');
+    pressureUnitSpans.forEach(span => {
+        span.textContent = units.pressure;
+    });
 
-    // Set metric input limits
+    // Update volume unit labels
+    const volumeUnitSpans = document.querySelectorAll('[data-unit="volume"]');
+    volumeUnitSpans.forEach(span => {
+        span.textContent = units.volume;
+    });
+
+    // Update input limits based on unit system
     const depthInput = document.getElementById('diveDepth');
     if (depthInput) {
-        depthInput.max = "150";
-        depthInput.step = "0.5";
-        depthInput.placeholder = "e.g., 18";
+        if (window.unitsManager.currentSystem === 'imperial') {
+            depthInput.max = "500";
+            depthInput.step = "1";
+            depthInput.placeholder = "e.g., 60";
+        } else {
+            depthInput.max = "150";
+            depthInput.step = "0.5";
+            depthInput.placeholder = "e.g., 18";
+        }
     }
 
     const sacInput = document.getElementById('sacRate');
     if (sacInput) {
-        sacInput.min = "10";
-        sacInput.max = "50";
-        sacInput.step = "1";
-        sacInput.placeholder = "e.g., 20";
+        if (window.unitsManager.currentSystem === 'imperial') {
+            sacInput.min = "0.3";
+            sacInput.max = "1.8";
+            sacInput.step = "0.1";
+            sacInput.placeholder = "e.g., 0.7";
+        } else {
+            sacInput.min = "10";
+            sacInput.max = "50";
+            sacInput.step = "1";
+            sacInput.placeholder = "e.g., 20";
+        }
     }
 }
+
+// Listen for unit changes
+document.addEventListener('unitsChanged', function(e) {
+    console.log('Units changed to:', e.detail.system);
+    updateInputLabels();
+});
 
 /**
  * Initialize the application when the DOM is fully loaded

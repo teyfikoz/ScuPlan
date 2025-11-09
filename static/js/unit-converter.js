@@ -75,8 +75,8 @@ class UnitConverter {
      * Setup event listeners for unit system toggle
      */
     setupEventListeners() {
-        const metricToggle = document.getElementById('diveMetric');
-        const imperialToggle = document.getElementById('diveImperial');
+        const metricToggle = document.getElementById('metricSystem');
+        const imperialToggle = document.getElementById('imperialSystem');
 
         // Add null checks to prevent errors when elements don't exist
         if (metricToggle) {
@@ -280,8 +280,8 @@ class UnitConverter {
                 this.currentSystem = savedSystem;
 
                 // Update toggle buttons
-                const metricToggle = document.getElementById('diveMetric');
-                const imperialToggle = document.getElementById('diveImperial');
+                const metricToggle = document.getElementById('metricSystem');
+                const imperialToggle = document.getElementById('imperialSystem');
 
                 if (savedSystem === 'metric' && metricToggle) {
                     metricToggle.checked = true;
