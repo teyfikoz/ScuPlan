@@ -14,27 +14,36 @@ class MetaManager {
      * Initialize the meta manager and load SEO data
      */
     async init() {
-        try {
-            const response = await fetch('/static/data/seo.json');
-            this.seoData = await response.json();
-            console.log('Meta Manager: SEO data loaded successfully');
-        } catch (error) {
-            console.error('Meta Manager: Failed to load SEO data', error);
-            this.seoData = this.getFallbackData();
-        }
+        await this.loadSeoData();
+        this.addStaticStructuredData();
+        // Set initial language and route
+        this.setLanguage(this.currentLanguage);
+        this.onRouteChange(window.location.pathname || '/');
     }
 
     /**
-     * Get fallback SEO data in case JSON fails to load
+     * Load SEO data from a JSON file with improved error handling and fallback.
      */
-    getFallbackData() {
-        return {
-            '/': {
-                title: 'ScuPlan - Advanced Dive Planning & Safety Tools',
-                description: 'Professional dive planning application with decompression calculations and safety tools',
-                keywords: 'dive planner, scuba diving, decompression'
+    async loadSeoData() {
+        try {
+            const response = await fetch('/static/data/seo.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        };
+            const data = await response.json();
+            this.seoData = data || {};
+            console.log('Meta Manager: SEO data loaded successfully');
+        } catch (error) {
+            console.error('Meta Manager: Failed to load SEO data:', error);
+            // Provide fallback SEO data
+            this.seoData = {
+                '/': {
+                    title: 'ScuPlan - Professional Dive Planning',
+                    description: 'Advanced dive planning calculator with gas management, decompression calculations, and technical diving support.',
+                    keywords: 'dive planning, scuba diving, decompression, nitrox, trimix'
+                }
+            };
+        }
     }
 
     /**
@@ -42,22 +51,24 @@ class MetaManager {
      * @param {string} route - The route path (e.g., '/', '/checklist')
      */
     updateMeta(route) {
-        // Check if SEO data is loaded
-        if (!this.seoData) {
-            console.warn('Meta Manager: SEO data not loaded yet, skipping meta update');
+        // Ensure seoData exists and has routes
+        if (!this.seoData || typeof this.seoData !== 'object') {
+            console.error('Meta Manager: SEO data not loaded properly');
             return;
         }
 
-        // Normalize route - remove hash if present
-        const normalizedRoute = route.replace(/^#/, '');
-        
-        console.log(`Meta Manager: Updating meta tags for route: ${normalizedRoute}`);
-        
-        // Get SEO data for this route
-        const metaData = this.seoData[normalizedRoute] || this.seoData['/'];
-        
+        // Normalize route - remove hash and leading slash for consistency in lookup
+        const normalizedRoute = route.replace(/^#/, '').replace(/^\//, '');
+        // Use '/' as the key for the homepage if normalizedRoute is empty
+        const lookupRoute = normalizedRoute === '' ? '/' : normalizedRoute;
+
+        console.log(`Meta Manager: Updating meta tags for route: ${lookupRoute}`);
+
+        // Get SEO data for this route, fallback to '/' if not found
+        const metaData = this.seoData[lookupRoute] || this.seoData['/'];
+
         if (!metaData) {
-            console.warn(`Meta Manager: No SEO data found for route: ${normalizedRoute}`);
+            console.warn(`Meta Manager: No SEO data found for route: ${lookupRoute} or fallback '/'`);
             return;
         }
 
@@ -74,7 +85,9 @@ class MetaManager {
         this.updateMetaProperty('og:title', metaData['og:title'] || metaData.title);
         this.updateMetaProperty('og:description', metaData['og:description'] || metaData.description);
         this.updateMetaProperty('og:type', metaData['og:type'] || 'website');
-        this.updateMetaProperty('og:url', `${this.baseUrl}/#${normalizedRoute}`);
+        // Construct URL correctly, handling root path
+        const urlPath = lookupRoute === '/' ? '' : `/${lookupRoute}`;
+        this.updateMetaProperty('og:url', `${this.baseUrl}${urlPath ? '#/' + urlPath : ''}`);
         this.updateMetaProperty('og:image', metaData['og:image'] || `${this.baseUrl}/generated-icon.png`);
         this.updateMetaProperty('og:site_name', 'ScuPlan');
 
@@ -85,12 +98,12 @@ class MetaManager {
         this.updateMetaProperty('twitter:image', metaData['twitter:image'] || `${this.baseUrl}/generated-icon.png`);
 
         // Update canonical link
-        this.updateCanonical(normalizedRoute);
+        this.updateCanonical(lookupRoute);
 
         // Update JSON-LD breadcrumb
-        this.updateBreadcrumbSchema(normalizedRoute, metaData.title);
+        this.updateBreadcrumbSchema(lookupRoute, metaData.title);
 
-        console.log(`Meta Manager: Meta tags updated successfully for ${normalizedRoute}`);
+        console.log(`Meta Manager: Meta tags updated successfully for ${lookupRoute}`);
     }
 
     /**
@@ -102,13 +115,13 @@ class MetaManager {
         if (!content) return;
 
         let meta = document.querySelector(`meta[name="${name}"]`);
-        
+
         if (!meta) {
             meta = document.createElement('meta');
             meta.setAttribute('name', name);
             document.head.appendChild(meta);
         }
-        
+
         meta.setAttribute('content', content);
     }
 
@@ -121,13 +134,13 @@ class MetaManager {
         if (!content) return;
 
         let meta = document.querySelector(`meta[property="${property}"]`);
-        
+
         if (!meta) {
             meta = document.createElement('meta');
             meta.setAttribute('property', property);
             document.head.appendChild(meta);
         }
-        
+
         meta.setAttribute('content', content);
     }
 
@@ -137,14 +150,15 @@ class MetaManager {
      */
     updateCanonical(route) {
         let canonical = document.querySelector('link[rel="canonical"]');
-        
+
         if (!canonical) {
             canonical = document.createElement('link');
             canonical.setAttribute('rel', 'canonical');
             document.head.appendChild(canonical);
         }
-        
-        canonical.setAttribute('href', `${this.baseUrl}/#${route}`);
+        // Construct URL correctly, handling root path
+        const urlPath = route === '/' ? '' : `/${route}`;
+        canonical.setAttribute('href', `${this.baseUrl}${urlPath ? '#/' + urlPath : ''}`);
     }
 
     /**
@@ -282,7 +296,7 @@ class MetaManager {
      */
     onRouteChange(route) {
         this.updateMeta(route);
-        
+
         // Scroll to top on route change
         window.scrollTo(0, 0);
     }

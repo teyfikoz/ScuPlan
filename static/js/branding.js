@@ -2,7 +2,7 @@
  * Branding Management System for ScuPlan
  * White label configuration system that allows easy customization
  * without touching code.
- * 
+ *
  * Features:
  * - Load default config from branding.json
  * - Merge with Flask-injected config (window.__SCUPLAN_CONFIG__)
@@ -30,20 +30,20 @@ class BrandingManager {
         }
 
         console.log('Initializing BrandingManager...');
-        
+
         try {
             // Load default config from branding.json
             await this.loadDefaultConfig();
-            
+
             // Merge with Flask-injected config if available
             this.mergeServerConfig();
-            
+
             // Apply branding to the page
             this.applyBranding();
-            
+
             this.initialized = true;
             console.log('BrandingManager initialized successfully');
-            
+
             // Trigger custom event
             window.dispatchEvent(new CustomEvent('brandingLoaded', {
                 detail: { config: this.config }
@@ -152,17 +152,17 @@ class BrandingManager {
      */
     applyBranding() {
         console.log('Applying branding...');
-        
+
         // Update theme colors first (CSS custom properties)
         this.updateThemeColors();
-        
+
         // Update DOM elements
         this.updateBrandName();
         this.updateLogo();
         this.updateFooter();
         this.updateCryptoAddresses();
         this.updateMetaTags();
-        
+
         console.log('Branding applied successfully');
     }
 
@@ -197,7 +197,7 @@ class BrandingManager {
      */
     updateBrandName() {
         const brandName = this.config.brandName || 'ScuPlan';
-        
+
         // Update all elements with brand name
         // Navbar brand
         const navbarBrand = document.querySelector('.navbar-brand h1, .navbar-brand');
@@ -261,7 +261,7 @@ class BrandingManager {
         // Update copyright
         const copyrightYear = new Date().getFullYear();
         const copyrightText = `© ${copyrightYear} ${this.config.brandName}${this.config.copyright ? ' by ' + this.config.copyright : ''}. All rights reserved.`;
-        
+
         const copyrightElements = document.querySelectorAll('footer p, #currentYear, [data-branding="copyright"]');
         copyrightElements.forEach(el => {
             if (el.id === 'currentYear') {
@@ -365,9 +365,9 @@ class BrandingManager {
      * Update a specific meta tag
      */
     updateMetaTag(name, content) {
-        let meta = document.querySelector(`meta[name="${name}"]`) || 
+        let meta = document.querySelector(`meta[name="${name}"]`) ||
                    document.querySelector(`meta[property="${name}"]`);
-        
+
         if (meta) {
             meta.content = content;
         } else {
@@ -390,7 +390,7 @@ class BrandingManager {
 
         const keys = keyPath.split('.');
         let value = this.config;
-        
+
         for (const key of keys) {
             if (value && typeof value === 'object' && key in value) {
                 value = value[key];
@@ -398,7 +398,7 @@ class BrandingManager {
                 return null;
             }
         }
-        
+
         return value;
     }
 
@@ -415,19 +415,19 @@ class BrandingManager {
         const keys = keyPath.split('.');
         const lastKey = keys.pop();
         let target = this.config;
-        
+
         for (const key of keys) {
             if (!(key in target)) {
                 target[key] = {};
             }
             target = target[key];
         }
-        
+
         target[lastKey] = newValue;
-        
+
         // Re-apply branding
         this.applyBranding();
-        
+
         console.log(`Updated ${keyPath} to:`, newValue);
         return true;
     }

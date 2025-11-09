@@ -361,7 +361,7 @@ function setupEventListeners() {
                         aboutModal.style.display = 'block';
                         aboutModal.classList.add('show');
                         document.body.classList.add('modal-open');
-                        
+
                         // Add close functionality
                         const closeButtons = aboutModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
                         closeButtons.forEach(btn => {
@@ -2397,39 +2397,41 @@ function showExportGuide(e) {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exportGuideModalLabel">Export & Print Guide</h5>
+                        <h5 class="modal-title" id="exportGuideModalLabel">
+                            <i class="fas fa-download me-2"></i>Export & Print Guide
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>ScuPlan offers several ways to export or print your dive plans and checklists:</p>
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Multiple ways to export and print your dive plans:
+                        </div>
 
-                        <h6 class="mt-3">Printing Dive Plans</h6>
-                        <ol>
-                            <li>Create a dive plan</li>
-                            <li>Click the "Print Plan" button in the results panel</li>
-                            <li>Your browser's print dialog will open</li>
-                            <li>Select your printer or save as PDF</li>
-                        </ol>
+                        <h6><i class="fas fa-print me-2"></i>Printing Dive Plans</h6>
+                        <ul>
+                            <li>Use your browser's print function (Ctrl+P / Cmd+P)</li>
+                            <li>Plans are optimized for printing</li>
+                            <li>Include dive profile charts and all details</li>
+                        </ul>
 
-                        <h6 class="mt-3">Printing Checklists</h6>
-                        <ol>
-                            <li>Go to the Checklists page</li>
-                            <li>Find the checklist you want to print</li>
-                            <li>Click the "Print" button next to it</li>
-                            <li>Your browser's print dialog will open</li>
-                        </ol>
+                        <h6><i class="fas fa-file-pdf me-2"></i>Saving as PDF</h6>
+                        <ul>
+                            <li>Use your browser's "Print to PDF" option</li>
+                            <li>Perfect for digital storage and sharing</li>
+                            <li>Includes all calculations and charts</li>
+                        </ul>
 
-                        <h6 class="mt-3">Sharing Plans</h6>
-                        <ol>
-                            <li>Create a dive plan</li>
-                            <li>Click the "Share Plan" button</li>
-                            <li>Copy the generated link</li>
-                            <li>Send the link to your dive buddies</li>
-                        </ol>
+                        <h6><i class="fas fa-share me-2"></i>Sharing Plans</h6>
+                        <ul>
+                            <li>Each plan has a unique sharing link</li>
+                            <li>Share with dive buddies and dive masters</li>
+                            <li>Links work offline if previously loaded</li>
+                        </ul>
 
-                        <div class="alert alert-info mt-3">
-                            <i class="fas fa-info-circle me-2"></i>
-                            When printing, try the "Save as PDF" option to create a digital copy that you can store on your device or share via email.
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Always verify:</strong> Print and review your plans before diving!
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -2838,19 +2840,16 @@ function capitalizeFirstLetter(string) {
 }
 
 /**
- * Metric/Imperial Toggle Functionality
- */
-/**
  * Initialize unit system - simplified metric-only version
  */
 function initUnitSystem() {
     // Set metric as default and only system
     localStorage.setItem('scuplan_units', 'metric');
-    
+
     if (window.unitsManager) {
         window.unitsManager.currentSystem = 'metric';
     }
-    
+
     console.log('Unit system initialized: metric only');
 }
 
@@ -2890,10 +2889,9 @@ function updateInputLabels() {
  * Initialize the application when the DOM is fully loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 ScuPlan application initializing...');
-
     try {
-        // Initialize performance monitoring
+        console.log('🚀 ScuPlan application initializing...');
+
         window.performanceMonitor = new PerformanceMonitor();
         window.performanceMonitor.startTiming('appInitialization');
 
@@ -3021,21 +3019,21 @@ function showOfflineGuide() {
                             <i class="fas fa-info-circle me-2"></i>
                             ScuPlan works offline! Here's how to make the most of it:
                         </div>
-                        
+
                         <h6><i class="fas fa-save me-2"></i>Saving Data Offline</h6>
                         <ul>
                             <li>Dive plans are automatically saved to your browser's local storage</li>
                             <li>Checklists can be saved for offline use</li>
                             <li>All calculations work without internet connection</li>
                         </ul>
-                        
+
                         <h6><i class="fas fa-download me-2"></i>Accessing Saved Data</h6>
                         <ul>
                             <li>Click "Saved Plans" in the navigation to view offline data</li>
                             <li>Use the checklist tab to access saved checklists</li>
                             <li>Data persists between browser sessions</li>
                         </ul>
-                        
+
                         <h6><i class="fas fa-exclamation-triangle me-2"></i>Limitations</h6>
                         <ul>
                             <li>Data is stored locally on this device only</li>
@@ -3050,16 +3048,16 @@ function showOfflineGuide() {
             </div>
         </div>
     `;
-    
+
     // Remove existing modal if present
     const existingModal = document.getElementById('offlineGuideModal');
     if (existingModal) {
         existingModal.remove();
     }
-    
+
     // Add modal to DOM
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
+
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('offlineGuideModal'));
     modal.show();
@@ -3084,28 +3082,28 @@ function showExportGuide() {
                             <i class="fas fa-check-circle me-2"></i>
                             Multiple ways to export and print your dive plans:
                         </div>
-                        
+
                         <h6><i class="fas fa-print me-2"></i>Printing Dive Plans</h6>
                         <ul>
                             <li>Use your browser's print function (Ctrl+P / Cmd+P)</li>
                             <li>Plans are optimized for printing</li>
                             <li>Include dive profile charts and all details</li>
                         </ul>
-                        
+
                         <h6><i class="fas fa-file-pdf me-2"></i>Saving as PDF</h6>
                         <ul>
                             <li>Use your browser's "Print to PDF" option</li>
                             <li>Perfect for digital storage and sharing</li>
                             <li>Includes all calculations and charts</li>
                         </ul>
-                        
+
                         <h6><i class="fas fa-share me-2"></i>Sharing Plans</h6>
                         <ul>
                             <li>Each plan has a unique sharing link</li>
                             <li>Share with dive buddies and dive masters</li>
                             <li>Links work offline if previously loaded</li>
                         </ul>
-                        
+
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Always verify:</strong> Print and review your plans before diving!
@@ -3118,16 +3116,16 @@ function showExportGuide() {
             </div>
         </div>
     `;
-    
+
     // Remove existing modal if present
     const existingModal = document.getElementById('exportGuideModal');
     if (existingModal) {
         existingModal.remove();
     }
-    
+
     // Add modal to DOM
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
+
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('exportGuideModal'));
     modal.show();
