@@ -49,9 +49,12 @@ class BrandingManager {
                 detail: { config: this.config }
             }));
         } catch (error) {
-            console.error('Error initializing BrandingManager:', error);
+            const errorMessage = error.message || error.toString() || 'Unknown error';
+            console.error('Error initializing BrandingManager:', errorMessage, error);
             // Fall back to basic defaults if config load fails
             this.useFallbackConfig();
+            // Still try to merge server config even if fetch failed
+            this.mergeServerConfig();
             this.applyBranding();
         }
     }
@@ -63,13 +66,16 @@ class BrandingManager {
         try {
             const response = await fetch('/config/branding.json');
             if (!response.ok) {
-                throw new Error(`Failed to load branding config: ${response.status}`);
+                const errorMsg = `HTTP ${response.status} ${response.statusText}`;
+                console.error(`Failed to load branding config: ${errorMsg}`);
+                throw new Error(errorMsg);
             }
             this.defaultConfig = await response.json();
             this.config = JSON.parse(JSON.stringify(this.defaultConfig)); // Deep copy
             console.log('Default branding config loaded:', this.config);
         } catch (error) {
-            console.error('Error loading branding.json:', error);
+            const errorMessage = error.message || error.toString() || 'Unknown error';
+            console.error('Error loading branding.json:', errorMessage, error);
             throw error;
         }
     }

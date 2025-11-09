@@ -42,6 +42,12 @@ class MetaManager {
      * @param {string} route - The route path (e.g., '/', '/checklist')
      */
     updateMeta(route) {
+        // Check if SEO data is loaded
+        if (!this.seoData) {
+            console.warn('Meta Manager: SEO data not loaded yet, skipping meta update');
+            return;
+        }
+
         // Normalize route - remove hash if present
         const normalizedRoute = route.replace(/^#/, '');
         
