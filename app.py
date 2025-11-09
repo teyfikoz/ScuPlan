@@ -264,6 +264,27 @@ def serve_page(page_name):
     except FileNotFoundError:
         return "Page not found", 404
 
+# Static JS routes  
+@app.route('/static/js/<path:filename>')
+def serve_static_js(filename):
+    """Serve static JavaScript files"""
+    try:
+        with open(f'static/js/{filename}', 'r') as f:
+            return f.read(), 200, {'Content-Type': 'application/javascript'}
+    except FileNotFoundError:
+        return "File not found", 404
+
+# Static data routes
+@app.route('/static/data/<path:filename>')
+def serve_static_data(filename):
+    """Serve static data files"""
+    try:
+        with open(f'static/data/{filename}', 'r') as f:
+            content_type = 'application/json' if filename.endswith('.json') else 'text/plain'
+            return f.read(), 200, {'Content-Type': content_type}
+    except FileNotFoundError:
+        return "File not found", 404
+
 # Manifest route
 @app.route('/manifest.json')
 def manifest():
