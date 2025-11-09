@@ -1,0 +1,104 @@
+{
+  "nav": {
+    "divePlanner": "Dive Planner",
+    "checklist": "Checklist",
+    "technical": "Technical",
+    "routes": "Routes",
+    "education": "Education",
+    "saved": "Saved Plans"
+  },
+  "common": {
+    "calculate": "Calculate",
+    "save": "Save",
+    "export": "Export",
+    "loading": "Loading",
+    "offline": "Offline",
+    "online": "Online",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "divePlanner": {
+    "title": "Dive Planner",
+    "location": "Dive Location",
+    "locationPlaceholder": "e.g., Great Barrier Reef",
+    "maxDepth": "Maximum Depth",
+    "bottomTime": "Bottom Time",
+    "minutes": "minutes",
+    "sacRate": "SAC Rate",
+    "calculatePlan": "Calculate Dive Plan",
+    "results": "Dive Profile & Results",
+    "totalTime": "Total Dive Time",
+    "airConsumed": "Air Consumed",
+    "savePlan": "Save Plan",
+    "exportPDF": "Export PDF",
+    "noResults": "Calculate a dive plan to see results"
+  },
+  "checklist": {
+    "title": "Dive Checklists",
+    "preDive": "Pre-Dive",
+    "postDive": "Post-Dive",
+    "emergency": "Emergency"
+  },
+  "technical": {
+    "title": "Technical Diving Calculators",
+    "modCalculator": "MOD Calculator",
+    "oxygenPercent": "Oxygen % (FO₂)",
+    "maxPO2": "Max PO₂ (bar)",
+    "working": "Working",
+    "deco": "Deco",
+    "calculateMOD": "Calculate MOD",
+    "maxOperatingDepth": "Maximum Operating Depth",
+    "bestMixCalculator": "Best Mix Calculator",
+    "targetDepth": "Target Depth",
+    "calculateBestMix": "Calculate Best Mix",
+    "optimalGasMix": "Optimal Gas Mix"
+  },
+  "routes": {
+    "title": "World Dive Routes",
+    "featuredSites": "Featured Dive Sites"
+  },
+  "education": {
+    "title": "Dive Education & Theory",
+    "physics": "Physics of Diving",
+    "boyles": "Boyle's Law",
+    "boylesDesc": "Volume inversely proportional to pressure",
+    "daltons": "Dalton's Law",
+    "daltonsDesc": "Total pressure equals sum of partial pressures",
+    "decoTheory": "Decompression Theory",
+    "decoDesc": "Understanding nitrogen absorption, tissue compartments, and safe ascent procedures"
+  },
+  "saved": {
+    "title": "Saved Dive Plans",
+    "noPlan": "No saved dive plans yet",
+    "createPlan": "Create and save a dive plan to see it here"
+  },
+  "footer": {
+    "support": "Support ScuPlan",
+    "copyright": "All rights reserved"
+  },
+  "toast": {
+    "planCalculated": "Dive plan calculated successfully!",
+    "planSaved": "Dive plan saved!",
+    "pdfExportSoon": "PDF export feature coming soon!",
+    "languageChanged": "Language changed to English",
+    "unitChanged": "Unit system changed",
+    "offlineMode": "You are currently offline"
+  },
+  "units": {
+    "meters": "m",
+    "feet": "ft",
+    "bar": "bar",
+    "psi": "PSI",
+    "liters": "L",
+    "cubicFeet": "cuft",
+    "celsius": "°C",
+    "fahrenheit": "°F",
+    "kilograms": "kg",
+    "pounds": "lbs"
+  }
+}

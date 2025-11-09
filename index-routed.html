@@ -35,6 +35,18 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/navigo@8.11.1/lib/navigo.min.js"></script>
     
+    <!-- i18n System -->
+    <script src="/static/js/i18n/i18n.js"></script>
+    
+    <!-- SEO Meta Manager -->
+    <script src="/static/js/meta-manager.js"></script>
+    
+    <!-- AdSense Manager -->
+    <script src="/static/js/adsense-manager.js"></script>
+    
+    <!-- Branding Manager -->
+    <script src="/static/js/branding.js"></script>
+    
     <style>
         /* CSS Custom Properties for Themes */
         :root {
@@ -216,34 +228,34 @@
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-2">
                     <a href="#/" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-calculator mr-1"></i> Dive Planner
+                        <i class="fas fa-calculator mr-1"></i> <span data-i18n="nav.divePlanner">Dive Planner</span>
                     </a>
                     <a href="#/checklist" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-tasks mr-1"></i> Checklist
+                        <i class="fas fa-tasks mr-1"></i> <span data-i18n="nav.checklist">Checklist</span>
                     </a>
                     <a href="#/technical" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-flask mr-1"></i> Technical
+                        <i class="fas fa-flask mr-1"></i> <span data-i18n="nav.technical">Technical</span>
                     </a>
                     <a href="#/routes" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-map-marked-alt mr-1"></i> Routes
+                        <i class="fas fa-map-marked-alt mr-1"></i> <span data-i18n="nav.routes">Routes</span>
                     </a>
                     <a href="#/education" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-graduation-cap mr-1"></i> Education
+                        <i class="fas fa-graduation-cap mr-1"></i> <span data-i18n="nav.education">Education</span>
                     </a>
                     <a href="#/saved" class="nav-link px-4 py-2 rounded" data-navigo>
-                        <i class="fas fa-save mr-1"></i> Saved
+                        <i class="fas fa-save mr-1"></i> <span data-i18n="nav.saved">Saved Plans</span>
                     </a>
                 </nav>
                 
-                <!-- Unit Toggle & Theme Selector -->
+                <!-- Unit Toggle, Theme & Language Selectors -->
                 <div class="flex items-center space-x-3">
                     <!-- Unit Toggle -->
                     <div id="unit-toggle" class="flex bg-blue-700 rounded-lg p-1">
                         <button data-unit="metric" class="unit-btn px-3 py-1 rounded transition-all text-sm bg-blue-500 text-white">
-                            Metric
+                            <span data-i18n="common.metric">Metric</span>
                         </button>
                         <button data-unit="imperial" class="unit-btn px-3 py-1 rounded transition-all text-sm text-gray-300">
-                            Imperial
+                            <span data-i18n="common.imperial">Imperial</span>
                         </button>
                     </div>
                     
@@ -264,22 +276,22 @@
             <!-- Mobile Navigation -->
             <nav id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
                 <a href="#/" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-calculator mr-2"></i> Dive Planner
+                    <i class="fas fa-calculator mr-2"></i> <span data-i18n="nav.divePlanner">Dive Planner</span>
                 </a>
                 <a href="#/checklist" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-tasks mr-2"></i> Checklist
+                    <i class="fas fa-tasks mr-2"></i> <span data-i18n="nav.checklist">Checklist</span>
                 </a>
                 <a href="#/technical" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-flask mr-2"></i> Technical
+                    <i class="fas fa-flask mr-2"></i> <span data-i18n="nav.technical">Technical</span>
                 </a>
                 <a href="#/routes" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-map-marked-alt mr-2"></i> Routes
+                    <i class="fas fa-map-marked-alt mr-2"></i> <span data-i18n="nav.routes">Routes</span>
                 </a>
                 <a href="#/education" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-graduation-cap mr-2"></i> Education
+                    <i class="fas fa-graduation-cap mr-2"></i> <span data-i18n="nav.education">Education</span>
                 </a>
                 <a href="#/saved" class="block nav-link px-4 py-2 rounded" data-navigo>
-                    <i class="fas fa-save mr-2"></i> Saved
+                    <i class="fas fa-save mr-2"></i> <span data-i18n="nav.saved">Saved Plans</span>
                 </a>
             </nav>
         </div>
@@ -339,12 +351,28 @@
         // Current page cleanup function
         let currentCleanup = null;
         
+        // Route to path mapping for meta manager
+        const routePathMap = {
+            'dive-planner': '/',
+            'checklist': '/checklist',
+            'technical': '/technical',
+            'dive-routes': '/routes',
+            'education': '/education',
+            'saved-plans': '/saved'
+        };
+        
         // Page loader function
         async function loadPage(pageId, initFn) {
             // Cleanup previous page
             if (currentCleanup) {
                 currentCleanup();
                 currentCleanup = null;
+            }
+            
+            // Update meta tags for this route
+            const metaRoute = routePathMap[pageId] || '/';
+            if (window.MetaManager) {
+                window.MetaManager.onRouteChange(metaRoute);
             }
             
             // Show loading
@@ -369,6 +397,11 @@
             // Initialize page
             if (initFn) {
                 currentCleanup = initFn();
+            }
+            
+            // Refresh ads on route change
+            if (window.AdSenseManager) {
+                window.AdSenseManager.refreshAdsOnRouteChange(pageId);
             }
             
             // Update active nav
@@ -501,6 +534,40 @@
             navigator.serviceWorker.register('/service-worker.js')
                 .catch(err => console.log('SW registration failed'));
         }
+        
+        // ============================================
+        // INITIALIZE META MANAGER
+        // ============================================
+        
+        // Initialize meta manager on page load
+        (async function initMetaManager() {
+            if (window.MetaManager) {
+                await window.MetaManager.init();
+                window.MetaManager.addStaticStructuredData();
+                
+                // Set initial meta for current route
+                const currentPath = window.location.hash.replace('#', '') || '/';
+                window.MetaManager.onRouteChange(currentPath);
+                
+                console.log('Meta Manager initialized successfully');
+            } else {
+                console.warn('Meta Manager not loaded');
+            }
+        })();
+        
+        // ============================================
+        // INITIALIZE ADSENSE MANAGER
+        // ============================================
+        
+        // Initialize AdSense manager on page load
+        (async function initAdSense() {
+            if (window.AdSenseManager) {
+                await window.AdSenseManager.init();
+                console.log('AdSense Manager initialized successfully');
+            } else {
+                console.warn('AdSense Manager not loaded');
+            }
+        })();
     </script>
 </body>
 </html>

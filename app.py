@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from datetime import datetime
@@ -85,25 +85,174 @@ with app.app_context():
         app.logger.warning("Application will run without database functionality")
 
 
+# ============================================
+# BRANDING CONFIGURATION SYSTEM
+# ============================================
+
+def load_branding_config():
+    """
+    Load branding configuration with priority:
+    1. Client-specific config (if CLIENT_NAME env var is set)
+    2. Environment variables override
+    3. Default config from branding.json
+    """
+    try:
+        # Load default branding config
+        branding_config_path = os.path.join('config', 'branding.json')
+        with open(branding_config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Check for client-specific config
+        client_name = os.environ.get('CLIENT_NAME')
+        if client_name:
+            client_config_path = os.path.join('config', 'clients', f'{client_name}.json')
+            if os.path.exists(client_config_path):
+                logger.info(f"Loading client-specific config for: {client_name}")
+                with open(client_config_path, 'r') as f:
+                    client_config = json.load(f)
+                # Deep merge client config into default config
+                config = deep_merge(config, client_config)
+        
+        # Override with environment variables (highest priority)
+        env_overrides = get_branding_from_env()
+        if env_overrides:
+            config = deep_merge(config, env_overrides)
+            logger.info("Applied environment variable overrides to branding config")
+        
+        return config
+    
+    except Exception as e:
+        logger.error(f"Error loading branding config: {e}")
+        # Return minimal fallback config
+        return {
+            'brandName': 'ScuPlan',
+            'tagline': 'Advanced Dive Planning',
+            'copyright': 'Teyfik ÖZ'
+        }
+
+def get_branding_from_env():
+    """
+    Extract branding configuration from environment variables
+    
+    Supported environment variables:
+    - BRAND_NAME: Brand name
+    - BRAND_LOGO_URL: Logo URL or data URI
+    - BRAND_TAGLINE: Tagline
+    - BRAND_COPYRIGHT: Copyright text
+    - BRAND_COLOR_PRIMARY: Primary color
+    - BRAND_COLOR_SECONDARY: Secondary color
+    - BRAND_XRP_ADDRESS: XRP crypto address
+    - BRAND_USDT_ADDRESS: USDT crypto address
+    - BRAND_EMAIL: Contact email
+    - BRAND_WEBSITE: Website URL
+    """
+    config = {}
+    
+    # Brand name
+    if os.environ.get('BRAND_NAME'):
+        config['brandName'] = os.environ.get('BRAND_NAME')
+    
+    # Logo
+    if os.environ.get('BRAND_LOGO_URL'):
+        config['logo'] = os.environ.get('BRAND_LOGO_URL')
+    
+    # Tagline
+    if os.environ.get('BRAND_TAGLINE'):
+        config['tagline'] = os.environ.get('BRAND_TAGLINE')
+    
+    # Copyright
+    if os.environ.get('BRAND_COPYRIGHT'):
+        config['copyright'] = os.environ.get('BRAND_COPYRIGHT')
+    
+    # Colors
+    colors = {}
+    if os.environ.get('BRAND_COLOR_PRIMARY'):
+        colors['primary'] = os.environ.get('BRAND_COLOR_PRIMARY')
+    if os.environ.get('BRAND_COLOR_SECONDARY'):
+        colors['secondary'] = os.environ.get('BRAND_COLOR_SECONDARY')
+    if colors:
+        config['colors'] = colors
+    
+    # Crypto addresses
+    crypto = {}
+    if os.environ.get('BRAND_XRP_ADDRESS'):
+        crypto['xrp'] = os.environ.get('BRAND_XRP_ADDRESS')
+    if os.environ.get('BRAND_USDT_ADDRESS'):
+        crypto['usdt'] = os.environ.get('BRAND_USDT_ADDRESS')
+    if crypto:
+        config['crypto'] = crypto
+    
+    # Contact info
+    contact = {}
+    if os.environ.get('BRAND_EMAIL'):
+        contact['email'] = os.environ.get('BRAND_EMAIL')
+    if os.environ.get('BRAND_WEBSITE'):
+        contact['website'] = os.environ.get('BRAND_WEBSITE')
+    if contact:
+        config['contact'] = contact
+    
+    return config if config else None
+
+def deep_merge(base, override):
+    """
+    Deep merge two dictionaries
+    """
+    result = base.copy()
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+def inject_branding_config(html_content):
+    """
+    Inject branding configuration into HTML as window.__SCUPLAN_CONFIG__
+    """
+    try:
+        branding_config = load_branding_config()
+        config_json = json.dumps(branding_config)
+        
+        # Inject before closing head tag
+        injection_script = f'''
+    <!-- Branding Configuration -->
+    <script>
+        window.__SCUPLAN_CONFIG__ = {config_json};
+    </script>
+</head>'''
+        
+        # Replace </head> with our injection
+        html_content = html_content.replace('</head>', injection_script)
+        
+        return html_content
+    except Exception as e:
+        logger.error(f"Error injecting branding config: {e}")
+        return html_content
+
+
 # Ana sayfa rotası
 @app.route('/')
 def index():
-    """Ana sayfa"""
-    return render_template('index.html')
+    """Ana sayfa - SPA with AdSense and Branding"""
+    with open('index-routed.html', 'r') as f:
+        html_content = f.read()
+    return inject_branding_config(html_content)
 
 # SPA route
 @app.route('/spa.html')
 def spa():
-    """Single Page Application"""
+    """Single Page Application with Branding"""
     with open('spa.html', 'r') as f:
-        return f.read()
+        html_content = f.read()
+    return inject_branding_config(html_content)
 
 # Multi-page routed app
 @app.route('/routed')
 def routed_app():
-    """Multi-page routed application"""
+    """Multi-page routed application with Branding"""
     with open('index-routed.html', 'r') as f:
-        return f.read()
+        html_content = f.read()
+    return inject_branding_config(html_content)
 
 # Page routes
 @app.route('/pages/<page_name>')
@@ -122,12 +271,105 @@ def manifest():
     with open('manifest.json', 'r') as f:
         return f.read(), 200, {'Content-Type': 'application/json'}
 
+# AdSense config route
+@app.route('/config/adsense.json')
+def adsense_config():
+    """AdSense Configuration"""
+    try:
+        with open('config/adsense.json', 'r') as f:
+            return f.read(), 200, {'Content-Type': 'application/json'}
+    except FileNotFoundError:
+        return jsonify({'error': 'AdSense config not found'}), 404
+
+# Branding config route
+@app.route('/config/branding.json')
+def branding_config():
+    """Branding Configuration"""
+    try:
+        config = load_branding_config()
+        return jsonify(config), 200, {'Content-Type': 'application/json'}
+    except Exception as e:
+        logger.error(f"Error serving branding config: {e}")
+        return jsonify({'error': 'Branding config not found'}), 404
+
 # Service Worker route
 @app.route('/service-worker.js')
 def service_worker():
     """Service Worker"""
     with open('service-worker.js', 'r') as f:
         return f.read(), 200, {'Content-Type': 'application/javascript'}
+
+# Sitemap route
+@app.route('/sitemap.xml')
+def sitemap():
+    """Generate dynamic sitemap.xml for SEO"""
+    try:
+        # Get the base URL from the request
+        base_url = request.url_root.rstrip('/')
+        
+        # Define routes with their metadata
+        routes = [
+            {
+                'path': '/#/',
+                'priority': '1.0',
+                'changefreq': 'weekly',
+                'lastmod': '2025-11-09'
+            },
+            {
+                'path': '/#/checklist',
+                'priority': '0.8',
+                'changefreq': 'monthly',
+                'lastmod': '2025-11-09'
+            },
+            {
+                'path': '/#/technical',
+                'priority': '0.9',
+                'changefreq': 'monthly',
+                'lastmod': '2025-11-09'
+            },
+            {
+                'path': '/#/routes',
+                'priority': '0.8',
+                'changefreq': 'monthly',
+                'lastmod': '2025-11-09'
+            },
+            {
+                'path': '/#/education',
+                'priority': '0.8',
+                'changefreq': 'monthly',
+                'lastmod': '2025-11-09'
+            },
+            {
+                'path': '/#/saved',
+                'priority': '0.6',
+                'changefreq': 'weekly',
+                'lastmod': '2025-11-09'
+            }
+        ]
+        
+        # Build XML sitemap
+        xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        
+        for route in routes:
+            xml += '  <url>\n'
+            xml += f'    <loc>{base_url}{route["path"]}</loc>\n'
+            xml += f'    <lastmod>{route["lastmod"]}</lastmod>\n'
+            xml += f'    <changefreq>{route["changefreq"]}</changefreq>\n'
+            xml += f'    <priority>{route["priority"]}</priority>\n'
+            xml += '  </url>\n'
+        
+        xml += '</urlset>'
+        
+        # Create response with proper content type
+        response = make_response(xml)
+        response.headers['Content-Type'] = 'application/xml; charset=utf-8'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error generating sitemap: {str(e)}")
+        return "Error generating sitemap", 500
 
 # Kontrol listesi sayfası rotası
 @app.route('/checklist')
