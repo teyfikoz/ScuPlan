@@ -79,10 +79,9 @@ class BrandingManager {
             }
             this.defaultConfig = data;
             this.config = JSON.parse(JSON.stringify(this.defaultConfig)); // Deep copy
-            console.log('Default branding config loaded:', this.config);
+            console.log('Default branding config loaded');
         } catch (error) {
-            const errorMsg = error?.message || 'Unknown error';
-            console.warn('Error loading branding.json, using defaults:', errorMsg);
+            console.warn('Error loading branding.json, using defaults');
             this.useFallbackConfig();
         }
     }

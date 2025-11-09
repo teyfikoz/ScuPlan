@@ -372,59 +372,81 @@
 
         // Page loader function
         async function loadPage(pageId, initFn) {
-            // Cleanup previous page
-            if (currentCleanup) {
-                currentCleanup();
-                currentCleanup = null;
-            }
-
-            // Update meta tags for this route
-            const metaRoute = routePathMap[pageId] || '/';
-            if (window.MetaManager) {
-                window.MetaManager.onRouteChange(metaRoute);
-            }
-
-            // Show loading
-            routeView.innerHTML = `
-                <div class="container mx-auto px-4">
-                    <div class="text-center py-12">
-                        <div class="spinner border-4 border-blue-600 border-t-transparent rounded-full w-12 h-12 animate-spin mx-auto"></div>
-                        <p class="mt-4" style="color: var(--color-text-secondary)">Loading ${pageId}...</p>
-                    </div>
-                </div>
-            `;
-
-            // Simulate async page load
-            await new Promise(resolve => setTimeout(resolve, 100));
-
-            // Load page content
-            const response = await fetch(`/pages/${pageId}.html`);
-            const html = await response.text();
-
-            routeView.innerHTML = `<div class="page-view">${html}</div>`;
-
-            // Initialize page
-            if (initFn) {
-                currentCleanup = initFn();
-            }
-
-            // Refresh ads on route change
-            if (window.AdSenseManager) {
-                window.AdSenseManager.refreshAdsOnRouteChange(pageId);
-            }
-
-            // Update active nav
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                const href = link.getAttribute('href');
-                if ((href === '#/' && pageId === 'dive-planner') || 
-                    href.includes(pageId)) {
-                    link.classList.add('active');
+            try {
+                // Cleanup previous page
+                if (currentCleanup) {
+                    currentCleanup();
+                    currentCleanup = null;
                 }
-            });
 
-            // Close mobile menu
-            document.getElementById('mobile-menu').classList.add('hidden');
+                // Update meta tags for this route
+                const metaRoute = routePathMap[pageId] || '/';
+                if (window.MetaManager) {
+                    window.MetaManager.onRouteChange(metaRoute);
+                }
+
+                // Show loading
+                routeView.innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="text-center py-12">
+                            <div class="spinner border-4 border-blue-600 border-t-transparent rounded-full w-12 h-12 animate-spin mx-auto"></div>
+                            <p class="mt-4" style="color: var(--color-text-secondary)">Loading ${pageId}...</p>
+                        </div>
+                    </div>
+                `;
+
+                // Load page content with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                const response = await fetch(`/pages/${pageId}.html`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load page: ${response.status}`);
+                }
+
+                const html = await response.text();
+                routeView.innerHTML = `<div class="page-view">${html}</div>`;
+
+                // Initialize page
+                if (initFn) {
+                    currentCleanup = initFn();
+                }
+
+                // Refresh ads on route change
+                if (window.AdSenseManager) {
+                    window.AdSenseManager.refreshAdsOnRouteChange(pageId);
+                }
+
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    const href = link.getAttribute('href');
+                    if ((href === '#/' && pageId === 'dive-planner') || 
+                        href.includes(pageId)) {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Close mobile menu
+                document.getElementById('mobile-menu').classList.add('hidden');
+
+            } catch (error) {
+                console.error(`Error loading page ${pageId}:`, error);
+                routeView.innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="text-center py-12">
+                            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                            <p class="text-lg font-semibold">Error loading page</p>
+                            <p class="text-gray-600 mt-2">Please try again or contact support</p>
+                            <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Reload Page
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // Define routes
@@ -491,30 +513,48 @@
         // UNIT CONVERTER
         // ============================================
 
-        const unitBtns = document.querySelectorAll('.unit-btn');
-        const savedUnit = localStorage.getItem('unit') || 'metric';
+        function initUnitToggle() {
+            const unitBtns = document.querySelectorAll('.unit-btn');
+            const savedUnit = localStorage.getItem('unit') || 'metric';
 
-        unitBtns.forEach(btn => {
-            if (btn.dataset.unit === savedUnit) {
-                btn.classList.add('bg-blue-500', 'text-white');
-                btn.classList.remove('text-gray-300');
-            }
+            // Set initial active state
+            unitBtns.forEach(btn => {
+                if (btn.dataset.unit === savedUnit) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('text-gray-300');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('text-gray-300');
+                }
 
-            btn.addEventListener('click', () => {
-                const unit = btn.dataset.unit;
-                localStorage.setItem('unit', unit);
+                // Add click event listener
+                btn.addEventListener('click', function() {
+                    const unit = this.dataset.unit;
+                    localStorage.setItem('unit', unit);
 
-                unitBtns.forEach(b => {
-                    b.classList.remove('bg-blue-500', 'text-white');
-                    b.classList.add('text-gray-300');
+                    // Update visual state
+                    unitBtns.forEach(b => {
+                        b.classList.remove('bg-blue-500', 'text-white');
+                        b.classList.add('text-gray-300');
+                    });
+
+                    this.classList.add('bg-blue-500', 'text-white');
+                    this.classList.remove('text-gray-300');
+
+                    // Dispatch event for other components
+                    window.dispatchEvent(new CustomEvent('unitchange', { detail: unit }));
+
+                    // Show notification
+                    const unitName = unit === 'metric' ? 'Metric' : 'Imperial';
+                    showToast(`Switched to ${unitName} units`);
                 });
-
-                btn.classList.add('bg-blue-500', 'text-white');
-                btn.classList.remove('text-gray-300');
-
-                window.dispatchEvent(new CustomEvent('unitchange', { detail: unit }));
             });
-        });
+
+            console.log('Unit toggle initialized');
+        }
+
+        // Initialize unit toggle
+        initUnitToggle();
 
         // ============================================
         // MOBILE MENU
