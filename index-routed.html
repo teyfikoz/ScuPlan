@@ -40,6 +40,15 @@
 
     <!-- Core scripts must load first -->
     <script src="/static/js/unit-converter.js"></script>
+    
+    <!-- Dive Planner Modules (load before main.js) -->
+    <script src="/static/js/tank.js"></script>
+    <script src="/static/js/buddy.js"></script>
+    <script src="/static/js/dive.js"></script>
+    <script src="/static/js/checklist.js"></script>
+    
+    <!-- Main Application Logic -->
+    <script src="/static/js/main.js"></script>
 
     <!-- Meta Manager -->
     <script src="/static/js/meta-manager.js" defer></script>
@@ -451,46 +460,110 @@
 
         // Define routes
         router
-            .on('/', () => loadPage('dive-planner', initDivePlanner))
-            .on('/checklist', () => loadPage('checklist', initChecklist))
-            .on('/technical', () => loadPage('technical', initTechnical))
-            .on('/routes', () => loadPage('dive-routes', initDiveRoutes))
-            .on('/education', () => loadPage('education', initEducation))
-            .on('/saved', () => loadPage('saved-plans', initSavedPlans))
+            .on('/', () => loadPage('dive-planner', routeInitDivePlanner))
+            .on('/checklist', () => loadPage('checklist', routeInitChecklist))
+            .on('/technical', () => loadPage('technical', routeInitTechnical))
+            .on('/routes', () => loadPage('dive-routes', routeInitDiveRoutes))
+            .on('/education', () => loadPage('education', routeInitEducation))
+            .on('/saved', () => loadPage('saved-plans', routeInitSavedPlans))
             .resolve();
 
         // ============================================
-        // PAGE INITIALIZERS (placeholders)
+        // PAGE INITIALIZERS (call real functions from main.js)
         // ============================================
 
-        function initDivePlanner() {
-            console.log('Dive Planner initialized');
-            return () => console.log('Dive Planner cleanup');
+        function routeInitDivePlanner() {
+            console.log('[Router] Initializing Dive Planner');
+            
+            // Call main.js initialization functions
+            if (typeof initBasicTankManagement === 'function') {
+                initBasicTankManagement();
+            }
+            if (typeof initBasicBuddyManagement === 'function') {
+                initBasicBuddyManagement();
+            }
+            if (typeof initBasicCalculationLogic === 'function') {
+                initBasicCalculationLogic();
+            }
+            
+            // Re-translate page content after loading
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Dive Planner cleanup');
         }
 
-        function initChecklist() {
-            console.log('Checklist initialized');
-            return () => console.log('Checklist cleanup');
+        function routeInitChecklist() {
+            console.log('[Router] Initializing Checklist');
+            
+            // Call checklist initialization from main.js
+            if (typeof initChecklists === 'function') {
+                initChecklists();
+            }
+            
+            // Re-translate page content
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Checklist cleanup');
         }
 
-        function initTechnical() {
-            console.log('Technical initialized');
-            return () => console.log('Technical cleanup');
+        function routeInitTechnical() {
+            console.log('[Router] Initializing Technical Diving');
+            
+            // Technical diving initialization
+            // Add event listeners for technical diving calculators
+            
+            // Re-translate page content
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Technical cleanup');
         }
 
-        function initDiveRoutes() {
-            console.log('Dive Routes initialized');
-            return () => console.log('Dive Routes cleanup');
+        function routeInitDiveRoutes() {
+            console.log('[Router] Initializing Dive Routes');
+            
+            // Dive routes map initialization will be in the page itself
+            
+            // Re-translate page content
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Dive Routes cleanup');
         }
 
-        function initEducation() {
-            console.log('Education initialized');
-            return () => console.log('Education cleanup');
+        function routeInitEducation() {
+            console.log('[Router] Initializing Education');
+            
+            // Education page initialization
+            
+            // Re-translate page content
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Education cleanup');
         }
 
-        function initSavedPlans() {
-            console.log('Saved Plans initialized');
-            return () => console.log('Saved Plans cleanup');
+        function routeInitSavedPlans() {
+            console.log('[Router] Initializing Saved Plans');
+            
+            // Saved plans initialization
+            if (typeof initSharedPlanView === 'function') {
+                initSharedPlanView();
+            }
+            
+            // Re-translate page content
+            if (window.i18n) {
+                setTimeout(() => window.i18n.translatePage(), 100);
+            }
+            
+            return () => console.log('[Router] Saved Plans cleanup');
         }
 
         // ============================================

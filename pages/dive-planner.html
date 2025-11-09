@@ -110,24 +110,3 @@
     </div>
 </div>
 
-<script>
-// Initialize dive planner page functionality
-(function() {
-    console.log('Dive Planner page loaded');
-    
-    // Load required scripts if not already loaded
-    const scriptsToLoad = [
-        '/static/js/tank.js',
-        '/static/js/buddy.js',
-        '/static/js/dive.js'
-    ];
-    
-    scriptsToLoad.forEach(src => {
-        if (!document.querySelector(`script[src="${src}"]`)) {
-            const script = document.createElement('script');
-            script.src = src;
-            document.head.appendChild(script);
-        }
-    });
-})();
-</script>
