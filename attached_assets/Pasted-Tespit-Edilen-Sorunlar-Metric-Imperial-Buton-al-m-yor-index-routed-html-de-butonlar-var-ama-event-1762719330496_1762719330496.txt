@@ -1,0 +1,119 @@
+Tespit Edilen Sorunlar
+Metric-Imperial Buton Çalışmıyor: index-routed.html'de butonlar var ama event listener'lar doğru bağlanmamış
+İçerik Yüklenmiyor: Meta Manager ve Branding Manager hataları var
+Çeviri Sistemi: i18n yüklü ama aktif değil
+Navigasyon: Butonlar çalışıyor ama bazı linkler hatalı
+Comprehensive Agent Prompt
+Aşağıda tüm sorunları çözmek için detaylı bir prompt:
+
+COMPREHENSIVE SCUPLAN FIX PROMPT FOR AI AGENT
+
+You are fixing a scuba dive planning SPA application with critical issues. The app uses:
+
+Navigo hash router for navigation
+i18n system for Turkish/English translations
+Unit conversion system (Metric ↔ Imperial)
+Meta Manager for SEO
+Branding Manager for white-label support
+CRITICAL ISSUES TO FIX:
+
+1. METRIC-IMPERIAL TOGGLE NOT WORKING
+Problem: Buttons in header don't switch units
+Location: index-routed.html lines 159-168
+Current code has buttons but no functional event listeners
+Fix required:
+
+Connect click events to unit-converter.js
+Update button active states visually
+Persist selection to localStorage
+Trigger unitsChanged custom event
+Convert all visible numbers on page
+2. TURKISH TRANSLATIONS MISSING
+Problem: "Imperial" showing as "İmparatorluk" (wrong translation)
+Location: static/js/i18n/tr.json
+Fix required:
+
+Change "common.imperial" from "İmparatorluk" to "Imperial"
+Add missing navigation translations
+Ensure all data-i18n attributes are translated
+Fix page load translation timing
+3. META MANAGER CRASHING
+Console error: "Cannot read properties of null (reading '/')"
+Location: static/js/meta-manager.js line 51
+Problem: seoData is null when updateMeta is called
+Fix required:
+
+Add null checks before accessing seoData
+Use fallback default SEO data
+Ensure loadSeoData completes before onRouteChange
+4. BRANDING MANAGER ERROR
+Console error: "Error loading branding.json"
+Location: static/js/branding.js
+Problem: Fetch fails but error handling incomplete
+Fix required:
+
+Improve error handling in loadDefaultConfig
+Ensure useFallbackConfig is called properly
+Don't block app initialization on config load failure
+5. PAGE LOADING STUCK
+Problem: Page shows "Loading..." and never renders content
+Location: index-routed.html router section (lines 365-480)
+Fix required:
+
+Add timeout fallback for page loading
+Better error handling in loadPage function
+Console logging for debugging
+Ensure /pages/*.html files exist and load
+6. NAVIGATION BUTTON ERRORS
+Problem: Some footer/nav links don't work correctly
+Locations to check:
+
+Footer "Saved Plans" link
+Technical diving calculator links
+Checklist navigation
+Fix required:
+Update all href="#/route" to match router paths
+Fix data-navigo attributes
+Ensure router.resolve() is called
+IMPLEMENTATION PRIORITY:
+
+FIRST: Fix Unit Toggle (most visible to user)
+Add working event listeners to metric/imperial buttons
+Visual feedback (bg-blue-500 for active)
+localStorage persistence
+SECOND: Fix Turkish translations
+Update tr.json file
+Test with language selector
+THIRD: Fix Meta Manager null errors
+Add safety checks
+Prevent app crash
+FOURTH: Fix page loading
+Remove loading spinner
+Show actual content
+FIFTH: Fix remaining navigation issues
+CODE STYLE REQUIREMENTS:
+
+Keep existing structure, don't rewrite everything
+Use existing event delegation patterns
+Maintain Bootstrap 5 classes
+Keep Tailwind utility classes
+Preserve accessibility attributes
+Add console.log for debugging
+TESTING CHECKLIST:
+After fixes, verify:
+
+ Metric/Imperial toggle works and persists
+ All Turkish text shows correctly
+ Page loads without "Loading..." stuck
+ No console errors on page load
+ All navigation links work
+ Unit conversions apply to all numbers
+ Active nav items highlight correctly
+FILES TO MODIFY:
+
+index-routed.html - Fix unit toggle listeners
+static/js/i18n/tr.json - Fix translations
+static/js/meta-manager.js - Add null safety
+static/js/branding.js - Improve error handling
+static/js/unit-converter.js - Ensure global availability
+Start with the unit toggle fix as it's the most critical user-facing issue.

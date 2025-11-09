@@ -161,16 +161,33 @@ class I18nManager {
     }
     
     injectSwitcher(html) {
-        const unitToggle = document.getElementById('unit-toggle');
-        if (unitToggle && !document.getElementById('language-selector')) {
-            unitToggle.insertAdjacentHTML('beforebegin', html);
+        // Check if language selector already exists in HTML
+        const existingSelector = document.getElementById('language-selector');
+        
+        if (existingSelector) {
+            // Language selector already in HTML, just bind event
+            existingSelector.value = this.currentLang;
             
-            const selector = document.getElementById('language-selector');
-            selector.value = this.currentLang;
-            
-            selector.addEventListener('change', (e) => {
+            existingSelector.addEventListener('change', (e) => {
                 this.setLanguage(e.target.value);
             });
+            
+            console.log('Language selector found in HTML, event bound');
+        } else {
+            // Inject language selector if not found
+            const unitToggle = document.getElementById('unit-toggle');
+            if (unitToggle) {
+                unitToggle.insertAdjacentHTML('beforebegin', html);
+                
+                const selector = document.getElementById('language-selector');
+                selector.value = this.currentLang;
+                
+                selector.addEventListener('change', (e) => {
+                    this.setLanguage(e.target.value);
+                });
+                
+                console.log('Language selector injected dynamically');
+            }
         }
     }
     

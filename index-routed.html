@@ -262,6 +262,12 @@
                         </button>
                     </div>
 
+                    <!-- Language Selector -->
+                    <select id="language-selector" class="bg-blue-700 text-white rounded px-2 py-1 text-sm border-0">
+                        <option value="en">🇬🇧 EN</option>
+                        <option value="tr">🇹🇷 TR</option>
+                    </select>
+
                     <!-- Theme Selector -->
                     <select id="theme-selector" class="bg-blue-700 text-white rounded px-2 py-1 text-sm border-0">
                         <option value="light">☀️ Light</option>
@@ -537,6 +543,15 @@
             navigator.serviceWorker.register('/service-worker.js')
                 .catch(err => console.log('SW registration failed'));
         }
+
+        // ============================================
+        // INITIALIZE I18N (Language System)
+        // ============================================
+        
+        // i18n is auto-initialized via i18n.js constructor
+        // The manager is available at window.i18n after page load
+        // Language selector events are bound by i18n.js injectSwitcher()
+        console.log('i18n will be auto-initialized by i18n.js');
 
         // ============================================
         // INITIALIZE META MANAGER
