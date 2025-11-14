@@ -152,6 +152,18 @@
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
 
     <script src="/static/js/vendor.bundle.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/dive.js"></script>
+    <script src="/static/js/tank.js"></script>
+    <script src="/static/js/buddy.js"></script>
+    <script src="/static/js/checklist.js"></script>
+    <script src="/static/js/technical.js"></script>
+    <script src="/static/js/dive-routes.js"></script>
+    <script src="/static/js/storage.js"></script>
+    <script src="/static/js/chart.js"></script>
+    <script src="/static/js/unit-converter.js"></script>
+    <script src="/static/js/enhanced-ai-assistant.js"></script>
+    <script src="/static/js/spa-init.js"></script>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 8. JSON-LD STRUCTURED DATA                                               -->
@@ -770,7 +782,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
 
     <script>
-    // ═══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════R��════════════════════════════════════════
     // TABLE OF CONTENTS - JAVASCRIPT MODULES
     // ═══════════════════════════════════════════════════════════════════════════
     // 1. CONFIG & UTILITIES
