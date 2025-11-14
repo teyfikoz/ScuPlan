@@ -105,18 +105,21 @@ self.addEventListener('fetch', event => {
       const fetchRequest = request.clone();
       
       return fetch(fetchRequest).then(networkResponse => {
-        // Check if valid response
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        // Check if valid response (accept 200 OK and redirects)
+        if (!networkResponse || (networkResponse.status !== 200 && networkResponse.status !== 304)) {
           return networkResponse;
         }
         
-        // Clone the response
-        const responseToCache = networkResponse.clone();
-        
-        // Cache the fetched response
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(request, responseToCache);
-        });
+        // Only cache successful responses with basic type (not opaque/cors)
+        if (networkResponse.type === 'basic' || networkResponse.type === 'cors') {
+          // Clone the response
+          const responseToCache = networkResponse.clone();
+          
+          // Cache the fetched response
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, responseToCache);
+          });
+        }
         
         return networkResponse;
       }).catch(() => {

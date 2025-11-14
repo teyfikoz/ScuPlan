@@ -230,11 +230,13 @@ def inject_branding_config(html_content):
         return html_content
 
 
-# Ana sayfa rotası - Redirect to production SPA
+# Ana sayfa rotası - Serve production SPA directly
 @app.route('/')
 def index():
-    """Redirect to production-ready SPA (CDN-free)"""
-    return redirect(url_for('spa'))
+    """Production-ready Single Page Application (no CDN dependencies)"""
+    with open('index-spa.html', 'r') as f:
+        html_content = f.read()
+    return inject_branding_config(html_content)
 
 # SPA route (legacy)
 @app.route('/spa.html')
