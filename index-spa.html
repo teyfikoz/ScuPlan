@@ -14,7 +14,7 @@
     ║  Built: November 2025                                                        ║
     ║                                                                              ║
     ╚══════════════════════════════════════════════════════════════════════════════╝
-    
+
     TABLE OF CONTENTS:
     ==================
     1. META & PWA TAGS
@@ -26,62 +26,62 @@
     7. VENDOR BUNDLE (EXTERNAL)
     8. JSON-LD STRUCTURED DATA
     -->
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 1. META & PWA TAGS                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- SEO Meta Tags -->
     <title>ScuPlan - Advanced Dive Planning & Safety Tools</title>
     <meta name="description" content="Professional dive planning application with decompression calculations, technical diving tools, MOD/END/CNS calculators, multi-tank gas management, and offline support.">
     <meta name="keywords" content="dive planner, scuba diving, decompression, MOD calculator, END calculator, CNS tracker, Best Mix, technical diving, dive safety">
     <meta name="author" content="Teyfik ÖZ">
     <link rel="canonical" href="https://scuplan.com">
-    
+
     <!-- OpenGraph Meta Tags -->
     <meta property="og:title" content="ScuPlan - Advanced Dive Planning">
     <meta property="og:description" content="Professional dive planning with technical calculators, multi-tank management, and offline support">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scuplan.com">
     <meta property="og:image" content="https://scuplan.com/assets/og-image.png">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ScuPlan - Advanced Dive Planning">
     <meta name="twitter:description" content="Professional dive planning application for recreational and technical divers">
     <meta name="twitter:image" content="https://scuplan.com/assets/og-image.png">
-    
+
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#0056b3">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="ScuPlan">
     <link rel="manifest" href="/manifest.json">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230056b3' width='100' height='100'/%3E%3Cpath fill='%23fff' d='M50 20c-16.5 0-30 13.5-30 30s13.5 30 30 30 30-13.5 30-30-13.5-30-30-30zm0 48c-9.9 0-18-8.1-18-18s8.1-18 18-18 18 8.1 18 18-8.1 18-18 18z'/%3E%3Ccircle fill='%23fff' cx='50' cy='50' r='10'/%3E%3C/svg%3E">
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 2. INLINE UTILITY CSS                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <style>
 :root{--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--red-500:#ef4444;--red-600:#dc2626;--red-700:#b91c1c;--green-500:#10b981;--green-600:#059669;--green-700:#047857;--white:#ffffff;--black:#000000;--primary:#0056b3;--spacing-0:0;--spacing-1:0.25rem;--spacing-2:0.5rem;--spacing-3:0.75rem;--spacing-4:1rem;--spacing-5:1.25rem;--spacing-6:1.5rem;--spacing-8:2rem}*,::before,::after{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5}html{scroll-behavior:smooth}.container{width:100%;max-width:1280px;margin:0 auto;padding:0 1rem}@media(min-width:640px){.container{max-width:640px}}@media(min-width:768px){.container{max-width:768px}}@media(min-width:1024px){.container{max-width:1024px}}.flex{display:flex}.grid{display:grid}.hidden{display:none}.block{display:block}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.space-x-2>*+*{margin-left:0.5rem}.space-x-3>*+*{margin-left:0.75rem}.space-y-2>*+*{margin-top:0.5rem}.space-y-4>*+*{margin-top:1rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.rounded{border-radius:0.25rem}.rounded-lg{border-radius:0.5rem}.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}.bg-white{background-color:#fff}.bg-blue-50{background-color:#eff6ff}.bg-blue-600{background-color:#2563eb}.bg-blue-700{background-color:#1d4ed8}.bg-green-600{background-color:#059669}.bg-purple-600{background-color:#9333ea}.bg-red-50{background-color:#fef2f2}.bg-gray-100{background-color:#f3f4f6}.text-white{color:#fff}.text-blue-600{color:#2563eb}.text-green-600{color:#059669}.text-gray-400{color:#9ca3af}.text-gray-600{color:#4b5563}.text-sm{font-size:0.875rem}.text-xl{font-size:1.25rem}.text-2xl{font-size:1.5rem}.text-3xl{font-size:1.875rem}.font-bold{font-weight:700}.font-semibold{font-weight:600}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.ml-auto{margin-left:auto}.w-full{width:100%}.h-auto{height:auto}.border{border:1px solid #e5e7eb}.border-0{border:0}.top-0{top:0}.left-0{left:0}.right-0{right:0}.z-50{z-index:50}.cursor-pointer{cursor:pointer}.transition-all{transition:all 0.3s ease}.hover\:bg-blue-700:hover{background-color:#1d4ed8}.hover\:bg-green-700:hover{background-color:#047857}@media(min-width:768px){.md\:flex{display:flex}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2,1fr)}.md\:grid-cols-3{grid-template-columns:repeat(3,1fr)}}body.light{background:#f5f5f5;color:#333}body.dark{background:#1a1a1a;color:#e0e0e0}body.dark .bg-white{background:#2d2d2d;color:#e0e0e0}body.underwater{background:linear-gradient(180deg,#001a33 0%,#003d66 50%,#006699 100%);color:#e0f7ff}body.underwater .bg-white{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);color:#e0f7ff}.animate-fade-in{animation:fadeIn 0.5s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.spinner{border:3px solid rgba(255,255,255,0.3);border-top-color:var(--primary);border-radius:50%;width:40px;height:40px;animation:spin 0.8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.nav-link.active{background:var(--primary);color:white}#diveProfileCanvas{max-width:100%;height:auto}.offline-indicator{position:fixed;bottom:20px;right:20px;background:#dc3545;color:white;padding:10px 20px;border-radius:8px;z-index:1000;display:none}
     </style>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 3. LEAFLET CSS (EXTERNAL)                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <link rel="stylesheet" href="/static/css/leaflet.min.css">
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 4. SITE CONFIGURATION                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <script>
         const siteConfig = {
             brandName: 'ScuPlan',
@@ -107,9 +107,9 @@
             },
             version: '2.0.0'
         };
-        
+
         console.log('ScuPlan initialized - Environment:', siteConfig.env);
-        
+
         // Update meta tags with dynamic URLs
         function updateMetaTags() {
             const base = siteConfig.canonicalURL;
@@ -118,7 +118,7 @@
             document.querySelector('meta[property="og:image"]').setAttribute('content', base + '/assets/og-image.png');
             document.querySelector('meta[name="twitter:image"]').setAttribute('content', base + '/assets/og-image.png');
         }
-        
+
         // Run on DOMContentLoaded to ensure meta tags are available
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', updateMetaTags);
@@ -127,36 +127,48 @@
             updateMetaTags();
         }
     </script>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 5. TRANSLATIONS DATA                                                     -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <script>
         const TRANSLATIONS = {
-            "en": {"nav":{"divePlanner":"Dive Planner","checklist":"Checklist","technical":"Technical","routes":"Routes","education":"Education","saved":"Saved Plans"},"common":{"calculate":"Calculate","save":"Save","export":"Export","loading":"Loading","offline":"Offline","online":"Online","metric":"Metric","imperial":"Imperial","close":"Close","cancel":"Cancel","confirm":"Confirm","delete":"Delete","edit":"Edit"},"divePlanner":{"title":"Dive Planner","location":"Dive Location","locationPlaceholder":"e.g., Great Barrier Reef","maxDepth":"Maximum Depth","bottomTime":"Bottom Time","minutes":"minutes","sacRate":"SAC Rate","calculatePlan":"Calculate Dive Plan","results":"Dive Profile & Results","totalTime":"Total Dive Time","airConsumed":"Air Consumed","savePlan":"Save Plan","exportPDF":"Export PDF","noResults":"Calculate a dive plan to see results"},"checklist":{"title":"Dive Checklists","preDive":"Pre-Dive","postDive":"Post-Dive","emergency":"Emergency"},"technical":{"title":"Technical Diving Calculators","modCalculator":"MOD Calculator","oxygenPercent":"Oxygen % (FO₂)","maxPO2":"Max PO₂ (bar)","working":"Working","deco":"Deco","calculateMOD":"Calculate MOD","maxOperatingDepth":"Maximum Operating Depth","bestMixCalculator":"Best Mix Calculator","targetDepth":"Target Depth","calculateBestMix":"Calculate Best Mix","optimalGasMix":"Optimal Gas Mix"},"routes":{"title":"World Dive Routes","featuredSites":"Featured Dive Sites"},"education":{"title":"Dive Education & Theory","physics":"Physics of Diving","boyles":"Boyle's Law","boylesDesc":"Volume inversely proportional to pressure","daltons":"Dalton's Law","daltonsDesc":"Total pressure equals sum of partial pressures","decoTheory":"Decompression Theory","decoDesc":"Understanding nitrogen absorption, tissue compartments, and safe ascent procedures"},"saved":{"title":"Saved Dive Plans","noPlan":"No saved dive plans yet","createPlan":"Create and save a dive plan to see it here"},"footer":{"support":"Support ScuPlan","copyright":"All rights reserved"},"toast":{"planCalculated":"Dive plan calculated successfully!","planSaved":"Dive plan saved!","pdfExportSoon":"PDF export feature coming soon!","languageChanged":"Language changed to English","unitChanged":"Unit system changed","offlineMode":"You are currently offline"},"units":{"meters":"m","feet":"ft","bar":"bar","psi":"PSI","liters":"L","cubicFeet":"cuft","celsius":"°C","fahrenheit":"°F","kilograms":"kg","pounds":"lbs"}},
+            "en": {"nav":{"divePlanner":"Dive Planner","checklist":"Checklist","technical":"Technical","routes":"Routes","education":"Education","saved":"Saved Plans"},"common":{"calculate":"Calculate","save":"Save","export":"Export","loading":"Loading","offline":"Offline","online":"Online","metric":"Metric","imperial":"Imperial","close":"Close","cancel":"Cancel","confirm":"Confirm","delete":"Delete","edit":"Edit"},"divePlanner":{"title":"Dive Planner","location":"Dive Location","locationPlaceholder":"e.g., Great Barrier Reef","maxDepth":"Maximum Depth","bottomTime":"Bottom Time","minutes":"minutes","sacRate":"SAC Rate","calculatePlan":"Calculate Dive Plan","results":"Dive Profile & Results","totalTime":"Total Dive Time","airConsumed":"Air Consumed","savePlan":"Save Plan","exportPDF":"Export PDF","noResults":"Calculate a dive plan to see results"},"checklist":{"title":"Dive Checklists","preDive":"Pre-Dive","postDive":"Post-Dive","emergency":"Emergency"},"technical":{"title":"Technical Diving Calculators","modCalculator":"MOD Calculator","oxygenPercent":"Oxygen % (FO₂)","maxPO2":"Max PO₂ (bar)","working":"Working","deco":"Deco","calculateMOD":"Calculate MOD","maxOperatingDepth":"Maximum Operating Depth","bestMixCalculator":"Best Mix Calculator","targetDepth":"Target Depth","calculateBestMix":"Calculate Best Mix","optimalGasMix":"Optimal Gas Mix"},"routes":{"title":"World Dive Routes","featuredSites":"Featured Dive Sites"},"education":{"title":"Dive Education & Theory","physics":"Diving Physics","boyles":"Boyle's Law","boylesDesc":"Volume inversely proportional to pressure","daltons":"Dalton's Law","daltonsDesc":"Total pressure equals sum of partial pressures","decoTheory":"Decompression Theory","decoDesc":"Understanding nitrogen absorption, tissue compartments, and safe ascent procedures"},"saved":{"title":"Saved Dive Plans","noPlan":"No saved dive plans yet","createPlan":"Create and save a dive plan to see it here"},"footer":{"support":"Support ScuPlan","copyright":"All rights reserved"},"toast":{"planCalculated":"Dive plan calculated successfully!","planSaved":"Dive plan saved!","pdfExportSoon":"PDF export feature coming soon!","languageChanged":"Language changed to English","unitChanged":"Unit system changed","offlineMode":"You are currently offline"},"units":{"meters":"m","feet":"ft","bar":"bar","psi":"PSI","liters":"L","cubicFeet":"cuft","celsius":"°C","fahrenheit":"°F","kilograms":"kg","pounds":"lbs"}},
             "tr": {"nav":{"divePlanner":"Dalış Planlayıcı","checklist":"Kontrol Listesi","technical":"Teknik","routes":"Rotalar","education":"Eğitim","saved":"Kayıtlı Planlar"},"common":{"calculate":"Hesapla","save":"Kaydet","export":"Dışa Aktar","loading":"Yükleniyor","offline":"Çevrimdışı","online":"Çevrimiçi","metric":"Metrik","imperial":"Imperial","close":"Kapat","cancel":"İptal","confirm":"Onayla","delete":"Sil","edit":"Düzenle"},"divePlanner":{"title":"Dalış Planlayıcı","location":"Dalış Konumu","locationPlaceholder":"örn., Büyük Set Resifi","maxDepth":"Maksimum Derinlik","bottomTime":"Dip Süresi","minutes":"dakika","sacRate":"SAC Oranı","calculatePlan":"Dalış Planını Hesapla","results":"Dalış Profili ve Sonuçlar","totalTime":"Toplam Dalış Süresi","airConsumed":"Tüketilen Hava","savePlan":"Planı Kaydet","exportPDF":"PDF Olarak Dışa Aktar","noResults":"Sonuçları görmek için bir dalış planı hesaplayın"},"checklist":{"title":"Dalış Kontrol Listeleri","preDive":"Dalış Öncesi","postDive":"Dalış Sonrası","emergency":"Acil Durum"},"technical":{"title":"Teknik Dalış Hesaplayıcıları","modCalculator":"MOD Hesaplayıcı","oxygenPercent":"Oksijen % (FO₂)","maxPO2":"Maks PO₂ (bar)","working":"Çalışma","deco":"Deko","calculateMOD":"MOD Hesapla","maxOperatingDepth":"Maksimum Çalışma Derinliği","bestMixCalculator":"En İyi Karışım Hesaplayıcı","targetDepth":"Hedef Derinlik","calculateBestMix":"En İyi Karışımı Hesapla","optimalGasMix":"Optimal Gaz Karışımı"},"routes":{"title":"Dünya Dalış Rotaları","featuredSites":"Öne Çıkan Dalış Noktaları"},"education":{"title":"Dalış Eğitimi ve Teorisi","physics":"Dalış Fiziği","boyles":"Boyle Yasası","boylesDesc":"Hacim basınçla ters orantılıdır","daltons":"Dalton Yasası","daltonsDesc":"Toplam basınç, kısmi basınçların toplamına eşittir","decoTheory":"Dekompresyon Teorisi","decoDesc":"Nitrojen emilimi, doku bölmeleri ve güvenli çıkış prosedürlerini anlamak"},"saved":{"title":"Kayıtlı Dalış Planları","noPlan":"Henüz kayıtlı dalış planı yok","createPlan":"Burada görmek için bir dalış planı oluşturun ve kaydedin"},"footer":{"support":"ScuPlan'ı Destekle","copyright":"Tüm hakları saklıdır"},"toast":{"planCalculated":"Dalış planı başarıyla hesaplandı!","planSaved":"Dalış planı kaydedildi!","pdfExportSoon":"PDF dışa aktarma özelliği yakında geliyor!","languageChanged":"Dil Türkçe olarak değiştirildi","unitChanged":"Birim sistemi değiştirildi","offlineMode":"Şu anda çevrimdışısınız"},"units":{"meters":"m","feet":"ft","bar":"bar","psi":"PSI","liters":"L","cubicFeet":"cuft","celsius":"°C","fahrenheit":"°F","kilograms":"kg","pounds":"lbs"}}
         };
     </script>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 6. DIVE LOCATIONS DATA                                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <script>
         const DIVE_LOCATIONS = [{"name":"Great Barrier Reef","country":"Australia","lat":-16.4,"lng":145.8,"description":"World's largest coral reef system famous for vibrant marine life.","difficulty":"Intermediate","type":"Reef","maxDepth":40,"visibility":"15-30m","temperature":"24-30°C","bestTime":"June to October","highlights":["Diverse marine life","Coral formations","Tropical climate"],"link":"/?site=Great%20Barrier%20Reef&depth=40"},{"name":"Great Blue Hole","country":"Belize","lat":17.31528,"lng":-87.53444,"description":"A massive marine sinkhole with deep blue waters and stalactite formations.","difficulty":"Advanced","type":"Wall","maxDepth":124,"visibility":"30-40m","temperature":"26-29°C","bestTime":"November to June","highlights":["Circular sinkhole","Stalactites","Deep wall diving"],"link":"/?site=Great%20Blue%20Hole&depth=124"},{"name":"Silfra Fissure","country":"Iceland","lat":64.255,"lng":-21.129,"description":"Dive between two tectonic plates in crystal clear glacial water.","difficulty":"Intermediate","type":"Cave","maxDepth":18,"visibility":"100m+","temperature":"2-4°C","bestTime":"Year-round","highlights":["Tectonic plates","Ultra-clear water","Unique geological formations"],"link":"/?site=Silfra%20Fissure&depth=18"},{"name":"Ras Mohammed","country":"Egypt","lat":27.753,"lng":34.24,"description":"Iconic reef at the tip of the Sinai Peninsula with abundant fish and coral.","difficulty":"Intermediate","type":"Reef","maxDepth":40,"visibility":"20-30m","temperature":"24-28°C","bestTime":"March to May, September to November","highlights":["Colorful corals","Large schools of fish","Clear waters"],"link":"/?site=Ras%20Mohammed&depth=40"},{"name":"SS Thistlegorm Wreck","country":"Egypt","lat":27.814167,"lng":33.92,"description":"World-famous WWII British merchant navy shipwreck teeming with artifacts.","difficulty":"Intermediate","type":"Wreck","maxDepth":30,"visibility":"20-30m","temperature":"22-28°C","bestTime":"March to November","highlights":["WWII artifacts","Motorcycles and trucks","Historical significance"],"link":"/?site=SS%20Thistlegorm%20Wreck&depth=30"},{"name":"Barracuda Point","country":"Malaysia","lat":4.125833,"lng":118.625,"description":"Known for massive schools of barracuda and incredible biodiversity around Sipadan Island.","difficulty":"Intermediate","type":"Drift","maxDepth":40,"visibility":"25-40m","temperature":"27-30°C","bestTime":"March to October","highlights":["Barracuda tornadoes","Vibrant reef life","Clear tropical waters"],"link":"/?site=Barracuda%20Point&depth=40"},{"name":"Blue Corner Wall","country":"Palau","lat":7.3419,"lng":134.4827,"description":"Legendary drift dive with sharks, manta rays, and big pelagics.","difficulty":"Advanced","type":"Wall","maxDepth":60,"visibility":"30-50m","temperature":"27-30°C","bestTime":"November to May","highlights":["Shark encounters","Strong currents","Manta rays"],"link":"/?site=Blue%20Corner%20Wall&depth=60"},{"name":"Komodo National Park","country":"Indonesia","lat":-8.5333,"lng":119.4833,"description":"World-class diving with manta rays, abundant coral, and diverse marine life.","difficulty":"Advanced","type":"Drift","maxDepth":45,"visibility":"15-40m","temperature":"24-28°C","bestTime":"April to November","highlights":["Manta cleaning stations","Coral gardens","Strong currents"],"link":"/?site=Komodo%20National%20Park&depth=45"},{"name":"Cenote Dos Ojos","country":"Mexico","lat":20.3231,"lng":-87.3836,"description":"Crystal-clear freshwater cavern system with stunning light effects.","difficulty":"Intermediate","type":"Cave","maxDepth":10,"visibility":"100m+","temperature":"25°C","bestTime":"Year-round","highlights":["Crystal-clear water","Cave formations","Light beams"],"link":"/?site=Cenote%20Dos%20Ojos&depth=10"}];
     </script>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 7. VENDOR BUNDLE (EXTERNAL) - Chart.js, Leaflet, jsPDF, QRCode          -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
-    <script src="/static/js/vendor.bundle.js" defer></script>
-    
+
+    <script src="/static/js/vendor.bundle.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/dive.js"></script>
+    <script src="/static/js/tank.js"></script>
+    <script src="/static/js/buddy.js"></script>
+    <script src="/static/js/checklist.js"></script>
+    <script src="/static/js/technical.js"></script>
+    <script src="/static/js/dive-routes.js"></script>
+    <script src="/static/js/storage.js"></script>
+    <script src="/static/js/chart.js"></script>
+    <script src="/static/js/unit-converter.js"></script>
+    <script src="/static/js/enhanced-ai-assistant.js"></script>
+    <script src="/static/js/spa-init.js"></script>
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- 8. JSON-LD STRUCTURED DATA                                               -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -180,11 +192,11 @@
 </head>
 
 <body class="light">
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- SVG ICON SPRITE (INLINE)                                                 -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
         <symbol id="icon-water" viewBox="0 0 24 24"><path d="M3 12c0-1.5 1.5-3 3-3s3 1.5 3 3-1.5 3-3 3-3-1.5-3-3zm6 0c0-1.5 1.5-3 3-3s3 1.5 3 3-1.5 3-3 3-3-1.5-3-3zm6 0c0-1.5 1.5-3 3-3s3 1.5 3 3-1.5 3-3 3-3-1.5-3-3z"/></symbol>
         <symbol id="icon-calculator" viewBox="0 0 24 24"><path d="M6 2h12c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm1 3v3h10V5H7zm0 5h3v3H7v-3zm5 0h3v3h-3v-3zm5 0h3v3h-3v-3z"/></symbol>
@@ -198,11 +210,11 @@
         <symbol id="icon-qrcode" viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5z"/></symbol>
         <symbol id="icon-user" viewBox="0 0 24 24"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></symbol>
     </svg>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- NOSCRIPT WARNING                                                         -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <noscript>
         <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);color:white;display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;text-align:center;">
             <div>
@@ -211,11 +223,11 @@
             </div>
         </div>
     </noscript>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- NAVIGATION HEADER                                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <header id="site-header" class="fixed top-0 left-0 right-0 bg-blue-600 text-white shadow-lg z-50">
         <div class="container">
             <div class="flex items-center justify-between py-3">
@@ -224,7 +236,7 @@
                     <svg width="32" height="32" fill="currentColor"><use href="#icon-water"></use></svg>
                     <h1 class="text-2xl font-bold">ScuPlan</h1>
                 </div>
-                
+
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex space-x-2">
                     <a href="#planner" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all active">Dive Planner</a>
@@ -235,7 +247,7 @@
                     <a href="#saved" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">Saved</a>
                     <a href="#about" class="nav-link px-4 py-2 rounded hover:bg-blue-700 transition-all">About</a>
                 </nav>
-                
+
                 <!-- Settings -->
                 <div class="flex items-center space-x-3">
                     <!-- Language Selector -->
@@ -243,27 +255,27 @@
                         <option value="en">🇬🇧 EN</option>
                         <option value="tr">🇹🇷 TR</option>
                     </select>
-                    
+
                     <!-- Unit Toggle -->
                     <div id="unit-toggle" class="flex bg-blue-700 rounded-lg p-1">
                         <button data-unit="metric" class="unit-btn px-3 py-1 rounded transition-all text-sm bg-white text-blue-600">Metric</button>
                         <button data-unit="imperial" class="unit-btn px-3 py-1 rounded transition-all text-sm">Imperial</button>
                     </div>
-                    
+
                     <!-- Theme Selector -->
                     <select id="theme-selector" class="bg-blue-700 text-white rounded px-2 py-1 text-sm border-0">
                         <option value="light">☀️ Light</option>
                         <option value="dark">🌙 Dark</option>
                         <option value="underwater">🌊 Underwater</option>
                     </select>
-                    
+
                     <!-- Mobile Menu Toggle -->
                     <button id="mobile-menu-toggle" class="md:hidden">
                         <svg width="24" height="24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
                     </button>
                 </div>
             </div>
-            
+
             <!-- Mobile Navigation -->
             <nav id="mobile-menu" class="hidden md:hidden py-4 space-y-2">
                 <a href="#planner" class="block nav-link px-4 py-2 rounded hover:bg-blue-700">Dive Planner</a>
@@ -276,34 +288,34 @@
             </nav>
         </div>
     </header>
-    
+
     <!-- Offline Indicator -->
     <div id="offline-indicator" class="offline-indicator">
         <svg width="20" height="20" fill="currentColor" style="display:inline;margin-right:8px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         Offline Mode
     </div>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- MAIN CONTENT                                                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <main style="padding-top:80px;padding-bottom:60px;">
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 1: DIVE PLANNER                                              -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="planner" class="container py-8 animate-fade-in">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-blue-600"><use href="#icon-calculator"></use></svg>
                 <span data-i18n="divePlanner.title">Dive Planner</span>
             </h2>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <!-- Input Panel -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4">Dive Parameters</h3>
-                    
+
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-semibold mb-1">
@@ -311,7 +323,7 @@
                             </label>
                             <input type="text" id="dive-location" class="w-full px-3 py-2 border rounded-lg" placeholder="e.g., Great Barrier Reef">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-1">
                                 <span data-i18n="divePlanner.maxDepth">Maximum Depth</span>
@@ -319,7 +331,7 @@
                             </label>
                             <input type="number" id="max-depth" class="w-full px-3 py-2 border rounded-lg" value="18" min="1" max="100">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-1">
                                 <span data-i18n="divePlanner.bottomTime">Bottom Time</span>
@@ -327,7 +339,7 @@
                             </label>
                             <input type="number" id="bottom-time" class="w-full px-3 py-2 border rounded-lg" value="30" min="1" max="200">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-1">
                                 <span data-i18n="divePlanner.sacRate">SAC Rate</span>
@@ -335,7 +347,7 @@
                             </label>
                             <input type="number" id="sac-rate" class="w-full px-3 py-2 border rounded-lg" value="20" min="5" max="50">
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-1">
                                 Tank Size <span class="volume-unit">(L)</span>
@@ -347,45 +359,45 @@
                                 <option value="80">80 cuft</option>
                             </select>
                         </div>
-                        
+
                         <div>
                             <label class="block text-sm font-semibold mb-1">
                                 Starting Pressure <span class="pressure-unit">(bar)</span>
                             </label>
                             <input type="number" id="start-pressure" class="w-full px-3 py-2 border rounded-lg" value="200" min="50" max="300">
                         </div>
-                        
+
                         <button onclick="calculateDivePlan()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold">
                             <svg width="20" height="20" fill="currentColor" style="display:inline;margin-right:8px"><use href="#icon-chart-line"></use></svg>
                             <span data-i18n="divePlanner.calculatePlan">Calculate Dive Plan</span>
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Results Panel -->
                 <div id="dive-results" class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4" data-i18n="divePlanner.results">Dive Profile & Results</h3>
-                    
+
                     <div id="results-placeholder" class="text-center py-12 text-gray-400">
                         <svg width="64" height="64" fill="currentColor" style="margin:0 auto 16px"><use href="#icon-chart-line"></use></svg>
                         <p data-i18n="divePlanner.noResults">Calculate a dive plan to see results</p>
                     </div>
-                    
+
                     <div id="results-content" class="hidden space-y-4">
                         <canvas id="diveProfileCanvas" width="400" height="300"></canvas>
-                        
+
                         <!-- Chart.js Profile Chart -->
                         <div class="bg-white p-4 rounded-lg mb-4">
                             <h4 class="font-semibold mb-3">Dive Profile</h4>
                             <canvas id="dive-profile" width="800" height="400"></canvas>
                         </div>
-                        
+
                         <!-- Decompression Stops -->
                         <div id="decompression-stops" class="bg-white p-4 rounded-lg mb-4">
                             <h4 class="font-semibold mb-3">Decompression Stops</h4>
                             <div id="stops-container"></div>
                         </div>
-                        
+
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             <div class="bg-blue-50 p-3 rounded">
                                 <div class="text-sm text-gray-600" data-i18n="divePlanner.totalTime">Total Dive Time</div>
@@ -404,7 +416,7 @@
                                 <div id="safety-stop" class="text-2xl font-bold text-red-600">--</div>
                             </div>
                         </div>
-                        
+
                         <div class="flex gap-2 mt-4">
                             <button onclick="saveDivePlan()" class="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-all">
                                 <span data-i18n="divePlanner.savePlan">Save</span>
@@ -420,17 +432,17 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 2: CHECKLIST                                                 -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="checklist" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-green-600"><use href="#icon-tasks"></use></svg>
                 <span data-i18n="checklist.title">Dive Checklists</span>
             </h2>
-            
+
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4 text-blue-600" data-i18n="checklist.preDive">Pre-Dive</h3>
@@ -452,7 +464,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4 text-green-600" data-i18n="checklist.postDive">Post-Dive</h3>
                     <div id="post-dive-checklist" class="space-y-2">
@@ -473,7 +485,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4 text-red-600" data-i18n="checklist.emergency">Emergency</h3>
                     <div id="emergency-checklist" class="space-y-2">
@@ -496,17 +508,17 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 3: TECHNICAL DIVING                                          -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="technical" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-purple-600"><use href="#icon-flask"></use></svg>
                 <span data-i18n="technical.title">Technical Diving Calculators</span>
             </h2>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <!-- MOD Calculator -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
@@ -532,7 +544,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Best Mix Calculator -->
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4" data-i18n="technical.bestMixCalculator">Best Mix Calculator</h3>
@@ -559,37 +571,37 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 4: WORLD DIVE ROUTES                                         -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="routes" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-blue-600"><use href="#icon-map-marked-alt"></use></svg>
                 <span data-i18n="routes.title">World Dive Routes</span>
             </h2>
-            
+
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div id="map-container" style="height:500px;border-radius:8px"></div>
             </div>
-            
+
             <div class="mt-6">
                 <h3 class="text-xl font-semibold mb-4" data-i18n="routes.featuredSites">Featured Dive Sites</h3>
                 <div id="dive-sites-list" class="grid md:grid-cols-3 gap-4"></div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 5: DIVE EDUCATION                                            -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="education" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-blue-600"><use href="#icon-graduation-cap"></use></svg>
                 <span data-i18n="education.title">Dive Education & Theory</span>
             </h2>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4 text-blue-600" data-i18n="education.physics">Physics of Diving</h3>
@@ -606,7 +618,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4 text-blue-600" data-i18n="education.decoTheory">Decompression Theory</h3>
                     <div class="space-y-4">
@@ -621,17 +633,17 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 6: SAVED DIVE PLANS                                          -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="saved" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-blue-600"><use href="#icon-save"></use></svg>
                 <span data-i18n="saved.title">Saved Dive Plans</span>
             </h2>
-            
+
             <div id="saved-plans-container" class="bg-white rounded-lg shadow-lg p-6">
                 <div class="text-center py-12 text-gray-400">
                     <svg width="64" height="64" fill="currentColor" style="margin:0 auto 16px"><use href="#icon-save"></use></svg>
@@ -640,17 +652,17 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- ─────────────────────────────────────────────────────────────────── -->
         <!-- SECTION 7: ABOUT SCUPLAN                                             -->
         <!-- ─────────────────────────────────────────────────────────────────── -->
-        
+
         <section id="about" class="container py-8">
             <h2 class="text-3xl font-bold mb-6 flex items-center">
                 <svg width="32" height="32" fill="currentColor" class="mr-3 text-blue-600"><use href="#icon-user"></use></svg>
                 About ScuPlan
             </h2>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4">Project Description</h3>
@@ -662,7 +674,7 @@
                         The application works completely offline once loaded, making it perfect for use on dive boats and remote locations. 
                         All calculations follow industry-standard decompression models and safety protocols.
                     </p>
-                    
+
                     <h4 class="font-semibold mt-6 mb-2">Key Features:</h4>
                     <ul class="space-y-1 text-sm">
                         <li>✓ Advanced dive plan calculations with decompression modeling</li>
@@ -676,7 +688,7 @@
                         <li>✓ Multiple theme support (Light, Dark, Underwater)</li>
                     </ul>
                 </div>
-                
+
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-xl font-semibold mb-4">Author Information</h3>
                     <div class="flex items-center mb-4">
@@ -686,7 +698,7 @@
                             <p class="text-sm text-gray-600">Full-Stack Developer & Dive Enthusiast</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-2 mb-6">
                         <p class="text-sm">
                             <strong>Email:</strong> 
@@ -697,7 +709,7 @@
                             <a href="https://www.linkedin.com/in/teyfikoz" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/teyfikoz</a>
                         </p>
                     </div>
-                    
+
                     <h4 class="font-semibold mb-2">Technology Stack:</h4>
                     <div class="flex flex-wrap gap-2">
                         <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-sm">HTML5</span>
@@ -709,7 +721,7 @@
                         <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-sm">LocalStorage</span>
                         <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded text-sm">PWA</span>
                     </div>
-                    
+
                     <div class="mt-6 p-4 bg-blue-50 rounded">
                         <p class="text-sm">
                             <strong>Note:</strong> ScuPlan is free and open-source. 
@@ -719,13 +731,13 @@
                 </div>
             </div>
         </section>
-        
+
     </main>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- FOOTER                                                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <footer class="bg-gray-800 text-white py-6">
         <div class="container">
             <div class="grid md:grid-cols-3 gap-6">
@@ -743,13 +755,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div>
                     <h4 class="font-semibold mb-2">ScuPlan</h4>
                     <p class="text-sm text-gray-400">Professional dive planning application for recreational and technical divers.</p>
                     <p class="text-sm text-gray-400 mt-2">Version 2.0.0</p>
                 </div>
-                
+
                 <div>
                     <h4 class="font-semibold mb-2">Contact</h4>
                     <p class="text-sm text-gray-400">Teyfik ÖZ</p>
@@ -761,11 +773,11 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- INLINE JAVASCRIPT MODULES                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    
+
     <script>
     // ═══════════════════════════════════════════════════════════════════════════
     // TABLE OF CONTENTS - JAVASCRIPT MODULES
@@ -786,13 +798,13 @@
     // 14. SERVICE WORKER REGISTRATION
     // 15. ADSENSE LOADER (PRODUCTION ONLY)
     // ═══════════════════════════════════════════════════════════════════════════
-    
+
     'use strict';
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 1. CONFIG & UTILITIES
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const app = {
         currentPlan: null,
         savedPlans: [],
@@ -801,7 +813,7 @@
         currentUnit: siteConfig.defaultUnit,
         isOffline: !navigator.onLine
     };
-    
+
     // Unit conversion factors
     const conversions = {
         depth: { m_to_ft: 3.28084, ft_to_m: 0.3048 },
@@ -809,7 +821,7 @@
         volume: { l_to_cuft: 0.0353147, cuft_to_l: 28.3168 },
         temperature: { c_to_f: (c) => (c * 9/5) + 32, f_to_c: (f) => (f - 32) * 5/9 }
     };
-    
+
     // Utility: Show toast notification
     function showToast(message, type = 'info') {
         const toast = document.createElement('div');
@@ -822,14 +834,14 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 2. STORAGE MODULE (localStorage)
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const StorageManager = {
         storageKey: 'scuplan_data_v2',
-        
+
         init() {
             if (!localStorage.getItem(this.storageKey)) {
                 localStorage.setItem(this.storageKey, JSON.stringify({
@@ -844,11 +856,11 @@
             }
             this.loadSettings();
         },
-        
+
         getData() {
             return JSON.parse(localStorage.getItem(this.storageKey) || '{"plans":[],"settings":{}}');
         },
-        
+
         savePlan(plan) {
             const data = this.getData();
             plan.id = 'plan_' + Date.now();
@@ -858,24 +870,24 @@
             this.displaySavedPlans();
             return plan.id;
         },
-        
+
         getSavedPlans() {
             return this.getData().plans || [];
         },
-        
+
         deletePlan(id) {
             const data = this.getData();
             data.plans = data.plans.filter(p => p.id !== id);
             localStorage.setItem(this.storageKey, JSON.stringify(data));
             this.displaySavedPlans();
         },
-        
+
         saveSettings(settings) {
             const data = this.getData();
             data.settings = { ...data.settings, ...settings };
             localStorage.setItem(this.storageKey, JSON.stringify(data));
         },
-        
+
         loadSettings() {
             const data = this.getData();
             if (data.settings) {
@@ -884,11 +896,11 @@
                 app.currentUnit = data.settings.unit || siteConfig.defaultUnit;
             }
         },
-        
+
         displaySavedPlans() {
             const container = document.getElementById('saved-plans-container');
             const plans = this.getSavedPlans();
-            
+
             if (plans.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-12 text-gray-400">
@@ -899,7 +911,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = plans.map(plan => `
                 <div class="bg-white rounded-lg shadow-lg p-4 mb-4">
                     <div class="flex justify-between items-start">
@@ -916,20 +928,20 @@
             `).join('');
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 3. I18N MODULE (Internationalization)
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const I18n = {
         currentLang: siteConfig.defaultLang,
-        
+
         init() {
             this.currentLang = app.currentLang;
             this.setupLanguageSelector();
             this.translatePage();
         },
-        
+
         setupLanguageSelector() {
             const selector = document.getElementById('language-selector');
             selector.value = this.currentLang;
@@ -937,7 +949,7 @@
                 this.setLanguage(e.target.value);
             });
         },
-        
+
         setLanguage(lang) {
             this.currentLang = lang;
             app.currentLang = lang;
@@ -946,7 +958,7 @@
             StorageManager.saveSettings({ lang });
             showToast(TRANSLATIONS[lang].toast.languageChanged);
         },
-        
+
         t(key) {
             const keys = key.split('.');
             let value = TRANSLATIONS[this.currentLang];
@@ -955,7 +967,7 @@
             }
             return value || key;
         },
-        
+
         translatePage() {
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -963,20 +975,20 @@
             });
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 4. THEME MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const ThemeManager = {
         currentTheme: siteConfig.defaultTheme,
-        
+
         init() {
             this.currentTheme = app.currentTheme;
             this.setupThemeSelector();
             this.applyTheme(this.currentTheme);
         },
-        
+
         setupThemeSelector() {
             const selector = document.getElementById('theme-selector');
             selector.value = this.currentTheme;
@@ -984,32 +996,32 @@
                 this.setTheme(e.target.value);
             });
         },
-        
+
         setTheme(theme) {
             this.currentTheme = theme;
             app.currentTheme = theme;
             this.applyTheme(theme);
             StorageManager.saveSettings({ theme });
         },
-        
+
         applyTheme(theme) {
             document.body.className = theme;
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 5. UNIT CONVERSION MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const UnitConverter = {
         currentUnit: siteConfig.defaultUnit,
-        
+
         init() {
             this.currentUnit = app.currentUnit;
             this.setupUnitToggle();
             this.updateLabels();
         },
-        
+
         setupUnitToggle() {
             const buttons = document.querySelectorAll('.unit-btn');
             buttons.forEach(btn => {
@@ -1023,7 +1035,7 @@
                 });
             });
         },
-        
+
         setUnit(unit) {
             const oldUnit = this.currentUnit;
             this.currentUnit = unit;
@@ -1033,23 +1045,23 @@
             StorageManager.saveSettings({ unit });
             showToast(TRANSLATIONS[app.currentLang].toast.unitChanged);
         },
-        
+
         updateLabels() {
             const labels = {
                 metric: { depth: 'm', pressure: 'bar', volume: 'L', sac: 'L/min' },
                 imperial: { depth: 'ft', pressure: 'psi', volume: 'cuft', sac: 'cuft/min' }
             };
-            
+
             document.querySelectorAll('.depth-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].depth})`);
             document.querySelectorAll('.pressure-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].pressure})`);
             document.querySelectorAll('.volume-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].volume})`);
             document.querySelectorAll('.sac-unit').forEach(el => el.textContent = `(${labels[this.currentUnit].sac})`);
         },
-        
+
         convertInputs(oldUnit, newUnit) {
             const depthInput = document.getElementById('max-depth');
             const pressureInput = document.getElementById('start-pressure');
-            
+
             if (depthInput?.value) {
                 const value = parseFloat(depthInput.value);
                 if (newUnit === 'imperial' && oldUnit === 'metric') {
@@ -1058,7 +1070,7 @@
                     depthInput.value = (value * conversions.depth.ft_to_m).toFixed(1);
                 }
             }
-            
+
             if (pressureInput?.value) {
                 const value = parseFloat(pressureInput.value);
                 if (newUnit === 'imperial' && oldUnit === 'metric') {
@@ -1068,7 +1080,7 @@
                 }
             }
         },
-        
+
         convert(value, type, toImperial = true) {
             if (toImperial) {
                 if (type === 'depth') return value * conversions.depth.m_to_ft;
@@ -1081,7 +1093,7 @@
             }
             return value;
         },
-        
+
         getLabel(type) {
             const labels = {
                 metric: { depth: 'm', pressure: 'bar', volume: 'L' },
@@ -1090,11 +1102,11 @@
             return labels[this.currentUnit][type];
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 6. DIVE CALCULATOR MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     window.calculateDivePlan = function() {
         const depth = parseFloat(document.getElementById('max-depth').value);
         const bottomTime = parseFloat(document.getElementById('bottom-time').value);
@@ -1102,59 +1114,59 @@
         const tankSize = parseFloat(document.getElementById('tank-size').value);
         const startPressure = parseFloat(document.getElementById('start-pressure').value);
         const location = document.getElementById('dive-location').value;
-        
+
         // Convert to metric if needed
         let depthMetric = depth;
         let pressureMetric = startPressure;
-        
+
         if (UnitConverter.currentUnit === 'imperial') {
             depthMetric = depth * conversions.depth.ft_to_m;
             pressureMetric = startPressure * conversions.pressure.psi_to_bar;
         }
-        
+
         // Calculate absolute pressure at depth
         const ambientPressure = (depthMetric / 10) + 1;
-        
+
         // Calculate gas consumption
         const gasConsumption = sacRate * ambientPressure * bottomTime;
-        
+
         // Calculate remaining air
         const totalAir = tankSize * pressureMetric;
         const airRemaining = totalAir - gasConsumption;
-        
+
         // Safety stop calculation
         const needsSafetyStop = depthMetric > 10;
         const safetyStopTime = 3;
-        
+
         // Total dive time
         const descentRate = 18; // m/min
         const ascentRate = 9; // m/min
         const descentTime = depthMetric / descentRate;
         const ascentTime = depthMetric / ascentRate;
         const totalTime = descentTime + bottomTime + ascentTime + (needsSafetyStop ? safetyStopTime : 0);
-        
+
         // Display results
         document.getElementById('results-placeholder').classList.add('hidden');
         document.getElementById('results-content').classList.remove('hidden');
-        
+
         document.getElementById('total-time').textContent = `${Math.round(totalTime)} min`;
         document.getElementById('air-consumed').textContent = `${Math.round(gasConsumption)} ${UnitConverter.getLabel('volume')}`;
         document.getElementById('air-remaining').textContent = `${Math.round(airRemaining)} ${UnitConverter.getLabel('volume')}`;
         document.getElementById('safety-stop').textContent = needsSafetyStop ? `${safetyStopTime} min @ 5m` : 'Not Required';
-        
+
         // Draw dive profile (legacy canvas)
         drawDiveProfile(depthMetric, bottomTime, descentTime, ascentTime, needsSafetyStop);
-        
+
         // Prepare profile data for Chart.js
         const profileData = {
             timeLabels: [],
             depths: []
         };
-        
+
         // Build time series for dive profile
         const timePoints = [0, descentTime, descentTime + bottomTime];
         const depthPoints = [0, depthMetric, depthMetric];
-        
+
         if (needsSafetyStop) {
             const safetyStopDepth = 5;
             const timeToSafetyStop = (depthMetric - safetyStopDepth) / ascentRate;
@@ -1163,16 +1175,16 @@
             timePoints.push(descentTime + bottomTime + timeToSafetyStop + safetyStopTime);
             depthPoints.push(safetyStopDepth);
         }
-        
+
         timePoints.push(totalTime);
         depthPoints.push(0);
-        
+
         // Convert to Chart.js format
         for (let i = 0; i < timePoints.length; i++) {
             profileData.timeLabels.push(Math.round(timePoints[i]));
             profileData.depths.push(Math.round(depthPoints[i] * 10) / 10);
         }
-        
+
         // Prepare decompression stops data
         const decoStops = [];
         if (needsSafetyStop) {
@@ -1181,12 +1193,12 @@
                 time: safetyStopTime
             });
         }
-        
+
         // Call new rendering functions
         showResults();
         renderProfile(profileData);
         renderDecompression(decoStops);
-        
+
         // Store current plan
         app.currentPlan = {
             location,
@@ -1198,36 +1210,36 @@
             profile: profileData,
             decoStops: decoStops
         };
-        
+
         showToast(TRANSLATIONS[app.currentLang].toast.planCalculated);
     };
-    
+
     function drawDiveProfile(depth, bottomTime, descentTime, ascentTime, hasSafetyStop) {
         const canvas = document.getElementById('diveProfileCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         const width = canvas.width;
         const height = canvas.height;
         const padding = 40;
-        
+
         const times = [0, descentTime, descentTime + bottomTime];
         const depths = [0, depth, depth];
-        
+
         if (hasSafetyStop) {
             times.push(descentTime + bottomTime + (depth - 5) / 9);
             depths.push(5);
             times.push(times[times.length - 1] + 3);
             depths.push(5);
         }
-        
+
         times.push(times[times.length - 1] + 5 / 9);
         depths.push(0);
-        
+
         const maxTime = Math.max(...times);
         const maxDepth = Math.max(...depths);
-        
+
         // Draw axes
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
@@ -1236,25 +1248,25 @@
         ctx.lineTo(padding, height - padding);
         ctx.lineTo(width - padding, height - padding);
         ctx.stroke();
-        
+
         // Draw profile
         ctx.strokeStyle = '#0056b3';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        
+
         times.forEach((time, i) => {
             const x = padding + (time / maxTime) * (width - 2 * padding);
             const y = height - padding - (depths[i] / maxDepth) * (height - 2 * padding);
-            
+
             if (i === 0) {
                 ctx.moveTo(x, y);
             } else {
                 ctx.lineTo(x, y);
             }
         });
-        
+
         ctx.stroke();
-        
+
         // Draw labels
         ctx.fillStyle = '#333';
         ctx.font = '12px Arial';
@@ -1265,16 +1277,16 @@
         ctx.fillText(`Depth (${UnitConverter.getLabel('depth')})`, -30, 0);
         ctx.restore();
     }
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // NEW RENDERING FUNCTIONS FOR CHART.JS AND DECOMPRESSION STOPS
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     // Show results section
     window.showResults = function() {
         document.getElementById('dive-results').classList.remove('hidden');
     };
-    
+
     // Render dive profile chart using Chart.js
     window.renderProfile = function(profileData) {
         const canvas = document.getElementById('dive-profile');
@@ -1282,20 +1294,20 @@
             console.error('Dive profile canvas not found');
             return;
         }
-        
+
         const ctx = canvas.getContext('2d');
-        
+
         // Destroy existing chart if any
         if (window.diveChart) {
             window.diveChart.destroy();
         }
-        
+
         // Check if Chart is available
         if (typeof Chart === 'undefined') {
             console.warn('Chart.js not loaded yet');
             return;
         }
-        
+
         window.diveChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -1330,7 +1342,7 @@
             }
         });
     };
-    
+
     // Render decompression stops
     window.renderDecompression = function(stops) {
         const container = document.getElementById('stops-container');
@@ -1338,12 +1350,12 @@
             console.error('Decompression stops container not found');
             return;
         }
-        
+
         if (!stops || stops.length === 0) {
             container.innerHTML = '<p class="text-gray-600">No decompression stops required</p>';
             return;
         }
-        
+
         let html = '<div class="space-y-2">';
         stops.forEach(stop => {
             html += `
@@ -1356,81 +1368,81 @@
         html += '</div>';
         container.innerHTML = html;
     };
-    
+
     window.saveDivePlan = function() {
         if (!app.currentPlan) {
             showToast('Please calculate a dive plan first', 'error');
             return;
         }
-        
+
         StorageManager.savePlan(app.currentPlan);
         showToast(TRANSLATIONS[app.currentLang].toast.planSaved);
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 7. TECHNICAL CALCULATORS MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     window.calculateMOD = function() {
         const o2Percent = parseFloat(document.getElementById('mod-o2').value);
         const maxPO2 = parseFloat(document.getElementById('mod-po2').value);
-        
+
         const mod = ((maxPO2 / (o2Percent / 100)) - 1) * 10;
-        
+
         document.getElementById('mod-result').classList.remove('hidden');
         document.getElementById('mod-value').textContent = `${mod.toFixed(1)} ${UnitConverter.getLabel('depth')}`;
     };
-    
+
     window.calculateBestMix = function() {
         let depth = parseFloat(document.getElementById('bestmix-depth').value);
         const maxPO2 = parseFloat(document.getElementById('bestmix-po2').value);
-        
+
         if (UnitConverter.currentUnit === 'imperial') {
             depth = depth * conversions.depth.ft_to_m;
         }
-        
+
         const bestMix = (maxPO2 / ((depth / 10) + 1)) * 100;
-        
+
         document.getElementById('bestmix-result').classList.remove('hidden');
         document.getElementById('bestmix-value').textContent = `EAN${Math.round(bestMix)}`;
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 8. CHECKLIST MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const ChecklistManager = {
         init() {
             // Checklist functionality is handled by HTML checkboxes
             // State could be saved to localStorage if needed
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 9. DIVE ROUTES/MAP MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const DiveRoutesManager = {
         map: null,
-        
+
         init() {
             this.initMap();
             this.displayDiveSites();
         },
-        
+
         initMap() {
             if (typeof L === 'undefined') {
                 console.warn('Leaflet not loaded yet, retrying...');
                 setTimeout(() => this.initMap(), 500);
                 return;
             }
-            
+
             this.map = L.map('map-container').setView([0, 0], 2);
-            
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(this.map);
-            
+
             DIVE_LOCATIONS.forEach(site => {
                 const marker = L.marker([site.lat, site.lng]).addTo(this.map);
                 marker.bindPopup(`
@@ -1442,7 +1454,7 @@
                 `);
             });
         },
-        
+
         displayDiveSites() {
             const container = document.getElementById('dive-sites-list');
             container.innerHTML = DIVE_LOCATIONS.slice(0, 9).map(site => `
@@ -1454,28 +1466,28 @@
             `).join('');
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 10. PDF EXPORT MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     window.exportPDF = function() {
         if (!app.currentPlan) {
             showToast('Please calculate a dive plan first', 'error');
             return;
         }
-        
+
         if (typeof window.jspdf === 'undefined') {
             showToast('PDF library not loaded', 'error');
             return;
         }
-        
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
+
         doc.setFontSize(20);
         doc.text('ScuPlan - Dive Plan', 20, 20);
-        
+
         doc.setFontSize(12);
         doc.text(`Location: ${app.currentPlan.location || 'Not specified'}`, 20, 40);
         doc.text(`Maximum Depth: ${app.currentPlan.depth.toFixed(1)} m`, 20, 50);
@@ -1483,23 +1495,23 @@
         doc.text(`Total Dive Time: ${app.currentPlan.totalTime.toFixed(1)} min`, 20, 70);
         doc.text(`Gas Consumed: ${app.currentPlan.gasConsumption.toFixed(0)} L`, 20, 80);
         doc.text(`Air Remaining: ${app.currentPlan.airRemaining.toFixed(0)} L`, 20, 90);
-        
+
         doc.save('scuplan-dive-plan.pdf');
         showToast('PDF exported successfully!');
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 11. QR CODE SHARE MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     window.shareQR = function() {
         if (!app.currentPlan) {
             showToast('Please calculate a dive plan first', 'error');
             return;
         }
-        
+
         const shareUrl = `${window.location.origin}?plan=${encodeURIComponent(JSON.stringify(app.currentPlan))}`;
-        
+
         // For now, just copy to clipboard
         navigator.clipboard.writeText(shareUrl).then(() => {
             showToast('Plan URL copied to clipboard!');
@@ -1507,15 +1519,15 @@
             showToast('Failed to copy URL', 'error');
         });
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 12. ROUTER MODULE
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     const Router = {
         init() {
             window.addEventListener('hashchange', () => this.navigate());
-            
+
             document.querySelectorAll('a[href^="#"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1523,39 +1535,39 @@
                     this.navigate(hash);
                 });
             });
-            
+
             const hash = window.location.hash.slice(1) || 'planner';
             this.navigate(hash);
         },
-        
+
         navigate(hash) {
             if (!hash) hash = window.location.hash.slice(1) || 'planner';
-            
+
             history.replaceState(null, null, `#${hash}`);
-            
+
             const section = document.getElementById(hash);
             if (section) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-            
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === `#${hash}`) {
                     link.classList.add('active');
                 }
             });
-            
+
             document.getElementById('mobile-menu').classList.add('hidden');
         }
     };
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 13. INITIALIZATION
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('ScuPlan SPA initializing...');
-        
+
         // Initialize modules
         StorageManager.init();
         I18n.init();
@@ -1563,39 +1575,39 @@
         UnitConverter.init();
         ChecklistManager.init();
         Router.init();
-        
+
         // Initialize map (delayed to ensure Leaflet is loaded)
         setTimeout(() => DiveRoutesManager.init(), 1000);
-        
+
         // Display saved plans
         StorageManager.displaySavedPlans();
-        
+
         // Mobile menu toggle
         document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         });
-        
+
         // Offline detection
         window.addEventListener('online', () => {
             app.isOffline = false;
             document.getElementById('offline-indicator').style.display = 'none';
             showToast(TRANSLATIONS[app.currentLang].common.online);
         });
-        
+
         window.addEventListener('offline', () => {
             app.isOffline = true;
             document.getElementById('offline-indicator').style.display = 'block';
             showToast(TRANSLATIONS[app.currentLang].toast.offlineMode);
         });
-        
+
         console.log('ScuPlan SPA initialized successfully!');
     });
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 14. SERVICE WORKER REGISTRATION
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     if ('serviceWorker' in navigator && siteConfig.env === 'production') {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js')
@@ -1603,11 +1615,11 @@
                 .catch(err => console.log('Service Worker registration failed:', err));
         });
     }
-    
+
     // ───────────────────────────────────────────────────────────────────────────
     // 15. ADSENSE LOADER (PRODUCTION ONLY)
     // ───────────────────────────────────────────────────────────────────────────
-    
+
     if (siteConfig.env === 'production' && siteConfig.adSenseClient) {
         (function() {
             const script = document.createElement('script');
@@ -1617,8 +1629,8 @@
             document.head.appendChild(script);
         })();
     }
-    
+
     </script>
-    
+
 </body>
 </html>

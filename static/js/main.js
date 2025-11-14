@@ -2933,20 +2933,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize state manager
         window.appStateManager = new AppStateManager();
 
-        // Initialize lazy loader
-        LazyLoader.preloadCriticalResources();
-
         // Set current year in footer
         const currentYear = document.getElementById('currentYear');
         if (currentYear) {
             currentYear.textContent = new Date().getFullYear();
         }
 
-        // Check which page we're on and initialize accordingly
-        if (document.getElementById('divePlanForm')) {
-            console.log('📊 Initializing dive planning page');
-            LazyLoader.loadComponent('divePlanning', () => {
-                initDivePlanner();
+        // Don't initialize page-specific code here for SPA
+        // Router will handle page loading
 
                 // Initialize date field with proper format
                 const dateInput = document.getElementById('diveDate');
@@ -2979,10 +2973,6 @@ document.addEventListener('DOMContentLoaded', function() {
             LazyLoader.loadComponent('sharedPlan', () => {
                 initSharedPlanView();
             });
-        } else {
-            console.log('📄 Basic page initialization');
-        }
-
         // Initialize unit system (metric only - single instance)
         if (typeof UnitConverter !== 'undefined' && !window.unitsManager) {
             window.unitsManager = new UnitConverter();
@@ -2990,6 +2980,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         initUnitSystem();
+        
+        // Initialize theme manager
+        if (typeof initThemeManager === 'function') {
+            initThemeManager();
+        }
 
         // Initialize AI assistant if available  
         if (window.aiAssistant) {

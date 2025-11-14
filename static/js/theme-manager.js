@@ -121,3 +121,36 @@ document.addEventListener('DOMContentLoaded', function() {
         element.style.transition = 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease';
     });
 });
+/**
+ * Theme Manager - Handles light/dark/underwater themes
+ */
+
+function initThemeManager() {
+    const savedTheme = localStorage.getItem('scuplan_theme') || 'light';
+    applyTheme(savedTheme);
+    
+    // Theme buttons
+    const themeButtons = document.querySelectorAll('[data-theme]');
+    themeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const theme = this.getAttribute('data-theme');
+            applyTheme(theme);
+            localStorage.setItem('scuplan_theme', theme);
+        });
+    });
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Update active button
+    document.querySelectorAll('[data-theme]').forEach(btn => {
+        if (btn.getAttribute('data-theme') === theme) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+console.log('Theme Manager loaded');
