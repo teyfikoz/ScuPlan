@@ -1,6 +1,6 @@
 // ScuPlan Service Worker - Offline-First PWA
-const CACHE_NAME = 'scuplan-v1.0.2';
-const RUNTIME_CACHE = 'scuplan-runtime';
+const CACHE_NAME = 'scuplan-v1.1.0';
+const RUNTIME_CACHE = 'scuplan-runtime-v1.1.0';
 
 // Files to cache immediately
 const PRECACHE_URLS = [
