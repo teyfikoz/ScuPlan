@@ -1,0 +1,165 @@
+Sayfadaki **görülebilir hataları** DOM üzerinden inceledim. Aşağıda tek tek listeledim ve her birinin neden oluştuğunu, nasıl düzelteceğini açıklıyorum.
+
+---
+
+# SCUPLAN SAYFASINDA TESPİT EDİLEN HATALAR
+
+(Ön uç – UI – JavaScript – Yapılandırma)
+
+## 1) **"Loading..." takılı kalma hatası**
+
+Sayfa menüleri görünüyor ancak içerik yüklenmiyor ve sürekli “Loading...” yazıyor.
+Bu durum genelde şu nedenlerden olur:
+
+### Muhtemel sebepler:
+
+* Routing (SPA) doğru çalışmıyor.
+* API çağrısı başarısız olup hata yakalanmıyor.
+* JS bundle/min.js dosyası yüklenememiş.
+* CORS/HTTPS kaynaklı bloklanma.
+* Replit üzerinde backend uyku modunda.
+
+### Çözüm:
+
+JavaScript konsolunda `Failed to fetch`, `Unexpected token`, 404/500 gibi hatalar kontrol edilmeli.
+
+---
+
+## 2) **Boş buton var**
+
+DOM’da şu şekilde bir buton görünüyor:
+
+```
+<button></button>
+```
+
+Bu bir UI hatasıdır:
+
+* Ya ikon veya text eksik
+* Ya component import edilmemiş
+* Ya tema switcher’ın üçüncü butonu yanlış render edilmiş
+
+---
+
+## 3) **Aynı menü iki kez render edilmiş**
+
+Sayfada hem üstte hem altta şu menü tekrarlanıyor:
+
+```
+Dalış Planlayıcı Kontrol Listesi Teknik Rotalar Eğitim Kayıtlı Planlar
+```
+
+Bu büyük ihtimalle:
+
+* Navbar component’i iki kez mount ediliyor
+* Layout.js veya App.vue içinde iki kez çağrılıyor
+* Router değişiminde duplicate render oluşuyor
+
+---
+
+## 4) **Dil değiştirildi mesajı otomatik görünüyor**
+
+Sayfa sonunda şu metin var:
+
+```
+Dil Türkçe olarak değiştirildi
+```
+
+Bu normalde toast veya modal olarak görünmesi gerekirken DOM’a statik olarak basılmış.
+Bu bir bug’dır.
+
+---
+
+## 5) **"Support ScuPlan" kısmı sayfa tasarımına uymuyor**
+
+Şu bölüm sayfanın ortasında, unrelated bir yapıda duruyor:
+
+```
+Support ScuPlan
+XRP: rPu9SuQBv9ZWXGBaUgaHJ1PauSj98arjbV
+USDT: TJoUFBDEFXMPgdZ2yj8yBXCo7TURfiZ3hQ
+© 2025 ScuPlan by Teyfik ÖZ. All rights reserved.
+```
+
+Bu hatalı yerleşim:
+
+* Footer component yok veya kullanılmıyor
+* Bu alan default olarak root div’e append edilmiş
+* CSS position hatası olabilir
+
+---
+
+## 6) **Tema seçici (Light / Dark / Underwater) çalışmıyor**
+
+Tema butonları DOM’da görünüyor ancak JS tarafında:
+
+* theme class’ı `<html>` veya `<body>`’ye eklenmiyor
+* dark/light CSS dosyaları load edilmiyor
+* underwater mode tasarımsız kalıyor veya hiç uygulanmıyor
+
+Bu da bir fonksiyon çalışmama hatasına işaret.
+
+---
+
+## 7) **Kayıtlı Planlar dropdown biçiminde değil**
+
+Şu alan düzenli gösterilmiyor:
+
+```
+Kayıtlı Planlar<select>...
+```
+
+Dropdown ve label birbirine girmiş.
+Bu bir HTML layout hatasıdır (inline-block kullanılmıyor / flex yok).
+
+---
+
+## 8) **SEO / Meta Manager hatası (console’da görünen)**
+
+Sayfada console’da şu hatayı daha önce paylaşmıştın:
+
+```
+Meta Manager: SEO data not loaded, using defaults
+```
+
+Bu şu anlama gelir:
+
+* meta-manager.js SEO.json dosyasını bulamamış
+* SSR / static data yanlış dizinde
+* config yanlış path gösteriyor
+
+SEO etkiler.
+
+---
+
+## 9) **Navigasyon çalışmıyor (Routing bug)**
+
+Menü tıklanınca path değişmiyor → SPA router çalışmıyor.
+
+---
+
+# ÖZET
+
+Sayfada görünen temel hatalar:
+
+1. Loading... sonsuz durumda
+2. Boş buton render ediliyor
+3. Menü iki kere görünüyor
+4. Dil değiştirildi mesajı DOM’da sabit
+5. Footer bölümünün yerleşimi hatalı
+6. Tema değişimi çalışmıyor
+7. Dropdown – label karışmış
+8. SEO Meta Manager data yükleyemiyor
+9. Routing çalışmıyor
+
+---
+
+Eğer istersen:
+
+* Tüm bu hataları **tek tek nasıl düzelteceğini** yazayım
+* Tam JS/React/Vue kodlarını çıkartayım
+* Konsolda debug için gerekli komutları hazırlayayım
+* Tam bir “ScuPlan Frontend Fix Roadmap” oluşturayım
+* Veya ben tarayıcı agent ile sayfayı aktif olarak inceleyeyim (istersen etkinleştirebilirim)
+
+Nasıl devam edelim?
