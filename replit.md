@@ -3,6 +3,9 @@
 ## Overview
 ScuPlan is a comprehensive diving application designed for divers of all skill levels, offering advanced dive planning, safety tools, and community-driven features. It emphasizes international and technical diving capabilities, aiming to be a complete solution for dive planning and education. The project envisions significant market potential by providing a robust, PWA-ready platform with extensive offline support and a focus on user experience.
 
+## Recent Changes
+- **November 14, 2025**: Fixed critical SPA initialization bugs by removing conflicting external script loaders. The application now correctly loads only vendor.bundle.js while keeping all other JavaScript inline in index-spa.html. This fixed three major issues: dive plan calculations not displaying results, all sections showing simultaneously instead of routing properly, and metric/imperial unit conversions not working.
+
 ## User Preferences
 - Language: English (translated from Turkish)
 - Unit System: Metric (default), Imperial support needed
@@ -10,7 +13,7 @@ ScuPlan is a comprehensive diving application designed for divers of all skill l
 - Navigation: Functional Saved Plans and Technical Diving sections
 
 ## System Architecture
-ScuPlan employs a hybrid architecture combining traditional multi-page Flask rendering, an original single-file SPA, and a modern multi-page SPA with client-side routing. The main application is a multi-page SPA utilizing Navigo for hash-based client-side routing, with separate HTML files for each major section (e.g., dive-planner, checklist, technical).
+ScuPlan is a single-page application (SPA) where all HTML, CSS, and JavaScript are embedded in index-spa.html. The application uses hash-based routing to navigate between sections without page reloads. **Critical:** Only vendor.bundle.js should be loaded externally; all other JavaScript is inline to prevent double-initialization conflicts.
 
 **UI/UX Decisions:**
 - **Theming:** Three comprehensive themes (Light, Dark, Underwater) with WCAG AA/AAA contrast ratios, using CSS custom properties for dynamic updates.
