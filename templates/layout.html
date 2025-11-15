@@ -81,7 +81,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
+            <a class="navbar-brand" href="/">
                 <i class="fas fa-water me-2"></i>ScuPlan
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -107,27 +107,27 @@
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}" id="homeLink">
+                        <a class="nav-link" href="/" id="homeLink">
                             <i class="fas fa-calculator me-1"></i> Dive Planner
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('checklist') }}" id="checklistLink">
+                        <a class="nav-link" href="/checklist" id="checklistLink">
                             <i class="fas fa-tasks me-1"></i> Checklists
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('technical') }}" id="technicalLink">
+                        <a class="nav-link" href="/technical" id="technicalLink">
                             <i class="fas fa-flask me-1"></i> Technical Diving
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dive_routes') }}" id="diveRoutesLink">
+                        <a class="nav-link" href="/dive_routes" id="diveRoutesLink">
                             <i class="fas fa-map-marked-alt me-1"></i> Dive Routes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dive_education') }}" id="diveEducationLink">
+                        <a class="nav-link" href="/dive_education" id="diveEducationLink">
                             <i class="fas fa-graduation-cap me-1"></i> Dive Education
                         </a>
                     </li>
@@ -205,9 +205,9 @@
                 <div class="col-md-3 mb-4 mb-md-0">
                     <h5 class="mb-3">Features</h5>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('index') }}">Dive Calculator</a></li>
-                        <li><a href="{{ url_for('checklist') }}">Dive Checklists</a></li>
-                        <li><a href="{{ url_for('technical') }}">Technical Diving</a></li>
+                        <li><a href="/">Dive Calculator</a></li>
+                        <li><a href="/checklist">Dive Checklists</a></li>
+                        <li><a href="/technical">Technical Diving</a></li>
                         <li><a href="#" id="footerSavedPlans">Saved Plans</a></li>
                     </ul>
                 </div>
