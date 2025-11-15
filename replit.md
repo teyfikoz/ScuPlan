@@ -90,7 +90,27 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **ENHANCED: Decompression stops display with proper debugging and unit formatting**
 ✓ **OPTIMIZED: SEO settings for better search engine discoverability**
 
-## Latest Enhancements (November 15, 2025 - Session 2)
+## Latest Enhancements (November 15, 2025 - Session 3)
+✓ **FIXED: Dive Profile Chart Rendering (CRITICAL BUG)**
+  - Canvas ID mismatch resolved: profileChart → diveProfileChart
+  - Chart.js now correctly finds canvas element and renders dive profile
+  - Negative depth visualization working (dive profile displays properly)
+✓ **RESTORED: Dive Results Containers**
+  - Added missing #diveSummary with descent/bottom/ascent/total time displays
+  - Added #decoStopsContainer with decompression stop warnings and list
+  - All dive calculation results now display correctly
+✓ **REMOVED: QRCode.js dependency**
+  - Eliminated unused QRCode.js library causing 404 errors
+  - Cleaner browser console (no CDN errors)
+  - Reduced unnecessary HTTP requests
+✓ **VERIFIED: End-to-End Dive Planning Functionality**
+  - Dive profile chart renders in both metric and imperial units
+  - Unit toggle works correctly (ft ↔ m conversion)
+  - Decompression stops display when needed
+  - All timing calculations visible (descent, bottom, ascent, total)
+  - Browser console clean (no errors)
+
+## Previous Enhancements (November 15, 2025 - Session 2)
 ✓ **REFACTORED: index.html to use layout.html (MAJOR)**
   - Removed duplicate navigation code (~100 lines eliminated)
   - All pages now consistently extend layout.html
