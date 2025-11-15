@@ -327,64 +327,66 @@ function setupEventListeners() {
         });
     }
 
-    // Setup About Me modal link - improved with better error handling
-    const aboutMeLink = document.getElementById('aboutMeLink');
-    if (aboutMeLink) {
-        console.log('Setting up About Me link');
-        aboutMeLink.addEventListener('click', function(e) {
-            console.log('About Me link clicked');
-            e.preventDefault();
-            e.stopPropagation();
+    // Setup About Me modal links (both navigation and footer) - improved with better error handling
+    const aboutMeLinks = document.querySelectorAll('.aboutMeLink');
+    if (aboutMeLinks.length > 0) {
+        console.log('Setting up About Me links:', aboutMeLinks.length);
+        aboutMeLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log('About Me link clicked');
+                e.preventDefault();
+                e.stopPropagation();
 
-            try {
-                // Use Bootstrap's modal instance or create new one
-                const aboutModal = document.getElementById('aboutMeModal');
-                if (aboutModal) {
-                    // Ensure Bootstrap is available
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        // Check if modal instance already exists
-                        let modal = bootstrap.Modal.getInstance(aboutModal);
-                        if (!modal) {
-                            modal = new bootstrap.Modal(aboutModal, {
-                                backdrop: true,
-                                keyboard: true,
-                                focus: true
+                try {
+                    // Use Bootstrap's modal instance or create new one
+                    const aboutModal = document.getElementById('aboutMeModal');
+                    if (aboutModal) {
+                        // Ensure Bootstrap is available
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                            // Check if modal instance already exists
+                            let modal = bootstrap.Modal.getInstance(aboutModal);
+                            if (!modal) {
+                                modal = new bootstrap.Modal(aboutModal, {
+                                    backdrop: true,
+                                    keyboard: true,
+                                    focus: true
+                                });
+                            }
+                            modal.show();
+                            console.log('About Me modal shown successfully');
+                        } else {
+                            console.error('Bootstrap Modal not available');
+                            // Fallback: show modal directly
+                            aboutModal.style.display = 'block';
+                            aboutModal.classList.add('show');
+                            document.body.classList.add('modal-open');
+                            
+                            // Add close functionality
+                            const closeButtons = aboutModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+                            closeButtons.forEach(btn => {
+                                btn.onclick = function() {
+                                    aboutModal.style.display = 'none';
+                                    aboutModal.classList.remove('show');
+                                    document.body.classList.remove('modal-open');
+                                };
                             });
                         }
-                        modal.show();
-                        console.log('About Me modal shown successfully');
                     } else {
-                        console.error('Bootstrap Modal not available');
-                        // Fallback: show modal directly
-                        aboutModal.style.display = 'block';
-                        aboutModal.classList.add('show');
-                        document.body.classList.add('modal-open');
-                        
-                        // Add close functionality
-                        const closeButtons = aboutModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
-                        closeButtons.forEach(btn => {
-                            btn.onclick = function() {
-                                aboutModal.style.display = 'none';
-                                aboutModal.classList.remove('show');
-                                document.body.classList.remove('modal-open');
-                            };
-                        });
+                        console.error('About Me modal element not found');
+                        if (typeof showAlert === 'function') {
+                            showAlert('About section is currently not available', 'warning');
+                        }
                     }
-                } else {
-                    console.error('About Me modal element not found');
+                } catch (error) {
+                    console.error('Error showing About Me modal:', error);
                     if (typeof showAlert === 'function') {
-                        showAlert('About section is currently not available', 'warning');
+                        showAlert('Error opening About section: ' + error.message, 'danger');
                     }
                 }
-            } catch (error) {
-                console.error('Error showing About Me modal:', error);
-                if (typeof showAlert === 'function') {
-                    showAlert('Error opening About section: ' + error.message, 'danger');
-                }
-            }
+            });
         });
     } else {
-        console.warn('About Me link element not found');
+        console.warn('About Me link elements not found');
     }
 }
 

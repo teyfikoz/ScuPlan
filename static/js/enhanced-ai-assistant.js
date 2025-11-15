@@ -34,7 +34,7 @@ class EnhancedDivingAssistant {
         const chatMessages = document.getElementById('chatMessages');
 
         if (!chatInput || !sendButton || !chatMessages) {
-            console.warn('Enhanced AI Assistant: Chat elements not found');
+            // Silently return if chat elements not found (normal on non-education pages)
             return;
         }
 
@@ -57,13 +57,13 @@ class EnhancedDivingAssistant {
     setupQuickActionButtons() {
         const chatContainer = document.querySelector('.ai-chat-container');
         if (!chatContainer) {
-            console.warn('Chat container not found, skipping quick actions setup');
+            // Silently return if chat container not found (normal on non-education pages)
             return;
         }
 
         const cardBody = chatContainer.querySelector('.card-body');
         if (!cardBody) {
-            console.warn('Card body not found, skipping quick actions setup');
+            // Silently return if card body not found
             return;
         }
 
@@ -120,9 +120,8 @@ class EnhancedDivingAssistant {
         const inputContainer = document.querySelector('.border-top.p-3');
         if (inputContainer) {
             inputContainer.insertAdjacentHTML('afterbegin', presetsHtml);
-        } else {
-            console.warn('Input container not found, skipping preset templates setup');
         }
+        // Silently skip if input container not found (normal on non-education pages)
     }
 
     setupVoiceInput() {
@@ -130,13 +129,13 @@ class EnhancedDivingAssistant {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const chatInput = document.querySelector('#chatInput');
             if (!chatInput) {
-                console.warn('Chat input not found, skipping voice input setup');
+                // Silently return if chat input not found (normal on non-education pages)
                 return;
             }
 
             const inputGroup = chatInput.closest('.input-group');
             if (!inputGroup) {
-                console.warn('Input group not found, skipping voice input setup');
+                // Silently return if input group not found
                 return;
             }
 
