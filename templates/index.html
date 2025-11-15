@@ -80,21 +80,6 @@
                     </li>
                 </ul>
                 
-                <!-- Unit Conversion Toggle - Master Menu -->
-                <div class="navbar-nav me-3">
-                    <div class="nav-item">
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Unit system toggle">
-                            <input type="radio" class="btn-check" name="masterUnits" id="masterMetric" autocomplete="off" checked>
-                            <label class="btn btn-outline-light" for="masterMetric" title="Metric System (m, bar, °C, L, kg)">
-                                <i class="fas fa-ruler me-1"></i>Metric
-                            </label>
-                            <input type="radio" class="btn-check" name="masterUnits" id="masterImperial" autocomplete="off">
-                            <label class="btn btn-outline-light" for="masterImperial" title="Imperial System (ft, PSI, °F, cuft, lbs)">
-                                <i class="fas fa-flag-usa me-1"></i>Imperial
-                            </label>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </nav>
@@ -111,16 +96,6 @@
                             <h5 class="card-title mb-0">
                                 <i class="fas fa-clipboard-list me-2"></i>Dive Plan Details
                             </h5>
-                            <div class="btn-group btn-group-sm" role="group" aria-label="Unit system toggle">
-                                <input type="radio" class="btn-check" name="diveUnits" id="diveMetric" autocomplete="off" checked>
-                                <label class="btn btn-outline-light" for="diveMetric" title="Metric System (m, bar, °C, L, kg)">
-                                    <i class="fas fa-ruler me-1"></i>Metric
-                                </label>
-                                <input type="radio" class="btn-check" name="diveUnits" id="diveImperial" autocomplete="off">
-                                <label class="btn btn-outline-light" for="diveImperial" title="Imperial System (ft, PSI, °F, cuft, lbs)">
-                                    <i class="fas fa-flag-usa me-1"></i>Imperial
-                                </label>
-                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -331,6 +306,113 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tank Modal -->
+    <div class="modal fade" id="tankModal" tabindex="-1" aria-labelledby="tankModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="tankModalLabel">Add Tank</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tankForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tankSize" class="form-label">Tank Size</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tankSize" min="5" max="20" step="0.5" value="12">
+                                    <span class="input-group-text">L</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tankPressure" class="form-label">Tank Pressure</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="tankPressure" min="100" max="300" step="10" value="200">
+                                    <span class="input-group-text">bar</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gasType" class="form-label">Gas Type</label>
+                            <select class="form-select" id="gasType">
+                                <option value="air">Air</option>
+                                <option value="nitrox">Nitrox</option>
+                                <option value="trimix">Trimix</option>
+                                <option value="oxygen">Oxygen</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="oxygenPercentage" class="form-label">Oxygen %</label>
+                                <input type="number" class="form-control" id="oxygenPercentage" min="5" max="100" step="1" value="21">
+                            </div>
+                            <div class="col-md-6 mb-3" id="heliumContainer" style="display: none;">
+                                <label for="heliumPercentage" class="form-label">Helium %</label>
+                                <input type="number" class="form-control" id="heliumPercentage" min="0" max="95" step="1" value="0">
+                            </div>
+                        </div>
+                        <div id="gasTypeHelper" class="mb-3">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveTankButton" onclick="saveTank()">Save Tank</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buddy Modal -->
+    <div class="modal fade" id="buddyModal" tabindex="-1" aria-labelledby="buddyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="buddyModalLabel">Add Buddy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="buddyForm">
+                        <div class="mb-3">
+                            <label for="buddyName" class="form-label">Buddy Name</label>
+                            <input type="text" class="form-control" id="buddyName" placeholder="Enter buddy's name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="buddyCertification" class="form-label">Certification</label>
+                            <input type="text" class="form-control" id="buddyCertification" placeholder="e.g., Open Water, Advanced, Rescue">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="buddySkillLevel" class="form-label">Skill Level</label>
+                                <select class="form-select" id="buddySkillLevel">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                    <option value="expert">Expert</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="buddySpecialty" class="form-label">Specialty</label>
+                                <select class="form-select" id="buddySpecialty">
+                                    <option value="none">None</option>
+                                    <option value="wreck">Wreck Diving</option>
+                                    <option value="deep">Deep Diving</option>
+                                    <option value="technical">Technical Diving</option>
+                                    <option value="underwater_photography">Underwater Photography</option>
+                                    <option value="night">Night Diving</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-info" id="saveBuddyButton" onclick="saveBuddy()">Save Buddy</button>
                 </div>
             </div>
         </div>
