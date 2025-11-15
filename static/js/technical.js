@@ -4,7 +4,7 @@
  */
 
 // Initialize all technical diving calculators
-document.addEventListener('DOMContentLoaded', function() {
+function initTechnicalDiving() {
     console.log('🔧 Technical Diving Module Loading...');
     
     // Initialize MOD calculator
@@ -28,7 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Multi-Level Calculator initialized');
     
     console.log('🎉 All Technical Diving calculators initialized successfully');
-});
+}
+
+// Check if DOM is already loaded (handles case where script loads after DOMContentLoaded)
+if (document.readyState === 'loading') {
+    // DOM is still loading, add event listener
+    document.addEventListener('DOMContentLoaded', initTechnicalDiving);
+} else {
+    // DOM is already loaded, execute immediately
+    initTechnicalDiving();
+}
 
 /**
  * Initialize Maximum Operating Depth (MOD) calculator
