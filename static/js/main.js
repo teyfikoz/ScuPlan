@@ -757,9 +757,21 @@ function displayDivePlanResults(data) {
         console.error('Decompression stops containers not found');
     }
 
+    // Show the dive profile container
+    const diveProfileContainer = document.getElementById('diveProfile');
+    if (diveProfileContainer) {
+        diveProfileContainer.style.display = 'block';
+    }
+
     // Draw the dive profile chart
     if (typeof drawDiveProfileChart === 'function') {
         drawDiveProfileChart(data.profile);
+    }
+    
+    // Show dive summary section
+    const diveSummary = document.getElementById('diveSummary');
+    if (diveSummary) {
+        diveSummary.style.display = 'block';
     }
 }
 
