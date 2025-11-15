@@ -1,274 +1,55 @@
 # ScuPlan - Advanced Dive Planning Application
 
-## Project Overview
-ScuPlan is a comprehensive diving application that provides advanced dive planning, safety tools, and community-driven features for divers of all skill levels, with enhanced international and technical diving capabilities.
-
-## Current Technology Stack
-- **Backend**: Flask (Python)
-- **Frontend**: JavaScript (ES6+), HTML5, CSS3
-- **Database**: PostgreSQL (with fallback mechanism)
-- **Styling**: Bootstrap 5
-- **Charts**: Chart.js
-- **Icons**: Font Awesome
-- **Deployment**: Gunicorn on Replit
-
-## Current Features (Fully Working)
-✓ **Dive Planner**: 
-  - Decompression calculations
-  - Descent, bottom, ascent time calculations
-  - Dive Profile Chart (negative depth visualization)
-  - Date/Time selection with calendar picker
-  - Buddy information display
-
-✓ **Checklist Module**: 
-  - Pre-dive, Post-dive, Emergency, Custom checklists
-  - Interactive checkbox system
-
-✓ **Saved Dive Plans**: 
-  - Local storage system for offline functionality
-  - Plan retrieval and management
-
-✓ **Gas Consumption Calculator**: 
-  - Tank size, pressure, O₂ percentage calculations
-  - Air consumption estimates
-
-✓ **Technical Diving Module**: 
-  - MOD (Maximum Operating Depth) calculations
-  - END (Equivalent Narcotic Depth) calculations
-  - CNS (Central Nervous System) oxygen toxicity tracking
-  - Best Mix calculations for optimal gas mixtures
-  - Multi-level dive planning
-
-✓ **Dive Education & Calculations**: 
-  - Interactive dive theory education with collapsible accordions
-  - Complete physics of diving (Boyle's, Dalton's, Henry's Laws, Archimedes)
-  - Decompression theory and safety stop explanations
-  - Dive planning essentials with NDL tables and gas planning
-  - Emergency procedures and equipment protocols
-  - Environmental awareness and marine conservation
-  - NDL time calculator with residual nitrogen tracking
-  - Surface interval calculator for repetitive dives
-  - Buoyancy weight calculator (fresh vs salt water)
-  - Gas mixture calculators with MOD calculations
-  - SAC rate and gas consumption calculators
-  - Live dive simulator with profile visualization
-  - Comprehensive zero-cost AI chatbot (100+ diving topics)
-  - Full metric/imperial unit system support throughout
-
-✓ **World Dive Routes**: 
-  - 29 comprehensive dive locations worldwide
-  - Interactive Leaflet.js map with clustering
-  - Advanced search and filtering system
-  - Detailed site information and planning integration
-
-✓ **Metric/Imperial Unit System**: 
-  - User-selectable toggle (persistent preference)
-  - Live conversion of input values when toggling
-  - Chart axis and result display updates
-  - Comprehensive depth, pressure, and volume conversions
-
-✓ **Cryptocurrency Donations**: 
-  - XRP and USDT TRC20 addresses displayed on all pages
-  - Copy-to-clipboard functionality
-
-✓ **Print & Offline Support**: 
-  - Printable dive plans
-  - Offline functionality with localStorage
-
-## Recent Technical Fixes (August 2025)
-✓ Fixed Multi-Level Planning redirecting to MOD Calculation
-✓ Fixed Saved Plans javascript:void(0) navigation error
-✓ Translated all Turkish messages to English in calculators
-✓ Fixed JavaScript errors causing Technical Diving issues
-✓ Database fallback mechanism working properly
-✓ **SIMPLIFIED: Removed metric/imperial unit toggle for better UX consistency**
-✓ **FIXED: Date field initialization with English format (dd.mm.yyyy)**
-✓ **UPDATED: Comprehensive 29 world-famous dive locations dataset**
-✓ **ENHANCED: Interactive map with all new dive sites and proper clustering**
-✓ **FIXED: Map search functionality now working with live filtering**
-✓ **IMPLEMENTED: Complete "Dive Education & Calculations" section with zero-cost AI**
-✓ **ENHANCED: Decompression stops display with proper debugging and unit formatting**
-✓ **OPTIMIZED: SEO settings for better search engine discoverability**
-
-## Latest Enhancements (November 15, 2025 - Session 3)
-✓ **FIXED: Dive Profile Chart Rendering (CRITICAL BUG)**
-  - Canvas ID mismatch resolved: profileChart → diveProfileChart
-  - Chart.js now correctly finds canvas element and renders dive profile
-  - Negative depth visualization working (dive profile displays properly)
-✓ **RESTORED: Dive Results Containers**
-  - Added missing #diveSummary with descent/bottom/ascent/total time displays
-  - Added #decoStopsContainer with decompression stop warnings and list
-  - All dive calculation results now display correctly
-✓ **REMOVED: QRCode.js dependency**
-  - Eliminated unused QRCode.js library causing 404 errors
-  - Cleaner browser console (no CDN errors)
-  - Reduced unnecessary HTTP requests
-✓ **VERIFIED: End-to-End Dive Planning Functionality**
-  - Dive profile chart renders in both metric and imperial units
-  - Unit toggle works correctly (ft ↔ m conversion)
-  - Decompression stops display when needed
-  - All timing calculations visible (descent, bottom, ascent, total)
-  - Browser console clean (no errors)
-
-## Previous Enhancements (November 15, 2025 - Session 2)
-✓ **REFACTORED: index.html to use layout.html (MAJOR)**
-  - Removed duplicate navigation code (~100 lines eliminated)
-  - All pages now consistently extend layout.html
-  - Navigation structure unified across entire application
-  - File reduced from 431 to 331 lines
-✓ **FIXED: Navigation consistency across all pages**
-  - Unit toggle now appears at END of navigation on ALL pages
-  - Previous issue: index.html had unit toggle at START, other pages at END
-  - Now consistent: Dive Planner → Checklists → Technical → Routes → Education → About → Saved Plans → **Metric/Imperial**
-✓ **STANDARDIZED: Color palette across all pages**
-  - Aligned style.css :root variables with custom-theme.css
-  - Primary color: #0077b6 (consistent across all pages)
-  - Navbar gradient: linear-gradient(135deg, primary → secondary)
-  - Button hover effects enhanced with transforms and shadows
-✓ **VERIFIED: Tab transition performance**
-  - All page navigations complete < 3 seconds (no freezing)
-  - Smooth transitions between all tabs
-  - Unit preference persists across navigation
-✓ **TESTED: Unit toggle functionality**
-  - Metric ↔ Imperial conversion working correctly
-  - Units update: meters ↔ feet, bar ↔ PSI, L ↔ cuft
-  - Toggle state synchronized across all pages
-
-## Previous Session (November 15, 2025 - Session 1)
-✓ **UPDATED: About Me modal now displays Teyfik ÖZ professional biography**
-  - Personal introduction and diving experience
-  - Professional background (software engineer, AI/ML)
-  - Education details and certifications
-  - Contact information (email, LinkedIn)
-✓ **REORGANIZED: Navigation structure improved**
-  - Imperial/Metric toggle moved to END position (last navigation item)
-  - Added "About Me" link to navigation
-  - Improved user experience with cleaner tab order
-✓ **FIXED: Unit conversion preference persistence bug**
-  - Removed initUnitSystem() that was forcing metric on every page load
-  - Enhanced UnitConverter.syncToggles() for dual toggle synchronization
-  - Fixed loadUserPreference() to properly apply saved units on page load
-  - Verified end-to-end: Imperial/Metric preference now survives page reloads
-✓ **RESTORED: Full Imperial/Metric unit conversion system**
-  - User-selectable toggle with localStorage persistence
-  - Live conversion of all inputs (depth, SAC rate, tank volume, pressure)
-  - Synchronized toggle states across navigation and page-specific controls
-  - Chart axis and labels update dynamically
-
-## Previous Enhancements (August 15, 2025)
-✓ **FIXED: Decompression stops display with proper console logging and unit formatting**  
-✓ **ENHANCED: Unit converter with cubic feet ↔ liters conversion capability**
-✓ **IMPLEMENTED: Comprehensive SEO optimization with meta tags, Open Graph, Twitter Cards**
-✓ **ADDED: JSON-LD structured data for better search engine understanding**
-✓ **IMPROVED: Enhanced dive profile chart with decompression stop annotations**
-✓ **COMPLETED: All calculator default values now use metric system (18m depth, 20L SAC rate)**
-✓ **FIXED: Clean dive routes template with working interactive map functionality**
-✓ **ENHANCED: Comprehensive AI assistant with technical diving knowledge base**
-✓ **EXPANDED: Comprehensive Mediterranean dive sites database (30 locations)**
-✓ **ADDED: Turkish dive sites (Bodrum, Kas, Antalya, Gallipoli)**
-✓ **ADDED: Greek dive sites (Santorini, Zakynthos, Crete, Rhodes)**
-✓ **ADDED: Italian dive sites (Ustica, Capri, Elba, Cinque Terre)**
-✓ **ADDED: Spanish dive sites (Costa Brava, Ibiza, Mallorca)**
-✓ **ADDED: Croatian Adriatic sites (Kornati, Vis, Pula wrecks)**
-✓ **ADDED: Cyprus, Malta, French dive sites**
-✓ **FIXED: Map search functionality with proper no-results handling**
-✓ **ENHANCED: Interactive map with clustering and detailed popups**
-✓ **NEW: 🐠 Playful Marine Life Interaction Tooltips**
-✓ **NEW: 🎧 Underwater Ambient Sound Customization**
-✓ **ADDED: 6 immersive sound themes (tropical, deep ocean, cave, wreck, night dive, current)**
-✓ **ADDED: Interactive marine creatures with educational facts**
-✓ **ADDED: Random marine life appearances with sound effects**
-
-## Zero-Cost Offline Education Features (August 2025)
-✓ **Comprehensive Dive Theory**: 6 major sections with interactive accordions
-✓ **Advanced Calculators**: NDL, surface interval, buoyancy, gas mix, SAC rate
-✓ **Zero-Cost AI Chatbot**: 100+ rule-based responses covering all diving topics
-✓ **Physics Simulations**: Interactive pressure simulator with real-time visualization  
-✓ **Live Dive Simulator**: Animated dive profiles with air consumption tracking
-✓ **Complete Offline Capability**: Works without internet after initial load
-✓ **Full Unit System Support**: Metric/Imperial toggle throughout education module
-
-## Planned New Features (Current Development)
-
-### 1. Decompression Calculation Explanation
-- Add informational box below dive planner results
-- Explain calculation methodology and limitations
-- Note: No specific algorithm (Bühlmann, VPM) currently implemented
-
-### 2. Metric/Imperial Unit System Toggle
-- User-selectable unit system (Metric default, Imperial option)
-- Conversions: meters ↔ feet, bar ↔ psi, liters ↔ cubic feet
-- Dynamic chart axis updates
-- Persistent user preference storage
-
-### 3. Tank Air Remaining Simulation
-- Real-time air consumption calculation
-- Inputs: depth, SAC rate, bottom time, tank specifications
-- Outputs: air used, remaining air, remaining pressure
-- Integration with dive profile display
-
-### 4. Run Time Table + Segment Consumption
-- Detailed air consumption breakdown by dive segments
-- Tabular display of time and air usage per phase
-- Integration with existing dive profile calculations
-
-### 5. Dive Routes Information Page
-- New navigation tab: "Dive Routes"
-- Curated list of world-famous dive sites
-- Site information: location, country, difficulty rating
-- Integration with Turkish Airlines dive packages
-
-### 6. Interactive World Map with Dive Sites
-- Leaflet.js implementation (API-free)
-- Static JSON data source for dive locations
-- Interactive markers with site information
-- Integration with Dive Routes page
-
-## Development Guidelines
-- Preserve all existing functionality during feature additions
-- Use modular, commented, testable code
-- Implement progressive enhancement
-- Maintain responsive design principles
-- Follow existing code patterns and naming conventions
-
-## File Structure
-```
-├── app.py                 # Main Flask application
-├── models.py              # Database models
-├── main.py               # Application entry point
-├── technical_diving.py    # Technical diving calculations
-├── templates/            # HTML templates
-├── static/
-│   ├── js/              # JavaScript modules
-│   ├── css/             # Stylesheets
-│   └── images/          # Static assets
-└── attached_assets/     # User-provided assets
-```
+## Overview
+ScuPlan is a comprehensive diving application designed for advanced dive planning, safety, and community interaction, catering to all skill levels with a focus on international and technical diving. Its purpose is to provide divers with robust tools for planning, education, and exploration, including features like decompression calculations, technical diving modules, and a global dive site directory. The project aims to enhance diving safety and enjoyment through technology.
 
 ## User Preferences
 - Language: English (translated from Turkish)
 - Unit System: Metric (default), Imperial support needed
 - Cryptocurrency addresses: XRP and USDT TRC20 visible on all pages
 - Navigation: Functional Saved Plans and Technical Diving sections
+- I prefer clear, concise explanations.
+- I appreciate iterative development with frequent updates.
+- Please ensure all new features maintain existing functionality.
+- I expect modular, commented, and testable code.
+- Responsive design principles should always be followed.
+- Adhere to existing code patterns and naming conventions.
 
-## Recent Development Progress
-✅ **Phase 1 Complete - Foundational Features:**
-- Implemented complete Metric/Imperial unit toggle system
-- Added decompression calculation explanations to dive results
-- Developed tank air remaining simulation with detailed consumption tracking
-- Built run time table showing segment-by-segment dive breakdown
-- Created World Dive Routes page with 8+ famous dive sites
-- Added dive site integration for seamless planning workflow
+## System Architecture
+ScuPlan utilizes a Flask (Python) backend with a JavaScript (ES6+), HTML5, and CSS3 frontend, styled with Bootstrap 5. Data is managed via PostgreSQL with a fallback mechanism and local storage for offline capabilities. Chart.js is used for data visualization, and Font Awesome for iconography. The application is deployed with Gunicorn on Replit.
 
-## Next Development Priority  
-1. Integrate Leaflet.js interactive world map
-2. Add marine life database with dive site species information
-3. Implement weather integration for dive site conditions
-4. Develop advanced gas mixture planning tools
-5. Create dive log export functionality
-6. Add social sharing features for dive plans
+**UI/UX Decisions:**
+- **Color Palette:** Standardized using `:root` variables in CSS with a primary color of `#0077b6`.
+- **Navigation:** Unified structure across all pages using `layout.html`, with a consistent order and unit toggle at the end.
+- **Responsiveness:** Designed with responsive containers for elements like charts to ensure adaptability across devices.
+- **Interactive Elements:** Features interactive checklists, collapsible accordions for education, and Leaflet.js for interactive maps.
 
-## Database Status
-- PostgreSQL endpoint currently disabled (Neon.tech)
-- Application runs successfully with database fallback mechanism
-- Local storage used for offline functionality
+**Technical Implementations:**
+- **Dive Planner:** Includes decompression, descent, bottom, and ascent time calculations, and a negative depth dive profile chart.
+- **Technical Diving Module:** Calculates MOD, END, CNS oxygen toxicity, and best mix for gas.
+- **Unit System:** Comprehensive metric/imperial toggle with live conversion for inputs, charts, and results, persistent via local storage.
+- **Offline Support:** Utilizes `localStorage` for saved dive plans and educational content.
+- **AI Chatbot:** A zero-cost, rule-based AI chatbot provides information on over 100 diving topics.
+- **World Dive Routes:** Features an interactive Leaflet.js map with clustering for 29 global dive locations, supported by static JSON data.
+- **Education Module:** Comprehensive dive theory, advanced calculators (NDL, surface interval, buoyancy, gas mix, SAC rate), and physics simulations.
+
+**Feature Specifications:**
+- **Dive Planner:** Decompression, timing, buddy info, profile chart, date/time picker.
+- **Checklist Module:** Pre-dive, post-dive, emergency, custom checklists.
+- **Gas Consumption Calculator:** Tank size, pressure, O₂ percentage, air consumption estimates.
+- **Dive Education:** Interactive theory, physics, decompression, emergency procedures, environmental awareness.
+- **Unit Conversion:** Full metric/imperial support for depth, pressure, volume, with chart axis and result updates.
+- **Donations:** Cryptocurrency (XRP, USDT TRC20) donation addresses displayed.
+- **Print Support:** Printable dive plans.
+
+**System Design Choices:**
+- **Modular Codebase:** Organized into `app.py`, `models.py`, `main.py`, `technical_diving.py`, and separate `templates`, `static/js`, `static/css` directories.
+- **Database Fallback:** Designed to run without an active PostgreSQL connection using a fallback mechanism and local storage.
+
+## External Dependencies
+- **Database:** PostgreSQL (with a fallback mechanism for local storage)
+- **Frontend Framework:** Bootstrap 5
+- **Charting Library:** Chart.js
+- **Icons:** Font Awesome
+- **Mapping Library:** Leaflet.js (API-free, using static JSON data)
+- **Deployment:** Gunicorn (on Replit)
