@@ -1,0 +1,125 @@
+GÖREV: ScuPlan projesini commit 3e6bfe88 durumuna tam olarak geri döndür
+COMMIT BİLGİSİ:
+- Commit Hash: 3e6bfe88
+- Commit Mesajı: "Fix issues with adding tanks and buddies and update navigation links"
+- Tarih: 2 ay önce
+SORUN:
+Tank ve buddy ekleme fonksiyonları düzgün çalışmıyor. Modal açılmıyor veya event listener'lar bağlanmıyor.
+ÖNCELİKLİ DÜZELTMELER:
+1. static/js/tank.js dosyasını şu şekilde güncelle:
+```javascript
+// initTankManagement fonksiyonunda hem addTankButton hem de addTankInlineButton için event listener ekle
+function initTankManagement() {
+    console.log('Initializing tank management module');
+    if (!window.app) {
+        window.app = {};
+    }
+    if (!window.app.tanks) {
+        window.app.tanks = [];
+    }
+    // Ana tank ekleme butonu
+    const addTankBtn = document.getElementById('addTankButton');
+    if (addTankBtn) {
+        addTankBtn.addEventListener('click', function() {
+            showAddTankModal();
+        });
+    }
+    // İnline tank ekleme butonu (dive parameters formunda)
+    const addTankInlineBtn = document.getElementById('addTankInlineButton');
+    if (addTankInlineBtn) {
+        addTankInlineBtn.addEventListener('click', function() {
+            showAddTankModal();
+        });
+    }
+    // Gas type değişikliği handler'ı
+    const gasTypeSelect = document.getElementById('gasType');
+    if (gasTypeSelect) {
+        gasTypeSelect.addEventListener('change', handleGasTypeChange);
+    }
+    updateTanksDisplay();
+}
+static/js/buddy.js dosyasını şu şekilde güncelle:
+// initBuddyManagement fonksiyonunda hem addBuddyButton hem de addBuddyInlineButton için event listener ekle
+function initBuddyManagement() {
+    console.log('Initializing buddy management module');
+    if (!window.app) {
+        window.app = {};
+    }
+    if (!window.app.buddies) {
+        window.app.buddies = [];
+    }
+    // Ana buddy ekleme butonu
+    const addBuddyBtn = document.getElementById('addBuddyButton');
+    if (addBuddyBtn) {
+        addBuddyBtn.addEventListener('click', function() {
+            showAddBuddyModal();
+        });
+    }
+    // İnline buddy ekleme butonu (dive parameters formunda)
+    const addBuddyInlineBtn = document.getElementById('addBuddyInlineButton');
+    if (addBuddyInlineBtn) {
+        addBuddyInlineBtn.addEventListener('click', function() {
+            showAddBuddyModal();
+        });
+    }
+    updateBuddiesDisplay();
+}
+templates/layout.html dosyasındaki tüm navigation linklerini Flask url_for() kullanacak şekilde güncelle:
+<!-- Ana sayfa linki -->
+<a class="nav-link" href="{{ url_for('index') }}" id="homeLink">
+    <i class="fas fa-calculator me-1"></i> Dive Planner
+</a>
+<!-- Footer'daki linkler -->
+<li><a href="{{ url_for('index') }}">Dive Calculator</a></li>
+<li><a href="{{ url_for('checklist') }}">Dive Checklists</a></li>
+<li><a href="{{ url_for('technical') }}">Technical Diving</a></li>
+static/js/main.js dosyasında setupDivePlanForm fonksiyonunu kontrol et ve gerekirse şu event listener'ları ekle:
+function setupDivePlanForm() {
+    // Calculate button
+    const calculateButton = document.getElementById('calculateButton');
+    if (calculateButton) {
+        calculateButton.addEventListener('click', calculateDivePlan);
+    }
+    // Tank modals - Her iki buton için
+    const addTankButton = document.getElementById('addTankButton');
+    if (addTankButton) {
+        addTankButton.addEventListener('click', showAddTankModal);
+    }
+    const addTankInlineButton = document.getElementById('addTankInlineButton');
+    if (addTankInlineButton) {
+        addTankInlineButton.addEventListener('click', showAddTankModal);
+    }
+    const saveTankButton = document.getElementById('saveTankButton');
+    if (saveTankButton) {
+        saveTankButton.addEventListener('click', saveTank);
+    }
+    // Buddy modals - Her iki buton için
+    const addBuddyButton = document.getElementById('addBuddyButton');
+    if (addBuddyButton) {
+        addBuddyButton.addEventListener('click', showAddBuddyModal);
+    }
+    const addBuddyInlineButton = document.getElementById('addBuddyInlineButton');
+    if (addBuddyInlineButton) {
+        addBuddyInlineButton.addEventListener('click', showAddBuddyModal);
+    }
+    const saveBuddyButton = document.getElementById('saveBuddyButton');
+    if (saveBuddyButton) {
+        saveBuddyButton.addEventListener('click', saveBuddy);
+    }
+}
+TEST ADIMLARI:
+
+Sayfayı yenile
+"Add Tank" butonuna tıkla - modal açılmalı
+Tank bilgilerini doldur ve kaydet - liste güncellenmeli
+"Add Buddy" butonuna tıkla - modal açılmalı
+Buddy bilgilerini doldur ve kaydet - liste güncellenmeli
+Dive Planner, Checklists, Technical Diving, Dive Routes linklerine tıkla - 404 hatası olmamalı
+BAŞARI KRİTERLERİ:
+✓ Her iki tank ekleme butonu da çalışıyor
+✓ Her iki buddy ekleme butonu da çalışıyor
+✓ Modals açılıyor ve kapanıyor
+✓ Veriler kaydediliyor ve görüntüleniyor
+✓ Tüm navigation linkleri çalışıyor
+✓ Console'da hata yok
+
