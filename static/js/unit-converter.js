@@ -75,8 +75,8 @@ class UnitConverter {
      * Setup event listeners for unit system toggle
      */
     setupEventListeners() {
-        const metricToggle = document.getElementById('metricSystem');
-        const imperialToggle = document.getElementById('imperialSystem');
+        const metricToggle = document.getElementById('diveMetric');
+        const imperialToggle = document.getElementById('diveImperial');
 
         // Add null checks to prevent errors when elements don't exist
         if (metricToggle) {
@@ -226,27 +226,24 @@ class UnitConverter {
 
     /**
      * Update input values when switching unit systems
-     * IMPORTANT: This should ONLY be called when user toggles metric/imperial
-     * NEVER call this on input events - it will reset user edits
-     * Percentage fields (O2%, He%) should NEVER have data-unit-type and will not be affected
      */
     updateInputValues() {
-        // Depth inputs - only convert fields explicitly marked with data-unit-type="depth"
+        // Depth inputs
         const depthInputs = document.querySelectorAll('input[data-unit-type="depth"]');
         depthInputs.forEach(input => {
-            const currentValue = parseFloat(input.value);
-            if (!isNaN(currentValue) && currentValue > 0) {
+            if (input.value && !isNaN(input.value)) {
+                const currentValue = parseFloat(input.value);
                 const convertedValue = this.convert(currentValue, 'depth', 
                     this.currentSystem === 'metric' ? 'imperial' : 'metric');
                 input.value = convertedValue;
             }
         });
 
-        // Pressure inputs - only convert fields explicitly marked with data-unit-type="pressure"
+        // Pressure inputs
         const pressureInputs = document.querySelectorAll('input[data-unit-type="pressure"]');
         pressureInputs.forEach(input => {
-            const currentValue = parseFloat(input.value);
-            if (!isNaN(currentValue) && currentValue > 0) {
+            if (input.value && !isNaN(input.value)) {
+                const currentValue = parseFloat(input.value);
                 const convertedValue = this.convert(currentValue, 'pressure',
                     this.currentSystem === 'metric' ? 'imperial' : 'metric');
                 input.value = Math.round(convertedValue);
@@ -283,8 +280,8 @@ class UnitConverter {
                 this.currentSystem = savedSystem;
 
                 // Update toggle buttons
-                const metricToggle = document.getElementById('metricSystem');
-                const imperialToggle = document.getElementById('imperialSystem');
+                const metricToggle = document.getElementById('diveMetric');
+                const imperialToggle = document.getElementById('diveImperial');
 
                 if (savedSystem === 'metric' && metricToggle) {
                     metricToggle.checked = true;

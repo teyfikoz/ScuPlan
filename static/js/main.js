@@ -280,7 +280,6 @@ function setupEventListeners() {
                 showOfflineGuide(e);
             } catch (error) {
                 console.error('Error showing offline guide:', error);
-                showAlert('Offline guide is not available at the moment', 'info');
             }
         });
     }
@@ -296,7 +295,6 @@ function setupEventListeners() {
                 showExportGuide(e);
             } catch (error) {
                 console.error('Error showing export guide:', error);
-                showAlert('Export guide is not available at the moment', 'info');
             }
         });
     }
@@ -361,7 +359,7 @@ function setupEventListeners() {
                         aboutModal.style.display = 'block';
                         aboutModal.classList.add('show');
                         document.body.classList.add('modal-open');
-
+                        
                         // Add close functionality
                         const closeButtons = aboutModal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
                         closeButtons.forEach(btn => {
@@ -2397,41 +2395,39 @@ function showExportGuide(e) {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exportGuideModalLabel">
-                            <i class="fas fa-download me-2"></i>Export & Print Guide
-                        </h5>
+                        <h5 class="modal-title" id="exportGuideModalLabel">Export & Print Guide</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>
-                            Multiple ways to export and print your dive plans:
-                        </div>
+                        <p>ScuPlan offers several ways to export or print your dive plans and checklists:</p>
 
-                        <h6><i class="fas fa-print me-2"></i>Printing Dive Plans</h6>
-                        <ul>
-                            <li>Use your browser's print function (Ctrl+P / Cmd+P)</li>
-                            <li>Plans are optimized for printing</li>
-                            <li>Include dive profile charts and all details</li>
-                        </ul>
+                        <h6 class="mt-3">Printing Dive Plans</h6>
+                        <ol>
+                            <li>Create a dive plan</li>
+                            <li>Click the "Print Plan" button in the results panel</li>
+                            <li>Your browser's print dialog will open</li>
+                            <li>Select your printer or save as PDF</li>
+                        </ol>
 
-                        <h6><i class="fas fa-file-pdf me-2"></i>Saving as PDF</h6>
-                        <ul>
-                            <li>Use your browser's "Print to PDF" option</li>
-                            <li>Perfect for digital storage and sharing</li>
-                            <li>Includes all calculations and charts</li>
-                        </ul>
+                        <h6 class="mt-3">Printing Checklists</h6>
+                        <ol>
+                            <li>Go to the Checklists page</li>
+                            <li>Find the checklist you want to print</li>
+                            <li>Click the "Print" button next to it</li>
+                            <li>Your browser's print dialog will open</li>
+                        </ol>
 
-                        <h6><i class="fas fa-share me-2"></i>Sharing Plans</h6>
-                        <ul>
-                            <li>Each plan has a unique sharing link</li>
-                            <li>Share with dive buddies and dive masters</li>
-                            <li>Links work offline if previously loaded</li>
-                        </ul>
+                        <h6 class="mt-3">Sharing Plans</h6>
+                        <ol>
+                            <li>Create a dive plan</li>
+                            <li>Click the "Share Plan" button</li>
+                            <li>Copy the generated link</li>
+                            <li>Send the link to your dive buddies</li>
+                        </ol>
 
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Always verify:</strong> Print and review your plans before diving!
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            When printing, try the "Save as PDF" option to create a digital copy that you can store on your device or share via email.
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -2840,98 +2836,70 @@ function capitalizeFirstLetter(string) {
 }
 
 /**
- * Initialize unit system
+ * Metric/Imperial Toggle Functionality
+ */
+/**
+ * Initialize unit system - simplified metric-only version
  */
 function initUnitSystem() {
-    // Load user preference or default to metric
-    const savedSystem = localStorage.getItem('scuplan_unit_system') || 'metric';
+    // Set metric as default and only system
+    localStorage.setItem('scuplan_units', 'metric');
     
     if (window.unitsManager) {
-        window.unitsManager.currentSystem = savedSystem;
-        console.log('Unit system initialized:', savedSystem);
-        
-        // Update UI elements
-        setTimeout(() => {
-            updateInputLabels();
-            window.unitsManager.updateAllUnits();
-        }, 200);
+        window.unitsManager.currentSystem = 'metric';
     }
+    
+    console.log('Unit system initialized: metric only');
 }
 
 /**
- * Update input labels based on current unit system
+ * Simplified metric-only unit system
  */
 function updateInputLabels() {
-    if (!window.unitsManager) return;
-    
-    const units = window.unitsManager.getUnits();
-    
-    // Update depth unit labels
-    const depthUnitSpans = document.querySelectorAll('[data-unit="depth"]');
-    depthUnitSpans.forEach(span => {
-        span.textContent = units.depth;
-    });
+    // Set all labels to metric
+    const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
+    if (depthUnitSpan) {
+        depthUnitSpan.textContent = 'meters';
+    }
 
-    // Update pressure unit labels
-    const pressureUnitSpans = document.querySelectorAll('[data-unit="pressure"]');
-    pressureUnitSpans.forEach(span => {
-        span.textContent = units.pressure;
-    });
+    const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
+    if (volumeUnitSpan) {
+        volumeUnitSpan.textContent = 'L/min';
+    }
 
-    // Update volume unit labels
-    const volumeUnitSpans = document.querySelectorAll('[data-unit="volume"]');
-    volumeUnitSpans.forEach(span => {
-        span.textContent = units.volume;
-    });
-
-    // Update input limits based on unit system
+    // Set metric input limits
     const depthInput = document.getElementById('diveDepth');
     if (depthInput) {
-        if (window.unitsManager.currentSystem === 'imperial') {
-            depthInput.max = "500";
-            depthInput.step = "1";
-            depthInput.placeholder = "e.g., 60";
-        } else {
-            depthInput.max = "150";
-            depthInput.step = "0.5";
-            depthInput.placeholder = "e.g., 18";
-        }
+        depthInput.max = "150";
+        depthInput.step = "0.5";
+        depthInput.placeholder = "e.g., 18";
     }
 
     const sacInput = document.getElementById('sacRate');
     if (sacInput) {
-        if (window.unitsManager.currentSystem === 'imperial') {
-            sacInput.min = "0.3";
-            sacInput.max = "1.8";
-            sacInput.step = "0.1";
-            sacInput.placeholder = "e.g., 0.7";
-        } else {
-            sacInput.min = "10";
-            sacInput.max = "50";
-            sacInput.step = "1";
-            sacInput.placeholder = "e.g., 20";
-        }
+        sacInput.min = "10";
+        sacInput.max = "50";
+        sacInput.step = "1";
+        sacInput.placeholder = "e.g., 20";
     }
 }
-
-// Listen for unit changes
-document.addEventListener('unitsChanged', function(e) {
-    console.log('Units changed to:', e.detail.system);
-    updateInputLabels();
-});
 
 /**
  * Initialize the application when the DOM is fully loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
-    try {
-        console.log('🚀 ScuPlan application initializing...');
+    console.log('🚀 ScuPlan application initializing...');
 
+    try {
+        // Initialize performance monitoring
         window.performanceMonitor = new PerformanceMonitor();
         window.performanceMonitor.startTiming('appInitialization');
 
         // Initialize state manager
         window.appStateManager = new AppStateManager();
+
+        // Initialize lazy loader
+        LazyLoader.preloadCriticalResources();
 
         // Set current year in footer
         const currentYear = document.getElementById('currentYear');
@@ -2939,8 +2907,11 @@ document.addEventListener('DOMContentLoaded', function() {
             currentYear.textContent = new Date().getFullYear();
         }
 
-        // Don't initialize page-specific code here for SPA
-        // Router will handle page loading
+        // Check which page we're on and initialize accordingly
+        if (document.getElementById('divePlanForm')) {
+            console.log('📊 Initializing dive planning page');
+            LazyLoader.loadComponent('divePlanning', () => {
+                initDivePlanner();
 
                 // Initialize date field with proper format
                 const dateInput = document.getElementById('diveDate');
@@ -2973,18 +2944,18 @@ document.addEventListener('DOMContentLoaded', function() {
             LazyLoader.loadComponent('sharedPlan', () => {
                 initSharedPlanView();
             });
-        // Initialize unit system (metric only - single instance)
-        if (typeof UnitConverter !== 'undefined' && !window.unitsManager) {
+        } else {
+            console.log('📄 Basic page initialization');
+        }
+
+        // Initialize unit systems
+        if (typeof UnitConverter !== 'undefined') {
             window.unitsManager = new UnitConverter();
             console.log('🔄 Global unit conversion system initialized');
         }
-        
+
+        // Initialize unit system (metric only)
         initUnitSystem();
-        
-        // Initialize theme manager
-        if (typeof initThemeManager === 'function') {
-            initThemeManager();
-        }
 
         // Initialize AI assistant if available  
         if (window.aiAssistant) {
@@ -3028,134 +2999,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Remove duplicate ScuPlanApp initialization - not needed
-
-/**
- * Show offline guide modal
- */
-function showOfflineGuide() {
-    const modalHtml = `
-        <div class="modal fade" id="offlineGuideModal" tabindex="-1" aria-labelledby="offlineGuideModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="offlineGuideModalLabel">
-                            <i class="fas fa-wifi me-2"></i>Offline Usage Guide
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            ScuPlan works offline! Here's how to make the most of it:
-                        </div>
-
-                        <h6><i class="fas fa-save me-2"></i>Saving Data Offline</h6>
-                        <ul>
-                            <li>Dive plans are automatically saved to your browser's local storage</li>
-                            <li>Checklists can be saved for offline use</li>
-                            <li>All calculations work without internet connection</li>
-                        </ul>
-
-                        <h6><i class="fas fa-download me-2"></i>Accessing Saved Data</h6>
-                        <ul>
-                            <li>Click "Saved Plans" in the navigation to view offline data</li>
-                            <li>Use the checklist tab to access saved checklists</li>
-                            <li>Data persists between browser sessions</li>
-                        </ul>
-
-                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Limitations</h6>
-                        <ul>
-                            <li>Data is stored locally on this device only</li>
-                            <li>Clearing browser data will remove saved plans</li>
-                            <li>Some features may require internet connection</li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Remove existing modal if present
-    const existingModal = document.getElementById('offlineGuideModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-
-    // Add modal to DOM
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('offlineGuideModal'));
-    modal.show();
-}
-
-/**
- * Show export guide modal
- */
-function showExportGuide() {
-    const modalHtml = `
-        <div class="modal fade" id="exportGuideModal" tabindex="-1" aria-labelledby="exportGuideModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exportGuideModalLabel">
-                            <i class="fas fa-download me-2"></i>Export & Print Guide
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>
-                            Multiple ways to export and print your dive plans:
-                        </div>
-
-                        <h6><i class="fas fa-print me-2"></i>Printing Dive Plans</h6>
-                        <ul>
-                            <li>Use your browser's print function (Ctrl+P / Cmd+P)</li>
-                            <li>Plans are optimized for printing</li>
-                            <li>Include dive profile charts and all details</li>
-                        </ul>
-
-                        <h6><i class="fas fa-file-pdf me-2"></i>Saving as PDF</h6>
-                        <ul>
-                            <li>Use your browser's "Print to PDF" option</li>
-                            <li>Perfect for digital storage and sharing</li>
-                            <li>Includes all calculations and charts</li>
-                        </ul>
-
-                        <h6><i class="fas fa-share me-2"></i>Sharing Plans</h6>
-                        <ul>
-                            <li>Each plan has a unique sharing link</li>
-                            <li>Share with dive buddies and dive masters</li>
-                            <li>Links work offline if previously loaded</li>
-                        </ul>
-
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Always verify:</strong> Print and review your plans before diving!
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood!</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Remove existing modal if present
-    const existingModal = document.getElementById('exportGuideModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-
-    // Add modal to DOM
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('exportGuideModal'));
-    modal.show();
-}
