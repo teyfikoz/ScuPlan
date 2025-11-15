@@ -75,23 +75,69 @@ class UnitConverter {
      * Setup event listeners for unit system toggle
      */
     setupEventListeners() {
-        const metricToggle = document.getElementById('diveMetric');
-        const imperialToggle = document.getElementById('diveImperial');
+        // Listen to both dive planner toggles and navigation toggles
+        const metricToggles = [
+            document.getElementById('diveMetric'),
+            document.getElementById('metricSystem')
+        ];
+        const imperialToggles = [
+            document.getElementById('diveImperial'),
+            document.getElementById('imperialSystem')
+        ];
 
-        // Add null checks to prevent errors when elements don't exist
-        if (metricToggle) {
-            metricToggle.addEventListener('change', () => {
-                if (metricToggle.checked) {
-                    this.switchToMetric();
-                }
+        // Add event listeners to all metric toggles
+        metricToggles.forEach(toggle => {
+            if (toggle) {
+                toggle.addEventListener('change', () => {
+                    if (toggle.checked) {
+                        this.switchToMetric();
+                        // Sync other toggles
+                        this.syncToggles('metric');
+                    }
+                });
+            }
+        });
+
+        // Add event listeners to all imperial toggles
+        imperialToggles.forEach(toggle => {
+            if (toggle) {
+                toggle.addEventListener('change', () => {
+                    if (toggle.checked) {
+                        this.switchToImperial();
+                        // Sync other toggles
+                        this.syncToggles('imperial');
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Sync all unit toggles to the same state
+     */
+    syncToggles(system) {
+        const allMetricToggles = [
+            document.getElementById('diveMetric'),
+            document.getElementById('metricSystem')
+        ];
+        const allImperialToggles = [
+            document.getElementById('diveImperial'),
+            document.getElementById('imperialSystem')
+        ];
+
+        if (system === 'metric') {
+            allMetricToggles.forEach(toggle => {
+                if (toggle) toggle.checked = true;
             });
-        }
-
-        if (imperialToggle) {
-            imperialToggle.addEventListener('change', () => {
-                if (imperialToggle.checked) {
-                    this.switchToImperial();
-                }
+            allImperialToggles.forEach(toggle => {
+                if (toggle) toggle.checked = false;
+            });
+        } else {
+            allImperialToggles.forEach(toggle => {
+                if (toggle) toggle.checked = true;
+            });
+            allMetricToggles.forEach(toggle => {
+                if (toggle) toggle.checked = false;
             });
         }
     }
@@ -279,15 +325,8 @@ class UnitConverter {
             if (savedSystem && (savedSystem === 'metric' || savedSystem === 'imperial')) {
                 this.currentSystem = savedSystem;
 
-                // Update toggle buttons
-                const metricToggle = document.getElementById('diveMetric');
-                const imperialToggle = document.getElementById('diveImperial');
-
-                if (savedSystem === 'metric' && metricToggle) {
-                    metricToggle.checked = true;
-                } else if (savedSystem === 'imperial' && imperialToggle) {
-                    imperialToggle.checked = true;
-                }
+                // Sync ALL toggle buttons (navigation and page-specific)
+                this.syncToggles(savedSystem);
 
                 // Update UI to reflect saved preference
                 setTimeout(() => this.updateAllUnits(), 100);

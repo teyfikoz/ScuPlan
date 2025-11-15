@@ -2837,52 +2837,9 @@ function capitalizeFirstLetter(string) {
 
 /**
  * Metric/Imperial Toggle Functionality
+ * Unit system is now managed by UnitConverter class (unit-converter.js)
+ * which handles preference loading, saving, and UI synchronization
  */
-/**
- * Initialize unit system - simplified metric-only version
- */
-function initUnitSystem() {
-    // Set metric as default and only system
-    localStorage.setItem('scuplan_units', 'metric');
-    
-    if (window.unitsManager) {
-        window.unitsManager.currentSystem = 'metric';
-    }
-    
-    console.log('Unit system initialized: metric only');
-}
-
-/**
- * Simplified metric-only unit system
- */
-function updateInputLabels() {
-    // Set all labels to metric
-    const depthUnitSpan = document.querySelector('span[data-unit="depth"]');
-    if (depthUnitSpan) {
-        depthUnitSpan.textContent = 'meters';
-    }
-
-    const volumeUnitSpan = document.querySelector('span[data-unit="volume"]');
-    if (volumeUnitSpan) {
-        volumeUnitSpan.textContent = 'L/min';
-    }
-
-    // Set metric input limits
-    const depthInput = document.getElementById('diveDepth');
-    if (depthInput) {
-        depthInput.max = "150";
-        depthInput.step = "0.5";
-        depthInput.placeholder = "e.g., 18";
-    }
-
-    const sacInput = document.getElementById('sacRate');
-    if (sacInput) {
-        sacInput.min = "10";
-        sacInput.max = "50";
-        sacInput.step = "1";
-        sacInput.placeholder = "e.g., 20";
-    }
-}
 
 /**
  * Initialize the application when the DOM is fully loaded
@@ -2954,8 +2911,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('🔄 Global unit conversion system initialized');
         }
 
-        // Initialize unit system (metric only)
-        initUnitSystem();
+        // Unit system is initialized by UnitConverter class (no manual init needed)
 
         // Initialize AI assistant if available  
         if (window.aiAssistant) {
