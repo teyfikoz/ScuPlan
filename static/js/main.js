@@ -398,38 +398,38 @@ function setupDivePlanForm() {
         calculateButton.addEventListener('click', calculateDivePlan);
     }
 
-    // Tank modals - Original button
-    const addTankButton = document.getElementById('addTankButton');
-    if (addTankButton) {
-        addTankButton.addEventListener('click', showAddTankModal);
-    }
-
-    // Tank modals - Inline button (in dive parameters form)
+    // Tank modal buttons
     const addTankInlineButton = document.getElementById('addTankInlineButton');
     if (addTankInlineButton) {
-        addTankInlineButton.addEventListener('click', showAddTankModal);
+        addTankInlineButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAddTankModal();
+        });
     }
 
     const saveTankButton = document.getElementById('saveTankButton');
     if (saveTankButton) {
-        saveTankButton.addEventListener('click', saveTank);
+        saveTankButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            saveTank();
+        });
     }
 
-    // Buddy modals - Original button
-    const addBuddyButton = document.getElementById('addBuddyButton');
-    if (addBuddyButton) {
-        addBuddyButton.addEventListener('click', showAddBuddyModal);
-    }
-
-    // Buddy modals - Inline button (in dive parameters form)
+    // Buddy modal buttons
     const addBuddyInlineButton = document.getElementById('addBuddyInlineButton');
     if (addBuddyInlineButton) {
-        addBuddyInlineButton.addEventListener('click', showAddBuddyModal);
+        addBuddyInlineButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAddBuddyModal();
+        });
     }
 
     const saveBuddyButton = document.getElementById('saveBuddyButton');
     if (saveBuddyButton) {
-        saveBuddyButton.addEventListener('click', saveBuddy);
+        saveBuddyButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            saveBuddy();
+        });
     }
 
     // Save and share buttons (will be shown after calculation)

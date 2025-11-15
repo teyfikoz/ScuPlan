@@ -17,20 +17,6 @@ function initBuddyManagement() {
         window.app.buddies = [];
     }
 
-    const addBuddyBtn = document.getElementById('addBuddyButton');
-    if (addBuddyBtn) {
-        addBuddyBtn.addEventListener('click', function() {
-            showAddBuddyModal();
-        });
-    }
-
-    const addBuddyInlineBtn = document.getElementById('addBuddyInlineButton');
-    if (addBuddyInlineBtn) {
-        addBuddyInlineBtn.addEventListener('click', function() {
-            showAddBuddyModal();
-        });
-    }
-
     // Display any existing buddies
     updateBuddiesDisplay();
 }
@@ -39,94 +25,84 @@ function initBuddyManagement() {
  * Show the modal to add a new buddy
  */
 function showAddBuddyModal() {
-    const buddyForm = document.getElementById('buddyForm');
-    if (!buddyForm) return;
+    const buddyModal = document.getElementById('buddyModal');
+    if (!buddyModal) {
+        console.error('Buddy modal not found');
+        return;
+    }
 
     // Reset the form
-    buddyForm.reset();
+    const buddyForm = document.getElementById('buddyForm');
+    if (buddyForm) {
+        buddyForm.reset();
+    }
 
-    // Show the modal
-    const buddyModal = document.getElementById('buddyModal');
-    if (!buddyModal) return;
+    // Reset modal title
+    const modalLabel = document.getElementById('buddyModalLabel');
+    if (modalLabel) {
+        modalLabel.textContent = 'Add Buddy';
+    }
 
+    // Show the modal using Bootstrap
     const modal = new bootstrap.Modal(buddyModal);
     modal.show();
-    app.modalInstance = modal;
+
+    if (window.app) {
+        window.app.modalInstance = modal;
+    }
 }
 
 /**
  * Show the modal to edit an existing buddy
- * @param {number} index - Index of the buddy to edit
  */
 function showEditBuddyModal(index) {
-    // Get the buddy data
-    const buddy = app.buddies[index];
+    const buddy = window.app.buddies[index];
 
-    const buddyNameInput = document.getElementById('buddyName');
-    const buddyCertInput = document.getElementById('buddyCertification');
-    const buddySkillSelect = document.getElementById('buddySkillLevel');
-    const buddySpecialtySelect = document.getElementById('buddySpecialty');
+    const buddyName = document.getElementById('buddyName');
+    const buddyCert = document.getElementById('buddyCertification');
+    const buddySkill = document.getElementById('buddySkillLevel');
+    const buddySpecialty = document.getElementById('buddySpecialty');
+
+    if (buddyName) buddyName.value = buddy.name;
+    if (buddyCert) buddyCert.value = buddy.certification || '';
+    if (buddySkill) buddySkill.value = buddy.skillLevel || 'intermediate';
+    if (buddySpecialty) buddySpecialty.value = buddy.specialty || 'none';
+
     const saveBuddyButton = document.getElementById('saveBuddyButton');
-    const buddyModalLabel = document.getElementById('buddyModalLabel');
-
-    if (!buddyNameInput || !buddyCertInput || !buddySkillSelect || 
-        !buddySpecialtySelect || !saveBuddyButton || !buddyModalLabel) {
-        return;
+    if (saveBuddyButton) {
+        saveBuddyButton.setAttribute('data-edit-index', index);
     }
 
-    // Fill the form with existing data
-    buddyNameInput.value = buddy.name;
-    buddyCertInput.value = buddy.certification || '';
-    buddySkillSelect.value = buddy.skillLevel || 'intermediate';
-    buddySpecialtySelect.value = buddy.specialty || 'none';
+    const modalLabel = document.getElementById('buddyModalLabel');
+    if (modalLabel) {
+        modalLabel.textContent = 'Edit Buddy';
+    }
 
-    // Set data attribute for the save button
-    saveBuddyButton.setAttribute('data-edit-index', index);
-
-    // Update modal title
-    buddyModalLabel.textContent = 'Edit Dive Buddy';
-
-    // Show the modal
     const buddyModal = document.getElementById('buddyModal');
-    if (!buddyModal) return;
+    if (buddyModal) {
+        const modal = new bootstrap.Modal(buddyModal);
+        modal.show();
 
-    const modal = new bootstrap.Modal(buddyModal);
-    modal.show();
-    app.modalInstance = modal;
+        if (window.app) {
+            window.app.modalInstance = modal;
+        }
+    }
 }
 
 /**
  * Save buddy data from the modal form
  */
 function saveBuddy() {
-    // Get form values
-    const buddyNameInput = document.getElementById('buddyName');
-    const buddyCertInput = document.getElementById('buddyCertification');
-    const buddySkillSelect = document.getElementById('buddySkillLevel');
-    const buddySpecialtySelect = document.getElementById('buddySpecialty');
-    const saveBuddyButton = document.getElementById('saveBuddyButton');
-    const buddyModalLabel = document.getElementById('buddyModalLabel');
+    const name = document.getElementById('buddyName').value.trim();
+    const certification = document.getElementById('buddyCertification').value.trim();
+    const skillLevel = document.getElementById('buddySkillLevel').value;
+    const specialty = document.getElementById('buddySpecialty').value;
 
-    if (!buddyNameInput || !buddyCertInput || !buddySkillSelect || 
-        !buddySpecialtySelect || !saveBuddyButton) {
-        return;
-    }
-
-    const name = buddyNameInput.value.trim();
-    const certification = buddyCertInput.value.trim();
-    const skillLevel = buddySkillSelect.value;
-    const specialty = buddySpecialtySelect.value;
-
-    // Validate inputs
     if (!name) {
-        showAlert('Please enter a buddy name', 'warning');
+        alert('Please enter a buddy name');
         return;
     }
 
-    // Check if we're editing or adding
-    const editIndex = saveBuddyButton.getAttribute('data-edit-index');
-
-    // Create buddy object
     const buddy = {
         name: name,
         certification: certification,
@@ -134,31 +110,32 @@ function saveBuddy() {
         specialty: specialty
     };
 
-    if (editIndex !== null && editIndex !== undefined) {
-        // Update existing buddy
-        window.app.buddies[editIndex] = buddy;
-        saveBuddyButton.removeAttribute('data-edit-index');
+    const saveButton = document.getElementById('saveBuddyButton');
+    if (!saveButton) return;
 
-        if (buddyModalLabel) {
-            buddyModalLabel.textContent = 'Add Dive Buddy';
+    const editIndex = saveButton.getAttribute('data-edit-index');
+
+    if (editIndex !== null && editIndex !== undefined) {
+        window.app.buddies[editIndex] = buddy;
+        saveButton.removeAttribute('data-edit-index');
+
+        const modalLabel = document.getElementById('buddyModalLabel');
+        if (modalLabel) {
+            modalLabel.textContent = 'Add Buddy';
         }
     } else {
-        // Add new buddy
         window.app.buddies.push(buddy);
     }
 
-    // Update the display
     updateBuddiesDisplay();
 
-    // Close the modal
-    if (app.modalInstance) {
-        app.modalInstance.hide();
+    if (window.app && window.app.modalInstance) {
+        window.app.modalInstance.hide();
     }
 }
 
 /**
  * Remove a buddy from the list
- * @param {number} index - Index of the buddy to remove
  */
 function removeBuddy(index) {
     if (index >= 0 && index < window.app.buddies.length) {
@@ -168,18 +145,16 @@ function removeBuddy(index) {
 }
 
 /**
- * Update the display of buddies in the interface
+ * Update the display of buddies
  */
 function updateBuddiesDisplay() {
     const container = document.getElementById('buddiesContainer');
     const noMessage = document.getElementById('noBuddiesMessage');
 
-    if (!container || !noMessage) return; // Not on a page with buddies display
+    if (!container || !noMessage) return;
 
-    // Clear current content
     container.innerHTML = '';
 
-    // Show/hide the no buddies message
     if (!window.app.buddies || window.app.buddies.length === 0) {
         noMessage.style.display = 'block';
         return;
@@ -187,12 +162,10 @@ function updateBuddiesDisplay() {
         noMessage.style.display = 'none';
     }
 
-    // Add each buddy to the display
     window.app.buddies.forEach((buddy, index) => {
         const buddyElement = document.createElement('div');
-        buddyElement.className = 'buddy-item';
+        buddyElement.className = 'buddy-item mb-3 p-3 bg-light rounded';
 
-        // Skill level badge color
         let skillBadgeClass = 'bg-secondary';
         switch (buddy.skillLevel) {
             case 'beginner':
@@ -209,8 +182,7 @@ function updateBuddiesDisplay() {
                 break;
         }
 
-        // Specialty badge if not 'none'
-        const specialtyBadge = buddy.specialty && buddy.specialty !== 'none' 
+        const specialtyBadge = (buddy.specialty && buddy.specialty !== 'none')
             ? `<span class="badge bg-light text-dark me-1">${capitalizeFirstLetter(buddy.specialty)}</span>`
             : '';
 
@@ -238,7 +210,6 @@ function updateBuddiesDisplay() {
         container.appendChild(buddyElement);
     });
 
-    // Add event listeners to the buttons
     document.querySelectorAll('.edit-buddy-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index'));
@@ -254,107 +225,7 @@ function updateBuddiesDisplay() {
     });
 }
 
-/**
- * Get buddy certification recommendations based on dive parameters
- * @param {number} depth - Planned dive depth
- * @param {boolean} isDecoNeeded - Whether decompression is needed
- * @returns {Object} Recommended certification levels
- */
-function getBuddyRecommendations(depth, isDecoNeeded) {
-    let recommendedLevel = 'beginner';
-    let recommendedCert = 'Open Water Diver';
-    let specialties = [];
-
-    // Determine recommendations based on depth
-    if (depth <= 18) {
-        recommendedLevel = 'beginner';
-        recommendedCert = 'Open Water Diver';
-    } else if (depth <= 30) {
-        recommendedLevel = 'intermediate';
-        recommendedCert = 'Advanced Open Water Diver';
-
-        if (depth > 25) {
-            specialties.push('Deep Diving');
-        }
-    } else if (depth <= 40) {
-        recommendedLevel = 'advanced';
-        recommendedCert = 'Advanced Open Water Diver';
-        specialties.push('Deep Diving');
-    } else {
-        recommendedLevel = 'professional';
-        recommendedCert = 'Technical Diver';
-        specialties.push('Extended Range');
-    }
-
-    // Add recommendations based on decompression
-    if (isDecoNeeded) {
-        if (recommendedLevel === 'beginner' || recommendedLevel === 'intermediate') {
-            recommendedLevel = 'advanced';
-        }
-
-        if (!specialties.includes('Deep Diving')) {
-            specialties.push('Deep Diving');
-        }
-
-        specialties.push('Decompression Procedures');
-    }
-
-    return {
-        level: recommendedLevel,
-        certification: recommendedCert,
-        specialties: specialties
-    };
-}
-
-/**
- * Show buddy compatibility warnings based on the current dive plan
- * @param {Object} plan - The current dive plan
- */
-function showBuddyCompatibilityWarnings(plan) {
-    if (!plan || !window.app.buddies || window.app.buddies.length === 0) return;
-
-    const depth = plan.depth;
-    const isDecoNeeded = plan.profile.decoStops && plan.profile.decoStops.length > 0;
-
-    // Get recommendations for this dive
-    const recommendations = getBuddyRecommendations(depth, isDecoNeeded);
-
-    const levelOrder = ['beginner', 'intermediate', 'advanced', 'professional'];
-
-    // Check each buddy against the recommendations
-    let warnings = [];
-
-    window.app.buddies.forEach(buddy => {
-        const buddyLevelIndex = levelOrder.indexOf(buddy.skillLevel);
-        const recommendedLevelIndex = levelOrder.indexOf(recommendations.level);
-
-        if (buddyLevelIndex < recommendedLevelIndex) {
-            warnings.push(`${buddy.name}'s skill level (${capitalizeFirstLetter(buddy.skillLevel)}) may be below recommended level (${capitalizeFirstLetter(recommendations.level)}) for this dive.`);
-        }
-
-        // Check for specialty requirements
-        if (recommendations.specialties.length > 0 && 
-            (buddy.specialty === 'none' || !recommendations.specialties.includes(buddy.specialty))) {
-            warnings.push(`This dive may require specialties (${recommendations.specialties.join(', ')}) that ${buddy.name} doesn't have.`);
-        }
-    });
-
-    // Show warnings if any
-    if (warnings.length > 0) {
-        showAlert(`<strong>Buddy Compatibility Warning:</strong><br>${warnings.join('<br>')}`, 'warning', 7000);
-    }
-}
-
-// Placeholder for capitalizeFirstLetter function if it's not defined elsewhere
 function capitalizeFirstLetter(string) {
     if (!string) return '';
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
-// Placeholder for showAlert function if it's not defined elsewhere
-function showAlert(message, type = 'info', duration = 3000) {
-    console.log(`Alert (${type}): ${message}`);
-    // In a real app, this would display a toast or similar notification
-}
-
-// App object will be defined in main.js
