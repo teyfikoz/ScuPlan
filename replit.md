@@ -90,8 +90,28 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **ENHANCED: Decompression stops display with proper debugging and unit formatting**
 ✓ **OPTIMIZED: SEO settings for better search engine discoverability**
 
-## Latest Enhancements (August 15, 2025)
-✓ **SIMPLIFIED: Removed metric/imperial toggle - system now uses metric units only**
+## Latest Enhancements (November 15, 2025)
+✓ **UPDATED: About Me modal now displays Teyfik ÖZ professional biography**
+  - Personal introduction and diving experience
+  - Professional background (software engineer, AI/ML)
+  - Education details and certifications
+  - Contact information (email, LinkedIn)
+✓ **REORGANIZED: Navigation structure improved**
+  - Imperial/Metric toggle moved to END position (last navigation item)
+  - Added "About Me" link to navigation
+  - Improved user experience with cleaner tab order
+✓ **FIXED: Unit conversion preference persistence bug**
+  - Removed initUnitSystem() that was forcing metric on every page load
+  - Enhanced UnitConverter.syncToggles() for dual toggle synchronization
+  - Fixed loadUserPreference() to properly apply saved units on page load
+  - Verified end-to-end: Imperial/Metric preference now survives page reloads
+✓ **RESTORED: Full Imperial/Metric unit conversion system**
+  - User-selectable toggle with localStorage persistence
+  - Live conversion of all inputs (depth, SAC rate, tank volume, pressure)
+  - Synchronized toggle states across navigation and page-specific controls
+  - Chart axis and labels update dynamically
+
+## Previous Enhancements (August 15, 2025)
 ✓ **FIXED: Decompression stops display with proper console logging and unit formatting**  
 ✓ **ENHANCED: Unit converter with cubic feet ↔ liters conversion capability**
 ✓ **IMPLEMENTED: Comprehensive SEO optimization with meta tags, Open Graph, Twitter Cards**
@@ -100,8 +120,6 @@ ScuPlan is a comprehensive diving application that provides advanced dive planni
 ✓ **COMPLETED: All calculator default values now use metric system (18m depth, 20L SAC rate)**
 ✓ **FIXED: Clean dive routes template with working interactive map functionality**
 ✓ **ENHANCED: Comprehensive AI assistant with technical diving knowledge base**
-✓ **REMOVED: Imperial system completely eliminated - only metric system supported**
-✓ **FIXED: All unit conversion dependencies removed from codebase**
 ✓ **EXPANDED: Comprehensive Mediterranean dive sites database (30 locations)**
 ✓ **ADDED: Turkish dive sites (Bodrum, Kas, Antalya, Gallipoli)**
 ✓ **ADDED: Greek dive sites (Santorini, Zakynthos, Crete, Rhodes)**
