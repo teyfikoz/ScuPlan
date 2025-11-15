@@ -1,93 +1,7 @@
+{% extends "layout.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScuPlan - Dive Planning Made Simple</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="/static/css/style.css" rel="stylesheet">
-    <link href="/static/css/diving-theme.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-swimmer me-2"></i>ScuPlan
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Unit Conversion Toggle -->
-                <div class="navbar-nav me-3">
-                    <div class="nav-item">
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Unit system toggle">
-                            <input type="radio" class="btn-check" name="unitSystem" id="metricSystem" autocomplete="off" checked>
-                            <label class="btn btn-outline-light" for="metricSystem" title="Metric System (m, bar, °C, L, kg)">
-                                <i class="fas fa-ruler me-1"></i>Metric
-                            </label>
-                            <input type="radio" class="btn-check" name="unitSystem" id="imperialSystem" autocomplete="off">
-                            <label class="btn btn-outline-light" for="imperialSystem" title="Imperial System (ft, PSI, °F, cuft, lbs)">
-                                <i class="fas fa-flag-usa me-1"></i>Imperial
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('index') }}" id="homeLink">
-                            <i class="fas fa-calculator me-1"></i> Dive Planner
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('checklist') }}" id="checklistLink">
-                            <i class="fas fa-tasks me-1"></i> Checklists
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('technical') }}" id="technicalLink">
-                            <i class="fas fa-flask me-1"></i> Technical Diving
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dive_routes') }}" id="diveRoutesLink">
-                            <i class="fas fa-map-marked-alt me-1"></i> Dive Routes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dive_education') }}" id="diveEducationLink">
-                            <i class="fas fa-graduation-cap me-1"></i> Dive Education
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="aboutMeLink">
-                            <i class="fas fa-user me-1"></i> About Me
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="offlineStorageButton" onclick="showOfflineStorageModal(); return false;">
-                            <i class="fas fa-save me-1"></i> Saved Plans
-                        </a>
-                    </li>
-                </ul>
-                
-            </div>
-        </div>
-    </nav>
-
-
-    <!-- Main Content -->
-    <div class="container py-4">
-        <div class="row">
+{% block content %}
+<div class="row">
             <!-- Left Panel: Dive Plan Form -->
             <div class="col-md-8">
                 <div class="card mb-4">
@@ -235,10 +149,10 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
+</div>
 
-    <!-- AI Chat Interface -->
+<!-- AI Chat Interface -->
     <div class="position-fixed bottom-0 end-0 me-3 mb-3" style="z-index: 1050;">
         <div class="ai-chat-container bg-white border rounded shadow" style="width: 350px; height: 400px; display: none;" id="aiChatContainer">
             <div class="card h-100">
@@ -414,17 +328,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-    <!-- App Scripts -->
-    <script src="/static/js/unit-converter.js"></script>
-    <script src="/static/js/tank.js"></script>
-    <script src="/static/js/buddy.js"></script>
-    <script src="/static/js/dive.js"></script>
-    <script src="/static/js/main.js"></script>
-    <script src="/static/js/enhanced-ai-assistant.js"></script>
-</body>
-</html>
+{% endblock %}
