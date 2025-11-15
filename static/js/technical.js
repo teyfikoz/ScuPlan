@@ -5,34 +5,50 @@
 
 // Initialize all technical diving calculators
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔧 Technical Diving Module Loading...');
+    
     // Initialize MOD calculator
     initMODCalculator();
+    console.log('✅ MOD Calculator initialized');
 
     // Initialize END calculator
     initENDCalculator();
+    console.log('✅ END Calculator initialized');
 
     // Initialize Best Mix calculator
     initBestMixCalculator();
+    console.log('✅ Best Mix Calculator initialized');
 
     // Initialize CNS calculator
     initCNSCalculator();
+    console.log('✅ CNS Calculator initialized');
 
     // Initialize Multi-Level calculator
     initMultiLevelCalculator();
+    console.log('✅ Multi-Level Calculator initialized');
+    
+    console.log('🎉 All Technical Diving calculators initialized successfully');
 });
 
 /**
  * Initialize Maximum Operating Depth (MOD) calculator
  */
 function initMODCalculator() {
+    console.log('🔍 Initializing MOD Calculator...');
     const modForm = document.getElementById('modForm');
-    if (!modForm) return;
+    if (!modForm) {
+        console.error('❌ MOD form not found!');
+        return;
+    }
+    console.log('✓ MOD form found');
 
     modForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        console.log('📝 MOD form submitted');
 
         const o2Percentage = parseFloat(document.getElementById('modO2').value);
         const maxPO2 = parseFloat(document.getElementById('modPO2').value);
+        console.log('📊 Input values - O2:', o2Percentage, '%, maxPO2:', maxPO2, 'bar');
 
         // Validate inputs
         if (isNaN(o2Percentage) || isNaN(maxPO2) || o2Percentage <= 0 || o2Percentage > 100 || maxPO2 <= 0) {
@@ -58,6 +74,7 @@ function initMODCalculator() {
             return response.json();
         })
         .then(data => {
+            console.log('✅ API response received:', data);
             // Display results
             document.getElementById('modDepth').textContent = data.mod;
             document.getElementById('modDepthCheck').textContent = data.mod;
@@ -66,6 +83,7 @@ function initMODCalculator() {
             // Set alert based on the result
             const resultBox = document.getElementById('modResult');
             const alertBox = document.getElementById('modAlert');
+            console.log('🎯 Setting result box display to block');
 
             if (data.mod <= 0) {
                 alertBox.className = 'alert alert-danger mt-3 mb-0';
@@ -82,13 +100,16 @@ function initMODCalculator() {
             }
 
             resultBox.style.display = 'block';
+            console.log('✅ Result box displayed');
         })
         .catch(error => {
-            console.log('API call failed, using offline calculation:', error);
+            console.log('⚠️ API call failed, using offline calculation:', error);
             
             // Offline MOD calculation
             try {
+                console.log('💻 Calculating offline MOD...');
                 const offlineMOD = calculateOfflineMOD(o2Percentage, maxPO2);
+                console.log('✅ Offline MOD calculated:', offlineMOD);
                 
                 // Display offline results
                 document.getElementById('modDepth').textContent = offlineMOD.mod;
@@ -98,6 +119,7 @@ function initMODCalculator() {
                 // Set alert based on the result
                 const resultBox = document.getElementById('modResult');
                 const alertBox = document.getElementById('modAlert');
+                console.log('🎯 Setting offline result box display to block');
 
                 if (offlineMOD.mod <= 0) {
                     alertBox.className = 'alert alert-danger mt-3 mb-0';
@@ -117,7 +139,9 @@ function initMODCalculator() {
                 alertBox.innerHTML += '<br><small class="text-muted"><i class="fas fa-wifi-slash me-1"></i>Calculated offline</small>';
 
                 resultBox.style.display = 'block';
+                console.log('✅ Offline result box displayed');
             } catch (offlineError) {
+                console.error('❌ Offline calculation error:', offlineError);
                 showError('modResult', 'modAlert', 'Calculation failed: ' + offlineError.message);
             }
         });

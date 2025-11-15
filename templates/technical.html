@@ -1,45 +1,418 @@
-# Moved `index.html` and `technical.html` to the `templates/` directory.
+{% extends "layout.html" %}
 
-# The following code assumes the files have been moved as per the error message and thinking.
-# No code changes are required in this specific file if the file system structure is corrected.
-# If this file were `app.py` or a similar file that *references* these templates,
-# then the `app.py` code might need changes if the references were hardcoded paths,
-# but typically Flask handles template loading relative to the 'templates' folder.
+{% block title %}Technical Diving Calculations{% endblock %}
 
-# Example of how `app.py` might look if it were rendering these templates:
-#
-# from flask import Flask, render_template
-#
-# app = Flask(__name__)
-#
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-#
-# @app.route('/technical')
-# def technical():
-#     return render_template('technical.html')
-#
-# if __name__ == '__main__':
-#     app.run(debug=True)
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Technical Diving Calculations</h1>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group mb-4" id="calculatorsTabs" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="mod-tab" data-bs-toggle="list" href="#mod" role="tab" aria-controls="mod">
+                    <i class="fas fa-arrow-down me-2"></i> MOD Calculation
+                </a>
+                <a class="list-group-item list-group-item-action" id="end-tab" data-bs-toggle="list" href="#end" role="tab" aria-controls="end">
+                    <i class="fas fa-brain me-2"></i> END Calculation
+                </a>
+                <a class="list-group-item list-group-item-action" id="best-mix-tab" data-bs-toggle="list" href="#best-mix" role="tab" aria-controls="best-mix">
+                    <i class="fas fa-flask me-2"></i> Best Mix
+                </a>
+                <a class="list-group-item list-group-item-action" id="cns-tab" data-bs-toggle="list" href="#cns" role="tab" aria-controls="cns">
+                    <i class="fas fa-heartbeat me-2"></i> CNS Tracking
+                </a>
+                <a class="list-group-item list-group-item-action" id="multi-level-tab" data-bs-toggle="list" href="#multi-level" role="tab" aria-controls="multi-level">
+                    <i class="fas fa-layer-group me-2"></i> Multi-Level Planning
+                </a>
+            </div>
+            
+            <div class="card bg-light mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">What is Technical Diving?</h5>
+                    <p class="card-text small">Technical diving involves diving beyond recreational limits, going deeper, longer, or in different environments. It requires specialized equipment, training, and gas mixtures.</p>
+                    <p class="card-text small">These calculators provide necessary information for your technical dive planning, but should not be used without proper training and certification.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="tab-content" id="calculatorsTabContent">
+                <!-- MOD Calculator -->
+                <div class="tab-pane fade show active" id="mod" role="tabpanel" aria-labelledby="mod-tab">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-arrow-down me-2"></i> Maximum Operating Depth (MOD) Calculation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">Maximum Operating Depth (MOD) calculates the safe maximum diving depth for a specific gas mixture. This is determined by the pO<sub>2</sub> limit value to prevent oxygen toxicity risk.</p>
+                            
+                            <form id="modForm" class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="modO2" class="form-label">Oxygen Percentage (%)</label>
+                                        <input type="number" class="form-control" id="modO2" min="1" max="100" value="32" required>
+                                        <div class="form-text">O<sub>2</sub> percentage in the mixture (e.g., 32 for Nitrox 32).</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="modPO2" class="form-label">Maximum pO<sub>2</sub> (bar)</label>
+                                        <input type="number" class="form-control" id="modPO2" min="0.1" max="2.0" step="0.1" value="1.4" required>
+                                        <div class="form-text">Limit value (typically between 1.4-1.6 bar).</div>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator me-2"></i> Calculate
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="modResult" class="result-box p-3 bg-light rounded" style="display:none;">
+                                <h5 class="result-title">MOD Result</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">Maximum Operating Depth:</span>
+                                            <span class="result-value fw-bold text-primary" id="modDepth">--</span> meters
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">pO<sub>2</sub> @ <span id="modDepthCheck">--</span>m:</span>
+                                            <span class="result-value fw-bold" id="modPO2Check">--</span> bar
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert mt-3 mb-0" id="modAlert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- END Calculator -->
+                <div class="tab-pane fade" id="end" role="tabpanel" aria-labelledby="end-tab">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-brain me-2"></i> Equivalent Narcotic Depth (END) Calculation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">Equivalent Narcotic Depth (END) calculates the narcotic depth you would feel as if diving with air, while actually diving with a trimix mixture at a specific depth.</p>
+                            
+                            <form id="endForm" class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="endDepth" class="form-label">Depth (m)</label>
+                                        <input type="number" class="form-control" id="endDepth" min="0" max="200" value="40" required>
+                                        <div class="form-text">Planned diving depth.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="endO2" class="form-label">Oxygen (%)</label>
+                                        <input type="number" class="form-control" id="endO2" min="1" max="100" value="21" required>
+                                        <div class="form-text">O<sub>2</sub> percentage in the mixture.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="endHe" class="form-label">Helium (%)</label>
+                                        <input type="number" class="form-control" id="endHe" min="0" max="95" value="35" required>
+                                        <div class="form-text">He percentage in the mixture.</div>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator me-2"></i> Calculate
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="endResult" class="result-box p-3 bg-light rounded" style="display:none;">
+                                <h5 class="result-title">END Result</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">Equivalent Narcotic Depth (END):</span>
+                                            <span class="result-value fw-bold text-primary" id="endValue">--</span> meters
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">Actual depth:</span>
+                                            <span class="result-value fw-bold" id="endActualDepth">--</span> meters
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <div class="result-item">
+                                            <span class="result-label">Gas Mixture:</span>
+                                            <span class="result-value" id="endGasMix">--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert mt-3 mb-0" id="endAlert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Best Mix Calculator -->
+                <div class="tab-pane fade" id="best-mix" role="tabpanel" aria-labelledby="best-mix-tab">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-flask me-2"></i> Optimal Gas Mixture (Best Mix) Calculation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">This calculator determines the most suitable Trimix gas mixture for a specific diving depth. It calculates ideal O<sub>2</sub> and He percentages based on maximum pO<sub>2</sub> and END limits.</p>
+                            
+                            <form id="bestMixForm" class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="bestMixDepth" class="form-label">Depth (m)</label>
+                                        <input type="number" class="form-control" id="bestMixDepth" min="30" max="200" value="60" required>
+                                        <div class="form-text">Your planned diving depth.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="bestMixPO2" class="form-label">Max pO<sub>2</sub> (bar)</label>
+                                        <input type="number" class="form-control" id="bestMixPO2" min="0.1" max="2.0" step="0.1" value="1.4" required>
+                                        <div class="form-text">Oxygen limit (typically 1.4 bar).</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="bestMixEND" class="form-label">Max END (m)</label>
+                                        <input type="number" class="form-control" id="bestMixEND" min="10" max="40" value="30" required>
+                                        <div class="form-text">Narcotic depth limit (typically 30m).</div>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator me-2"></i> Calculate
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="bestMixResult" class="result-box p-3 bg-light rounded" style="display:none;">
+                                <h5 class="result-title">Optimal Gas Mixture</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">Mixture Name:</span>
+                                            <span class="result-value fw-bold text-primary" id="bestMixName">--</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <span class="result-label">Planned Depth:</span>
+                                            <span class="result-value fw-bold" id="bestMixTargetDepth">--</span> meters
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">Oxygen (O<sub>2</sub>):</span>
+                                            <span class="result-value fw-bold" id="bestMixO2">--</span> %
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">Helium (He):</span>
+                                            <span class="result-value fw-bold" id="bestMixHe">--</span> %
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">Nitrogen (N<sub>2</sub>):</span>
+                                            <span class="result-value fw-bold" id="bestMixN2">--</span> %
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert mt-3 mb-0" id="bestMixAlert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CNS Calculator -->
+                <div class="tab-pane fade" id="cns" role="tabpanel" aria-labelledby="cns-tab">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-heartbeat me-2"></i> CNS Oxygen Toxicity Tracking
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">Calculate the Central Nervous System (CNS) oxygen toxicity based on partial pressure of oxygen (pO<sub>2</sub>) and exposure time. This helps track your oxygen exposure during dives.</p>
+                            
+                            <form id="cnsForm" class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="cnsDepth" class="form-label">Depth (m)</label>
+                                        <input type="number" class="form-control" id="cnsDepth" min="0" max="200" value="30" required>
+                                        <div class="form-text">Diving depth.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cnsO2" class="form-label">Oxygen (%)</label>
+                                        <input type="number" class="form-control" id="cnsO2" min="1" max="100" value="32" required>
+                                        <div class="form-text">O<sub>2</sub> percentage in the mixture.</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cnsTime" class="form-label">Exposure Time (min)</label>
+                                        <input type="number" class="form-control" id="cnsTime" min="1" max="600" value="45" required>
+                                        <div class="form-text">Time spent at this depth.</div>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator me-2"></i> Calculate CNS
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="cnsResult" class="result-box p-3 bg-light rounded" style="display:none;">
+                                <h5 class="result-title">CNS Oxygen Toxicity Result</h5>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">CNS Oxygen Loading:</span>
+                                            <span class="result-value fw-bold text-primary" id="cnsPercentage">--</span> %
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">pO<sub>2</sub> at depth:</span>
+                                            <span class="result-value fw-bold" id="cnsPO2">--</span> bar
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="result-item">
+                                            <span class="result-label">Time at depth:</span>
+                                            <span class="result-value fw-bold" id="cnsExposureTime">--</span> min
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3" style="height: 25px;">
+                                    <div id="cnsProgressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <div class="alert mt-3 mb-0" id="cnsAlert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Multi-Level Calculator -->
+                <div class="tab-pane fade" id="multi-level" role="tabpanel" aria-labelledby="multi-level-tab">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-layer-group me-2"></i> Multi-Level Dive Planning
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">Plan a multi-level dive with different depths, times, and gas mixtures. This advanced feature helps technical divers optimize their dive profiles.</p>
+                            
+                            <form id="multiLevelForm" class="mb-4">
+                                <div id="segmentsContainer">
+                                    <div class="segment-group mb-4">
+                                        <h6 class="segment-title mb-3">Segment 1 <small class="text-muted">(Bottom)</small></h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Depth (m)</label>
+                                                <input type="number" class="form-control segment-depth" min="1" max="200" value="40" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Time (min)</label>
+                                                <input type="number" class="form-control segment-time" min="1" max="120" value="20" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">O<sub>2</sub> (%)</label>
+                                                <input type="number" class="form-control segment-o2" min="1" max="100" value="21" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">He (%)</label>
+                                                <input type="number" class="form-control segment-he" min="0" max="95" value="35" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="segment-group mb-4">
+                                        <h6 class="segment-title mb-3">Segment 2 <small class="text-muted">(Ascent/Travel)</small></h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Depth (m)</label>
+                                                <input type="number" class="form-control segment-depth" min="1" max="200" value="25" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Time (min)</label>
+                                                <input type="number" class="form-control segment-time" min="1" max="120" value="10" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">O<sub>2</sub> (%)</label>
+                                                <input type="number" class="form-control segment-o2" min="1" max="100" value="32" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">He (%)</label>
+                                                <input type="number" class="form-control segment-he" min="0" max="95" value="20" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-4">
+                                    <button type="button" id="addSegmentBtn" class="btn btn-outline-primary me-2">
+                                        <i class="fas fa-plus me-1"></i> Add Segment
+                                    </button>
+                                    <button type="button" id="removeSegmentBtn" class="btn btn-outline-danger me-auto">
+                                        <i class="fas fa-minus me-1"></i> Remove Segment
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-calculator me-2"></i> Calculate
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div id="multiLevelResult" class="result-box p-3 bg-light rounded" style="display:none;">
+                                <h5 class="result-title">Multi-Level Dive Profile</h5>
+                                <div class="row mb-4">
+                                    <div class="col-md-5">
+                                        <div class="result-item">
+                                            <span class="result-label">Total Dive Time:</span>
+                                            <span class="result-value fw-bold text-primary" id="multiLevelTotalTime">--</span> min
+                                        </div>
+                                        <div class="result-item mt-2">
+                                            <span class="result-label">Maximum Depth:</span>
+                                            <span class="result-value fw-bold" id="multiLevelMaxDepth">--</span> m
+                                        </div>
+                                        <div class="result-item mt-2">
+                                            <span class="result-label">Total CNS:</span>
+                                            <span class="result-value fw-bold" id="multiLevelTotalCNS">--</span> %
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="segment-summary p-2 bg-white rounded border" id="segmentSummary">
+                                            <h6 class="segment-summary-title mb-2">Segment Summary:</h6>
+                                            <div id="segmentSummaryContent">
+                                                <!-- Segment summary content will be populated here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <canvas id="multiLevelProfileChart" width="400" height="200"></canvas>
+                                
+                                <div class="alert mt-3 mb-0" id="multiLevelAlert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-# Since the prompt only provided a diff for a Jinja template and no original content for a Python file,
-# and the diff itself is an empty replacement, we will assume the user wants to see the intended
-# structure of the `technical.html` file after the suggested fix, if it were to contain the provided snippet.
-# However, as the provided change snippet is empty (old_str and new_str are identical and empty),
-# we cannot apply any specific code changes based on the diff provided.
-# The core issue identified in the thinking is a file structure problem, not a code logic problem within a specific file's content provided here.
-
-# If the intention was to show the content of technical.html with the snippet applied, and the snippet
-# was meant to be a valid addition, it would look like this (but the provided snippet is empty):
-
-# {% extends 'layout.html' %}
-#
-# {% block title %}Technical Diving Calculator - ScuPlan{% endblock %}
-#
-# {% block content %}
-#     <!-- Content for technical page would go here -->
-# {% endblock %}
-
-# Given the empty diff, the most accurate representation is that no changes are applied to any *provided* code content.
-# The solution is external to the code content provided in the prompt.
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/technical.js') }}"></script>
+{% endblock %}
