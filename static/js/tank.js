@@ -17,9 +17,16 @@ function initTankManagement() {
         window.app.tanks = [];
     }
 
-    const addTankBtn = document.getElementById('addTankInlineButton');
+    const addTankBtn = document.getElementById('addTankButton');
     if (addTankBtn) {
         addTankBtn.addEventListener('click', function() {
+            showAddTankModal();
+        });
+    }
+
+    const addTankInlineBtn = document.getElementById('addTankInlineButton');
+    if (addTankInlineBtn) {
+        addTankInlineBtn.addEventListener('click', function() {
             showAddTankModal();
         });
     }

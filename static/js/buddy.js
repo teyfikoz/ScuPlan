@@ -17,9 +17,16 @@ function initBuddyManagement() {
         window.app.buddies = [];
     }
 
-    const addBuddyBtn = document.getElementById('addBuddyInlineButton');
+    const addBuddyBtn = document.getElementById('addBuddyButton');
     if (addBuddyBtn) {
         addBuddyBtn.addEventListener('click', function() {
+            showAddBuddyModal();
+        });
+    }
+
+    const addBuddyInlineBtn = document.getElementById('addBuddyInlineButton');
+    if (addBuddyInlineBtn) {
+        addBuddyInlineBtn.addEventListener('click', function() {
             showAddBuddyModal();
         });
     }
