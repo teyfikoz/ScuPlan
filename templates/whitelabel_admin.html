@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+
+{% block title %}White Label Configuration - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>White Label Configuration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Configure branding, monetization, and customization settings for your ScuPlan instance.
+                    </div>
+
+                    <form id="whiteLabelForm">
+                        <!-- Branding Section -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-tag me-2"></i>Branding
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="appName" class="form-label">Application Name</label>
+                                <input type="text" class="form-control" id="appName" value="{{ config.app_name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="appTagline" class="form-label">Tagline</label>
+                                <input type="text" class="form-control" id="appTagline" value="{{ config.app_tagline }}">
+                            </div>
+                        </div>
+
+                        <!-- Colors Section -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-palette me-2"></i>Theme Colors
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="primaryColor" class="form-label">Primary Color</label>
+                                <input type="color" class="form-control" id="primaryColor" value="{{ config.primary_color }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="secondaryColor" class="form-label">Secondary Color</label>
+                                <input type="color" class="form-control" id="secondaryColor" value="{{ config.secondary_color }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="accentColor" class="form-label">Accent Color</label>
+                                <input type="color" class="form-control" id="accentColor" value="{{ config.accent_color }}">
+                            </div>
+                        </div>
+
+                        <!-- Monetization Section -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-dollar-sign me-2"></i>Monetization (Google AdSense)
+                        </h5>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="adsenseEnabled" {% if config.adsense_enabled %}checked{% endif %}>
+                            <label class="form-check-label" for="adsenseEnabled">
+                                Enable Google AdSense
+                            </label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="adsenseClientId" class="form-label">AdSense Client ID</label>
+                                <input type="text" class="form-control" id="adsenseClientId" value="{{ config.adsense_client_id }}" placeholder="ca-pub-XXXXXXXXXXXXXXXXX">
+                                <small class="text-muted">Your Google AdSense publisher ID</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="adsenseSlotMain" class="form-label">Main Content Ad Slot</label>
+                                <input type="text" class="form-control" id="adsenseSlotMain" value="{{ config.adsense_slots.main_content }}" placeholder="1234567890">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="adsenseSlotFooter" class="form-label">Footer Ad Slot</label>
+                                <input type="text" class="form-control" id="adsenseSlotFooter" value="{{ config.adsense_slots.footer }}" placeholder="0987654321">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="adsenseSlotSidebar" class="form-label">Sidebar Ad Slot</label>
+                                <input type="text" class="form-control" id="adsenseSlotSidebar" value="{{ config.adsense_slots.sidebar }}" placeholder="1122334455">
+                            </div>
+                        </div>
+
+                        <!-- White Label Premium Features -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-crown me-2"></i>Premium Features
+                        </h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="whiteLabelEnabled" {% if config.white_label_enabled %}checked{% endif %}>
+                            <label class="form-check-label" for="whiteLabelEnabled">
+                                Enable White Label Mode
+                            </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="removeBranding" {% if config.remove_branding %}checked{% endif %}>
+                            <label class="form-check-label" for="removeBranding">
+                                Remove "Powered by ScuPlan" Branding
+                            </label>
+                        </div>
+
+                        <!-- Footer Configuration -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-shoe-prints me-2"></i>Footer Settings
+                        </h5>
+                        <div class="mb-3">
+                            <label for="footerText" class="form-label">Footer Copyright Text</label>
+                            <input type="text" class="form-control" id="footerText" value="{{ config.footer_text }}">
+                        </div>
+
+                        <!-- Contact Information -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-envelope me-2"></i>Contact & Support
+                        </h5>
+                        <div class="mb-3">
+                            <label for="supportEmail" class="form-label">Support Email</label>
+                            <input type="email" class="form-control" id="supportEmail" value="{{ config.support_email }}">
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Save Configuration
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="saveStatus" class="mt-3" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-lightbulb me-2"></i>White Label Benefits
+                    </h6>
+                    <ul class="mb-0">
+                        <li><strong>Custom Branding:</strong> Use your own brand name, colors, and logo</li>
+                        <li><strong>Monetization:</strong> Integrate Google AdSense to generate revenue</li>
+                        <li><strong>Remove Credits:</strong> Option to remove "Powered by ScuPlan" branding (premium)</li>
+                        <li><strong>Custom Domain:</strong> Use your own domain name</li>
+                        <li><strong>Analytics:</strong> Track usage with Google Analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('whiteLabelForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const config = {
+        app_name: document.getElementById('appName').value,
+        app_tagline: document.getElementById('appTagline').value,
+        primary_color: document.getElementById('primaryColor').value,
+        secondary_color: document.getElementById('secondaryColor').value,
+        accent_color: document.getElementById('accentColor').value,
+        adsense_enabled: document.getElementById('adsenseEnabled').checked,
+        adsense_client_id: document.getElementById('adsenseClientId').value,
+        'adsense_slots.main_content': document.getElementById('adsenseSlotMain').value,
+        'adsense_slots.footer': document.getElementById('adsenseSlotFooter').value,
+        'adsense_slots.sidebar': document.getElementById('adsenseSlotSidebar').value,
+        white_label_enabled: document.getElementById('whiteLabelEnabled').checked,
+        remove_branding: document.getElementById('removeBranding').checked,
+        footer_text: document.getElementById('footerText').value,
+        support_email: document.getElementById('supportEmail').value
+    };
+
+    fetch('/api/whitelabel/config', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(config)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const statusDiv = document.getElementById('saveStatus');
+        if (data.success) {
+            statusDiv.className = 'alert alert-success';
+            statusDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>Configuration saved successfully! Refresh the page to see changes.';
+        } else {
+            statusDiv.className = 'alert alert-danger';
+            statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error saving configuration: ' + (data.error || 'Unknown error');
+        }
+        statusDiv.style.display = 'block';
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
+    })
+    .catch(error => {
+        const statusDiv = document.getElementById('saveStatus');
+        statusDiv.className = 'alert alert-danger';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error: ' + error.message;
+        statusDiv.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

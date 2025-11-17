@@ -8,6 +8,7 @@ import logging
 import json
 import os
 import technical_diving
+from whitelabel_config import get_config
 
 # Loglama yapılandırması
 logging.basicConfig(level=logging.DEBUG)
@@ -118,11 +119,55 @@ def dive_routes():
     """World-famous dive routes and locations"""
     return render_template('dive_routes.html')
 
-# Dive education sayfası rotası  
+# Dive education sayfası rotası
 @app.route('/dive_education')
 def dive_education():
     """Dive education and calculations with AI assistant"""
     return render_template('dive_education.html')
+
+# White label configuration context processor
+@app.context_processor
+def inject_whitelabel_config():
+    """Make white label configuration available to all templates"""
+    wl_config = get_config()
+    return {
+        'whitelabel': wl_config.to_dict(),
+        'app_name': wl_config.get('app_name', 'ScuPlan'),
+        'adsense_enabled': wl_config.get('adsense_enabled', True),
+        'adsense_client_id': wl_config.get('adsense_client_id', 'ca-pub-XXXXXXXXXXXXXXXXX')
+    }
+
+# White label admin routes
+@app.route('/admin/whitelabel')
+def whitelabel_admin():
+    """White label configuration page (admin only)"""
+    wl_config = get_config()
+    return render_template('whitelabel_admin.html', config=wl_config.to_dict())
+
+@app.route('/api/whitelabel/config', methods=['GET'])
+def get_whitelabel_config():
+    """Get white label configuration"""
+    wl_config = get_config()
+    return jsonify(wl_config.to_dict())
+
+@app.route('/api/whitelabel/config', methods=['POST'])
+def update_whitelabel_config():
+    """Update white label configuration"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+
+        wl_config = get_config()
+
+        # Update configuration values
+        for key, value in data.items():
+            wl_config.set(key, value)
+
+        return jsonify({'success': True, 'config': wl_config.to_dict()})
+    except Exception as e:
+        logger.error(f"Error updating white label config: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 # API: Dive plan calculation
 @app.route('/api/calculate', methods=['POST'])

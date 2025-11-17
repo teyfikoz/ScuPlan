@@ -116,7 +116,7 @@
                     </div>
                 </div>
 
-                <!-- Calculate Button - Now positioned after Tank and Buddy sections -->
+                <!-- Calculate Button -->
                 <div class="card mb-4 border-success">
                     <div class="card-body text-center">
                         <div class="d-grid gap-2">
@@ -127,56 +127,171 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Right Panel: Results -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
+
+                <!-- Dive Profile - Moved below Calculate button -->
+                <div class="card mb-4" id="diveProfileCard" style="display:none;">
+                    <div class="card-header bg-dark text-white">
                         <h5 class="card-title mb-0">
-                            <i class="fas fa-chart-line me-2"></i>Dive Profile
+                            <i class="fas fa-chart-area me-2"></i>Dive Profile
                         </h5>
                     </div>
                     <div class="card-body">
-                        <div id="diveProfile" style="display:none;">
-                            <div style="position: relative; height:300px; width:100%;">
-                                <canvas id="diveProfileChart"></canvas>
-                            </div>
-                            
-                            <!-- Dive Summary -->
-                            <div id="diveSummary" class="mt-3" style="display:none;">
-                                <h6 class="fw-bold">Dive Summary</h6>
-                                <div class="dive-summary-grid">
-                                    <div class="dive-stat">
-                                        <span class="stat-label">Descent Time:</span>
-                                        <span class="stat-value" id="descentTimeResult">--</span>
-                                    </div>
-                                    <div class="dive-stat">
-                                        <span class="stat-label">Bottom Time:</span>
-                                        <span class="stat-value" id="bottomTimeDisplay">--</span>
-                                    </div>
-                                    <div class="dive-stat">
-                                        <span class="stat-label">Ascent Time:</span>
-                                        <span class="stat-value" id="ascentTimeResult">--</span>
-                                    </div>
-                                    <div class="dive-stat">
-                                        <span class="stat-label">Total Time:</span>
-                                        <span class="stat-value fw-bold" id="totalTimeDisplay">--</span>
-                                    </div>
+                        <div style="position: relative; height:350px; width:100%;">
+                            <canvas id="diveProfileChart"></canvas>
+                        </div>
+
+                        <!-- Dive Summary Below Chart -->
+                        <div class="row mt-4 text-center">
+                            <div class="col-3">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Descent Time</small>
+                                    <strong class="text-primary" id="descentTimeResult">1.0 min</strong>
                                 </div>
-                                
-                                <!-- Decompression Stops -->
-                                <div id="decoStopsContainer" class="mt-3" style="display:none;">
-                                    <h6 class="fw-bold text-warning">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>Decompression Stops Required
-                                    </h6>
-                                    <ul id="decoStopsList" class="list-unstyled"></ul>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Bottom Time</small>
+                                    <strong class="text-success" id="bottomTimeDisplay">40.0 min</strong>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Ascent Time</small>
+                                    <strong class="text-warning" id="ascentTimeResult">2.0 min</strong>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 bg-light rounded">
+                                    <small class="text-muted d-block">Total Time</small>
+                                    <strong class="text-info" id="totalTimeDisplay">43.0 min</strong>
                                 </div>
                             </div>
                         </div>
-                        <div id="noProfile" class="text-center text-muted">
-                            <i class="fas fa-chart-line fa-3x mb-3 opacity-25"></i>
-                            <p>Calculate your dive plan to see the profile</p>
+
+                        <!-- Decompression Stops -->
+                        <div id="decoStopsContainer" class="mt-3" style="display:none;">
+                            <div class="alert alert-warning">
+                                <strong><i class="fas fa-exclamation-triangle me-2"></i>Decompression Stops Required</strong>
+                                <ul id="decoStopsList" class="mb-0 mt-2"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Results -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Dive Plan Results
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultsContent" style="display:none;">
+                            <!-- Key Metrics -->
+                            <div class="row text-center mb-4">
+                                <div class="col-4">
+                                    <div class="metric-card p-3 bg-light rounded">
+                                        <div class="display-6 fw-bold text-primary" id="resultDepth">18.0</div>
+                                        <small class="text-muted">Depth (m)</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="metric-card p-3 bg-light rounded">
+                                        <div class="display-6 fw-bold text-success" id="resultBottomTime">40</div>
+                                        <small class="text-muted">Bottom (min)</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="metric-card p-3 bg-light rounded">
+                                        <div class="display-6 fw-bold text-info" id="resultTotalTime">43</div>
+                                        <small class="text-muted">Total (min)</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tank Status Quick Indicator -->
+                            <div id="tankStatusQuick" class="alert mb-3" style="display:none;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-flask fa-2x me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <strong id="tankStatusTitle">Tank Status</strong>
+                                        <div id="tankStatusMessage" class="small mt-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gas Consumption -->
+                            <div id="gasConsumptionSummary" style="display:none;">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-flask me-2"></i>Gas Consumption
+                                </h6>
+                                <div id="gasConsumptionDetails"></div>
+                                <div id="tankSufficiencyAlert" class="mt-2"></div>
+                            </div>
+
+                            <!-- Dive Buddies -->
+                            <div id="buddiesDisplay" class="mt-3" style="display:none;">
+                                <h6 class="fw-bold">
+                                    <i class="fas fa-users me-2"></i>Dive Buddies
+                                </h6>
+                                <div id="buddiesList" class="small">Add buddies to see them here</div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-3">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-success" id="savePlanButton">
+                                        <i class="fas fa-save me-2"></i>Save Offline
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="shareButton">
+                                        <i class="fas fa-share-alt me-2"></i>Share Plan
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="printButton" onclick="window.print()">
+                                        <i class="fas fa-print me-2"></i>Print Plan
+                                    </button>
+                                </div>
+                                <div id="saveStatus" class="mt-2" style="display:none;"></div>
+                            </div>
+
+                            <!-- Pre-Dive Checklist -->
+                            <div class="card bg-light mt-3">
+                                <div class="card-body p-3">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="fas fa-tasks me-2"></i>Pre-Dive Quick Checklist
+                                    </h6>
+                                    <div class="form-check form-check-sm mb-1">
+                                        <input class="form-check-input" type="checkbox" id="check1">
+                                        <label class="form-check-label small" for="check1">Check all equipment</label>
+                                    </div>
+                                    <div class="form-check form-check-sm mb-1">
+                                        <input class="form-check-input" type="checkbox" id="check2">
+                                        <label class="form-check-label small" for="check2">Test regulator</label>
+                                    </div>
+                                    <div class="form-check form-check-sm mb-1">
+                                        <input class="form-check-input" type="checkbox" id="check3">
+                                        <label class="form-check-label small" for="check3">Check BCD operation</label>
+                                    </div>
+                                    <div class="form-check form-check-sm mb-1">
+                                        <input class="form-check-input" type="checkbox" id="check4">
+                                        <label class="form-check-label small" for="check4">Verify weights</label>
+                                    </div>
+                                    <div class="form-check form-check-sm">
+                                        <input class="form-check-input" type="checkbox" id="check5">
+                                        <label class="form-check-label small" for="check5">Check air supply</label>
+                                    </div>
+                                    <a href="/checklist" class="btn btn-sm btn-outline-primary w-100 mt-2">
+                                        <i class="fas fa-list me-1"></i>Full Checklists
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- No Results Placeholder -->
+                        <div id="noResults" class="text-center text-muted py-5">
+                            <i class="fas fa-calculator fa-3x mb-3 opacity-25"></i>
+                            <p>Calculate your dive plan to see results</p>
                         </div>
                     </div>
                 </div>
@@ -360,4 +475,53 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set today's date as default
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('diveDate');
+    if (dateInput && !dateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+    }
+
+    // Update results display after calculation
+    document.addEventListener('divePlanCalculated', function(event) {
+        console.log('Dive plan calculated event received', event.detail);
+
+        // Show results section
+        document.getElementById('noResults').style.display = 'none';
+        document.getElementById('resultsContent').style.display = 'block';
+        document.getElementById('diveProfileCard').style.display = 'block';
+
+        // Update key metrics
+        const depth = parseFloat(document.getElementById('diveDepth').value);
+        const bottomTime = parseFloat(document.getElementById('bottomTime').value);
+
+        document.getElementById('resultDepth').textContent = depth.toFixed(1);
+        document.getElementById('resultBottomTime').textContent = bottomTime.toFixed(0);
+
+        // Show buddies if any
+        if (app.buddies && app.buddies.length > 0) {
+            document.getElementById('buddiesDisplay').style.display = 'block';
+            const buddiesList = document.getElementById('buddiesList');
+            buddiesList.innerHTML = app.buddies.map(b =>
+                `<div class="badge bg-info me-1 mb-1">${b.name}</div>`
+            ).join('');
+        }
+    });
+
+    // Share button
+    document.getElementById('shareButton')?.addEventListener('click', function() {
+        // Trigger share functionality
+        if (typeof generateShareLink === 'function') {
+            generateShareLink();
+        }
+    });
+
+    // Print button - already has onclick in HTML
+});
+</script>
 {% endblock %}

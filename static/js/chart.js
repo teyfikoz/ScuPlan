@@ -87,8 +87,9 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
                 label: 'Depth',
                 data: depthData,
                 borderColor: 'rgba(0, 123, 255, 1)',
-                backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                borderWidth: 3,
+                tension: 0.1,
                 pointBackgroundColor: function(context) {
                     const index = context.dataIndex;
                     const phase = phases[index];
@@ -132,38 +133,76 @@ function drawDiveProfileChart(profile, canvasId = 'diveProfileChart') {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
             scales: {
                 x: {
                     type: 'linear',
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Time (minutes)'
+                        text: 'Time (minutes)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     },
                     ticks: {
                         stepSize: 5,
+                        font: {
+                            size: 12
+                        },
                         callback: function(value) {
                             return value.toFixed(0);
                         }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        drawBorder: true,
+                        drawOnChartArea: true
                     }
                 },
                 y: {
                     title: {
                         display: true,
-                        text: `Depth (${depthUnit})`
+                        text: `Depth (${depthUnit})`,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     },
                     reverse: true, // Invert the scale
                     ticks: {
+                        font: {
+                            size: 12
+                        },
                         callback: function(value) {
                             return value.toFixed(0);
                         }
                     },
                     min: 0,
-                    max: Math.max(...depthData) + 2
+                    max: Math.max(...depthData) + 2,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: true,
+                        drawOnChartArea: true
+                    }
                 }
             },
             plugins: {
                 tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    padding: 12,
                     callbacks: {
                         title: function(tooltipItems) {
                             return `Time: ${tooltipItems[0].parsed.x.toFixed(1)} minutes`;

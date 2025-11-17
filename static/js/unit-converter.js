@@ -149,8 +149,9 @@ class UnitConverter {
         console.log('Switching to metric system');
         this.currentSystem = 'metric';
         this.updateAllUnits();
+        this.setDefaultValues('metric');
         this.saveUserPreference();
-        this.showUnitChangeNotification('Switched to Metric units');
+        // Notification disabled - this.showUnitChangeNotification('Switched to Metric units');
     }
 
     /**
@@ -160,8 +161,33 @@ class UnitConverter {
         console.log('Switching to imperial system');
         this.currentSystem = 'imperial';
         this.updateAllUnits();
+        this.setDefaultValues('imperial');
         this.saveUserPreference();
-        this.showUnitChangeNotification('Switched to Imperial units');
+        // Notification disabled - this.showUnitChangeNotification('Switched to Imperial units');
+    }
+
+    /**
+     * Set default values when switching unit systems
+     */
+    setDefaultValues(system) {
+        const depthInput = document.getElementById('diveDepth');
+
+        if (depthInput) {
+            // Only set default if field is empty or has the old default value
+            const currentValue = parseFloat(depthInput.value);
+
+            if (system === 'metric') {
+                // Set metric defaults: 18 meters
+                if (!currentValue || currentValue === 59.1 || currentValue === 60) {
+                    depthInput.value = '18';
+                }
+            } else if (system === 'imperial') {
+                // Set imperial defaults: 60 feet (approximately 18m)
+                if (!currentValue || currentValue === 18) {
+                    depthInput.value = '60';
+                }
+            }
+        }
     }
 
     /**

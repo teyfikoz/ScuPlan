@@ -822,6 +822,7 @@ function initMultiLevelCalculator() {
             showError('multiLevelResult', 'multiLevelAlert', error.message);
         });
     });
+    }
 }
 
 /**

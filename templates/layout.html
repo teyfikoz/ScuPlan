@@ -75,6 +75,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-theme.css') }}">
+
+    <!-- Google AdSense -->
+    {% if adsense_enabled %}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}"
+     crossorigin="anonymous"></script>
+    {% endif %}
+
     {% block head_extras %}{% endblock %}
 </head>
 <body>
@@ -121,7 +128,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link aboutMeLink" href="#" id="aboutMeLink">
+                        <a class="nav-link aboutMeLink" href="javascript:void(0)" id="aboutMeLink"
+                           data-bs-toggle="modal" data-bs-target="#aboutMeModal">
                             <i class="fas fa-user me-1"></i> About Me
                         </a>
                     </li>
@@ -149,6 +157,21 @@
     <!-- Main Content -->
     <main class="container py-4">
         {% block content %}{% endblock %}
+
+        <!-- Google AdSense - Horizontal Display Ad -->
+        {% if adsense_enabled %}
+        <div class="text-center my-4">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="{{ adsense_client_id }}"
+                 data-ad-slot="{{ whitelabel.adsense_slots.main_content }}"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        {% endif %}
     </main>
 
     <!-- Donation Section - Present on all pages -->
@@ -220,14 +243,29 @@
                 <div class="col-md-3">
                     <h5 class="mb-3">Resources</h5>
                     <ul class="footer-links">
-                        <li><a href="#" id="offlineGuideLink">Offline Usage Guide</a></li>
-                        <li><a href="#" id="exportGuideLink">Export & Print Guide</a></li>
-                        <li><a href="#" id="aboutMeFooterLink" class="aboutMeLink">About Me</a></li>
+                        <li><a href="javascript:void(0)" id="offlineGuideLink" onclick="showOfflineGuide(event); return false;">Offline Usage Guide</a></li>
+                        <li><a href="javascript:void(0)" id="exportGuideLink" onclick="showExportGuide(event); return false;">Export & Print Guide</a></li>
+                        <li><a href="javascript:void(0)" id="aboutMeFooterLink" class="aboutMeLink" data-bs-toggle="modal" data-bs-target="#aboutMeModal">About Me</a></li>
                     </ul>
                 </div>
             </div>
 
             <hr class="my-4" style="background-color: rgba(255,255,255,0.1);">
+
+            <!-- Google AdSense - Footer Ad -->
+            {% if adsense_enabled %}
+            <div class="text-center my-3">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="{{ adsense_client_id }}"
+                     data-ad-slot="{{ whitelabel.adsense_slots.footer }}"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            {% endif %}
 
             <div class="text-center">
                 <p class="mb-0">&copy; <span id="currentYear"></span> ScuPlan. All rights reserved.</p>
@@ -283,10 +321,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
 
-    <!-- Interactive Features -->
-    <script src="{{ url_for('static', filename='js/marine-life-tooltips.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ambient-sounds.js') }}"></script>
-
     <!-- App Scripts -->
     <script src="{{ url_for('static', filename='js/unit-converter.js') }}"></script>
     <script src="{{ url_for('static', filename='js/air-consumption.js') }}"></script>
@@ -299,6 +333,7 @@
     <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
     <script src="{{ url_for('static', filename='js/donations.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dive-plan-enhancements.js') }}"></script>
     <script src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/enhanced-ai-assistant.js') }}"></script>
 

@@ -638,6 +638,9 @@ function calculateDivePlan() {
         if (app.tanks.length > 0) {
             calculateGasConsumption(data);
         }
+
+        // Dispatch event to notify other components
+        document.dispatchEvent(new CustomEvent('divePlanCalculated', { detail: data }));
     })
     .catch(error => {
         hideLoading();
@@ -650,6 +653,9 @@ function calculateDivePlan() {
             const offlineResults = calculateOfflineDivePlan(planData);
             app.currentPlan = offlineResults;
             displayDivePlanResults(offlineResults);
+
+            // Dispatch event for offline calculations too
+            document.dispatchEvent(new CustomEvent('divePlanCalculated', { detail: offlineResults }));
         } else {
             showAlert('Failed to calculate dive plan: ' + error.message, 'danger');
         }
