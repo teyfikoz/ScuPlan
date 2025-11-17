@@ -33,13 +33,26 @@ function enhanceDivePlanDisplay() {
     console.log('Enhancing dive plan display...');
 
     // Check if we have tanks
-    if (!app.tanks || app.tanks.length === 0) {
-        console.log('No tanks defined, skipping gas consumption display');
+    if (!window.app || !window.app.tanks || window.app.tanks.length === 0) {
+        console.log('No tanks defined, showing warning message');
         // Hide gas consumption section
         const gasSection = document.getElementById('gasConsumptionSummary');
         if (gasSection) {
             gasSection.style.display = 'none';
         }
+
+        // Show warning in tank status quick indicator
+        const quickStatus = document.getElementById('tankStatusQuick');
+        const statusTitle = document.getElementById('tankStatusTitle');
+        const statusMessage = document.getElementById('tankStatusMessage');
+
+        if (quickStatus && statusTitle && statusMessage) {
+            quickStatus.className = 'alert mb-3 alert-warning';
+            statusTitle.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>⚠️ No Tanks Added';
+            statusMessage.textContent = 'Please add at least one tank using the "Add Tank" button above to see gas consumption analysis.';
+            quickStatus.style.display = 'block';
+        }
+
         return;
     }
 
@@ -48,7 +61,7 @@ function enhanceDivePlanDisplay() {
     const bottomTime = parseFloat(document.getElementById('bottomTime').value);
     const sacRate = parseFloat(document.getElementById('sacRate').value) || 20;
 
-    console.log('Dive parameters:', {depth, bottomTime, sacRate, tanks: app.tanks.length});
+    console.log('Dive parameters:', {depth, bottomTime, sacRate, tanks: window.app.tanks.length});
 
     if (!depth || !bottomTime) {
         console.log('Missing depth or bottom time');
@@ -76,7 +89,7 @@ function enhanceDivePlanDisplay() {
 function calculateGasConsumption(depth, bottomTime, sacRate) {
     const results = [];
 
-    app.tanks.forEach((tank, index) => {
+    window.app.tanks.forEach((tank, index) => {
         // Calculate pressure based on depth (atmospheres)
         const pressureFactor = (depth / 10) + 1;
 
@@ -356,8 +369,8 @@ function setupSavePlanButton() {
             location: document.getElementById('diveLocation').value,
             diveDate: document.getElementById('diveDate').value,
             diveTime: document.getElementById('diveTime').value,
-            tanks: app.tanks || [],
-            buddies: app.buddies || [],
+            tanks: window.app.tanks || [],
+            buddies: window.app.buddies || [],
             save: true
         };
 

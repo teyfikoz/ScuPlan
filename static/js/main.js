@@ -4,13 +4,15 @@
  */
 
 // Global application state
-const app = {
+window.app = {
     currentPlan: null,
     tanks: [],
     buddies: [],
     isOffline: !navigator.onLine,
     modalInstance: null
 };
+// Also expose as app for local access
+const app = window.app;
 
 /**
  * Initialize the dive planner with all necessary components
