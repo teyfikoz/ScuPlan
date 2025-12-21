@@ -1,0 +1,12 @@
+# Robots.txt for ScuPlan
+# https://scuplan.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API endpoints
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://scuplan.com/static/sitemap.xml
