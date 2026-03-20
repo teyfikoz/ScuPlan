@@ -5,6 +5,19 @@ Allows customization of branding, colors, and monetization features
 
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def env_bool(name, default=False):
+    """Parse boolean environment variables."""
+    value = os.environ.get(name)
+    if value is None:
+        return default
+
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
 
 class WhiteLabelConfig:
     """White label configuration manager"""
@@ -48,6 +61,8 @@ class WhiteLabelConfig:
 
             # Analytics
             'google_analytics_id': '',
+            'google_tag_id': os.environ.get('GOOGLE_TAG_ID', 'G-FZYPK08YL7'),
+            'google_consent_mode_enabled': env_bool('GOOGLE_CONSENT_MODE_ENABLED', True),
 
             # Contact & Support
             'support_email': 'teyfikoz@yahoo.com',
@@ -72,6 +87,11 @@ class WhiteLabelConfig:
                     loaded_config = json.load(f)
                     # Merge with defaults
                     default_config.update(loaded_config)
+                    if (
+                        not default_config.get('google_tag_id')
+                        and default_config.get('google_analytics_id')
+                    ):
+                        default_config['google_tag_id'] = default_config['google_analytics_id']
             except Exception as e:
                 print(f"Error loading white label config: {e}")
 

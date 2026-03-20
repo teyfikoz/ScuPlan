@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from dotenv import load_dotenv
 from datetime import datetime
 import secrets
 import math
@@ -8,11 +9,23 @@ import logging
 import json
 import os
 import technical_diving
+
+load_dotenv()
+
 from whitelabel_config import get_config
 
 # Loglama yapılandırması
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def parse_bool_env(name):
+    """Return a boolean env var value, or None when unset."""
+    value = os.environ.get(name)
+    if value is None:
+        return None
+
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 # Veritabanı kurulumu
 class Base(DeclarativeBase):
@@ -130,11 +143,35 @@ def dive_education():
 def inject_whitelabel_config():
     """Make white label configuration available to all templates"""
     wl_config = get_config()
+    adsense_enabled_env = parse_bool_env("ADSENSE_ENABLED")
+    consent_mode_enabled_env = parse_bool_env("GOOGLE_CONSENT_MODE_ENABLED")
+    google_tag_id = (
+        os.environ.get("GOOGLE_TAG_ID")
+        or wl_config.get("google_tag_id")
+        or wl_config.get("google_analytics_id")
+        or ""
+    ).strip()
+    adsense_enabled = (
+        adsense_enabled_env
+        if adsense_enabled_env is not None
+        else wl_config.get('adsense_enabled', True)
+    )
+    adsense_client_id = (
+        os.environ.get("ADSENSE_CLIENT_ID")
+        or wl_config.get('adsense_client_id', 'ca-pub-XXXXXXXXXXXXXXXXX')
+    ).strip()
+    google_consent_mode_enabled = (
+        consent_mode_enabled_env
+        if consent_mode_enabled_env is not None
+        else wl_config.get('google_consent_mode_enabled', bool(google_tag_id))
+    )
     return {
         'whitelabel': wl_config.to_dict(),
         'app_name': wl_config.get('app_name', 'ScuPlan'),
-        'adsense_enabled': wl_config.get('adsense_enabled', True),
-        'adsense_client_id': wl_config.get('adsense_client_id', 'ca-pub-XXXXXXXXXXXXXXXXX')
+        'adsense_enabled': adsense_enabled,
+        'adsense_client_id': adsense_client_id,
+        'google_tag_id': google_tag_id,
+        'google_consent_mode_enabled': google_consent_mode_enabled
     }
 
 # White label admin routes

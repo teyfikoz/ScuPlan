@@ -86,6 +86,26 @@
                             </div>
                         </div>
 
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-chart-line me-2"></i>Google Tag & Consent Mode
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="googleTagId" class="form-label">Google tag / GA4 Measurement ID</label>
+                                <input type="text" class="form-control" id="googleTagId" value="{{ config.google_tag_id or config.google_analytics_id }}" placeholder="G-FZYPK08YL7">
+                                <small class="text-muted">Use the Google tag ID from your GA4 web data stream.</small>
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="googleConsentModeEnabled" {% if config.google_consent_mode_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="googleConsentModeEnabled">
+                                        Enable Google Consent Mode v2 banner
+                                    </label>
+                                    <div class="text-muted small mt-1">Recommended when ScuPlan may receive EEA, UK, or Swiss traffic and uses Google measurement or ads.</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- White Label Premium Features -->
                         <h5 class="mt-4 mb-3">
                             <i class="fas fa-crown me-2"></i>Premium Features
@@ -167,6 +187,9 @@ document.getElementById('whiteLabelForm').addEventListener('submit', function(e)
         'adsense_slots.main_content': document.getElementById('adsenseSlotMain').value,
         'adsense_slots.footer': document.getElementById('adsenseSlotFooter').value,
         'adsense_slots.sidebar': document.getElementById('adsenseSlotSidebar').value,
+        google_tag_id: document.getElementById('googleTagId').value,
+        google_analytics_id: document.getElementById('googleTagId').value,
+        google_consent_mode_enabled: document.getElementById('googleConsentModeEnabled').checked,
         white_label_enabled: document.getElementById('whiteLabelEnabled').checked,
         remove_branding: document.getElementById('removeBranding').checked,
         footer_text: document.getElementById('footerText').value,

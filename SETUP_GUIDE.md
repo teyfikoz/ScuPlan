@@ -5,12 +5,13 @@
 ### 1. Gereksinimler
 - Python 3.11 veya üzeri
 - pip (Python paket yöneticisi)
+- PostgreSQL (production veya local persistence gerekiyorsa)
 
 ### 2. Kurulum Adımları
 
 ```bash
 # 1. Proje dizinine gidin
-cd /Users/teyfikoz/Downloads/ScuplanDive-2
+cd /path/to/ScuPlan
 
 # 2. Virtual environment oluşturun (zaten oluşturuldu)
 python3 -m venv venv
@@ -21,7 +22,10 @@ source venv/bin/activate
 # 4. Bağımlılıkları yükleyin
 pip install -r requirements.txt
 
-# 5. Uygulamayı başlatın
+# 5. Ortam değişkenlerini hazırlayın
+cp .env.example .env
+
+# 6. Uygulamayı başlatın
 python main.py
 ```
 
@@ -45,6 +49,27 @@ Uygulama şu sayfalardan oluşur:
 
 ## 💰 Gelir Ettirme Özellikleri
 
+### Google Tag / Consent Mode v2
+
+ScuPlan artik Google tag'i ortak `layout.html` dosyasindan yukler ve Consent Mode v2 banner'ini ayni yerden yonetir.
+
+Temel `.env` ayarlari:
+
+```env
+GOOGLE_TAG_ID=G-FZYPK08YL7
+GOOGLE_CONSENT_MODE_ENABLED=true
+ADSENSE_ENABLED=false
+ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXXX
+```
+
+Notlar:
+
+- `GOOGLE_TAG_ID`, GA4 web data stream icindeki Google tag / Measurement ID degeridir.
+- `GOOGLE_CONSENT_MODE_ENABLED=true` iken ziyaretciye kabul/red banner'i gosterilir.
+- Consent secimi `localStorage` icinde `scuplan_google_consent_v1` anahtariyla saklanir.
+- AdSense script'i ancak reklam izni verildiginde yuklenir.
+- Google Tag Assistant ile `ad_storage`, `ad_user_data`, `ad_personalization` ve `analytics_storage` sinyallerini test edin.
+
 ### Google AdSense Entegrasyonu
 
 1. **AdSense Ayarları**
@@ -53,6 +78,8 @@ Uygulama şu sayfalardan oluşur:
      - ✅ "Enable Google AdSense" seçeneğini işaretleyin
      - AdSense Client ID'nizi girin (örn: `ca-pub-1234567890123456`)
      - Her reklam slotu için Slot ID'leri girin
+   - Ayrica "Google Tag & Consent Mode" alaninda `G-FZYPK08YL7` veya kendi Measurement ID degerinizi girin
+   - EEA/UK/Isvicre trafigi veya Google ads/analytics kullaniminda Consent Mode'u acik birakin
 
 2. **Reklam Konumları**
    - **Ana İçerik:** Her sayfanın içerik sonunda
@@ -126,11 +153,18 @@ White Label Admin sayfasında (`/admin/whitelabel`) şunları yapabilirsiniz:
 - [x] Kullanıcı tercihi kaydediliyor
 
 ### ✅ Google AdSense
-- [x] Head'de AdSense script yükleniyor
+- [x] AdSense script'i yalnizca kullanici izni sonrasi yukleniyor
 - [x] Ana içerik reklamı eklendi
 - [x] Footer reklamı eklendi
 - [x] White Label Admin'den kontrol edilebilir
 - [x] Açma/kapama özelliği çalışıyor
+
+### ✅ Google Tag / Consent Mode
+- [x] Google tag shared layout'tan merkezi olarak yukleniyor
+- [x] Consent Mode v2 kabul/red banner'i mevcut
+- [x] Consent secimi tarayicida saklaniyor
+- [x] AdSense yuklemesi kullanici iznine baglandi
+- [x] White Label Admin'den Google tag ID guncellenebiliyor
 
 ### ✅ White Label
 - [x] Yapılandırma dosyası sistemi

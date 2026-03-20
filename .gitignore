@@ -1,0 +1,5 @@
+.env
+__pycache__/
+*.pyc
+instance/
+whitelabel_settings.json
