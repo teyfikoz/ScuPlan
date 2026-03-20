@@ -424,6 +424,7 @@
             const consentStorageKey = 'scuplan_google_consent_v1';
             const consentBanner = document.getElementById('consentBanner');
             let adsenseScriptRequested = false;
+            window.scuplanConsentState = 'unknown';
 
             function setBannerVisibility(isVisible) {
                 if (!consentBanner) {
@@ -506,6 +507,7 @@
 
             function applyConsent(state, persistChoice) {
                 const granted = state === 'granted';
+                window.scuplanConsentState = state;
 
                 if (persistChoice) {
                     localStorage.setItem(consentStorageKey, state);
@@ -524,12 +526,14 @@
 
             function initializeConsent() {
                 if (!config.googleConsentModeEnabled) {
+                    window.scuplanConsentState = 'granted';
                     setAdVisibility(hasValidAdSenseConfig());
                     loadAdSenseScript();
                     initializeAdSlots();
                     return;
                 }
 
+                window.scuplanConsentState = 'denied';
                 setAdVisibility(false);
 
                 const savedChoice = localStorage.getItem(consentStorageKey);
@@ -566,6 +570,38 @@
 
             initializeConsent();
         })();
+
+        document.addEventListener('click', function(event) {
+            const link = event.target.closest('a[href]');
+            if (!link || typeof window.gtag !== 'function') {
+                return;
+            }
+
+            let url;
+            try {
+                url = new URL(link.href, window.location.href);
+            } catch (error) {
+                return;
+            }
+
+            const hostname = url.hostname.toLowerCase();
+            const isAmazonAffiliateLink = hostname === 'amzn.to' || hostname.includes('amazon.');
+            if (!isAmazonAffiliateLink) {
+                return;
+            }
+
+            if (window.scuplanConfig.googleConsentModeEnabled && window.scuplanConsentState !== 'granted') {
+                return;
+            }
+
+            window.gtag('event', 'affiliate_click', {
+                affiliate_network: 'amazon',
+                destination_url: link.href,
+                event_category: 'affiliate',
+                event_label: link.href,
+                transport_type: 'beacon'
+            });
+        });
 
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
