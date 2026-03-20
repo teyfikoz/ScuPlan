@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}Privacy Policy - ScuPlan{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <a href="/" class="btn btn-sm btn-outline-secondary mb-4"><i class="fas fa-arrow-left me-1"></i> Back to ScuPlan</a>
+        <h1 class="mb-2">Privacy Policy</h1>
+        <p class="text-muted mb-4">Last updated: March 20, 2026</p>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>1. Data Controller</h4>
+                <p><strong>Tech Sync Analytica LLC</strong> operates ScuPlan.<br>
+                Contact: <a href="mailto:techsyncanalyticallc@gmail.com">techsyncanalyticallc@gmail.com</a></p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>2. Data We Collect</h4>
+                <ul>
+                    <li><strong>Dive Plans</strong> &mdash; Stored in a server-side database when you use the dive planner. No personal identifiers are attached to dive plans.</li>
+                    <li><strong>Checklists</strong> &mdash; Custom checklists are stored in the database. Default checklists can also be saved locally for offline use.</li>
+                    <li><strong>Analytics</strong> &mdash; We use Google Analytics 4 (GA4) to understand usage patterns. GA4 is loaded <strong>only after you accept cookies</strong> via our consent banner. We implement Google Consent Mode v2.</li>
+                    <li><strong>Affiliate Links</strong> &mdash; Blog posts contain Amazon affiliate links (tag: scuplan-20). Clicking these links is tracked as an <code>affiliate_click</code> event in GA4. Amazon may set their own cookies on their domain.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>3. Google Consent Mode v2</h4>
+                <p>ScuPlan implements full Google Consent Mode v2. By default, all consent categories are set to <code>denied</code>:</p>
+                <ul>
+                    <li><code>ad_storage</code> &mdash; denied by default</li>
+                    <li><code>ad_user_data</code> &mdash; denied by default</li>
+                    <li><code>ad_personalization</code> &mdash; denied by default</li>
+                    <li><code>analytics_storage</code> &mdash; denied by default</li>
+                </ul>
+                <p>When you accept cookies, these are updated to <code>granted</code>. When you decline, they remain <code>denied</code> and no tracking cookies are set.</p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>4. Cookies</h4>
+                <p>ScuPlan uses the following cookies/storage:</p>
+                <ul>
+                    <li><strong>cookie_consent</strong> (localStorage) &mdash; Stores your cookie consent preference</li>
+                    <li><strong>Google Analytics</strong> &mdash; Only if you accept cookies. Used for anonymous usage analytics.</li>
+                    <li><strong>Google AdSense</strong> &mdash; Only if you accept cookies. Used for displaying relevant advertisements.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>5. Third-Party Services</h4>
+                <ul>
+                    <li><strong>Google Analytics 4</strong> (G-FZYPK08YL7) &mdash; Anonymous usage analytics</li>
+                    <li><strong>Google AdSense</strong> &mdash; Advertising (consent-gated)</li>
+                    <li><strong>Amazon Associates</strong> &mdash; Affiliate product links in blog posts</li>
+                    <li><strong>Hugging Face Inference API</strong> &mdash; AI dive assistant (questions are sent to HF servers for processing)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>6. Your Rights</h4>
+                <p>You can:</p>
+                <ul>
+                    <li>Decline cookies at any time using the consent banner (click "Privacy Choices" in the footer)</li>
+                    <li>Clear your browser storage to remove all locally saved data</li>
+                    <li>Request deletion of your dive plan data by contacting us</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>7. Contact</h4>
+                <p><strong>Tech Sync Analytica LLC</strong><br>
+                New Mexico, United States<br>
+                Email: <a href="mailto:techsyncanalyticallc@gmail.com">techsyncanalyticallc@gmail.com</a></p>
+            </div>
+        </div>
+
+        <div class="text-center text-muted mt-4 mb-4">
+            <p>&copy; <script>document.write(new Date().getFullYear())</script> Tech Sync Analytica LLC. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

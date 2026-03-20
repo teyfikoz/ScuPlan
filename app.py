@@ -1039,3 +1039,105 @@ def calculate_multi_level_api():
     except Exception as e:
         logger.error(f"Error calculating multi-level profile: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+# ===== BLOG ROUTES =====
+@app.route('/blog')
+def blog_index():
+    return render_template('blog/index.html')
+
+@app.route('/blog/best-dive-computers-2025')
+def blog_dive_computers():
+    return render_template('blog/posts/best-dive-computers-2025.html')
+
+@app.route('/blog/pre-dive-checklist')
+def blog_pre_dive_checklist():
+    return render_template('blog/posts/pre-dive-checklist.html')
+
+@app.route('/blog/during-dive-safety')
+def blog_during_dive_safety():
+    return render_template('blog/posts/during-dive-safety.html')
+
+# Category Pages (redirect to main blog for now)
+@app.route('/blog/category/equipment')
+def blog_category_equipment():
+    return render_template('blog/index.html')
+
+@app.route('/blog/category/safety')
+def blog_category_safety():
+    return render_template('blog/index.html')
+
+@app.route('/blog/category/education')
+def blog_category_education():
+    return render_template('blog/index.html')
+
+# ===== PRIVACY & TERMS =====
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+# ── AI Dive Assistant (HF Pro — Mixtral-8x7B) ────────────────────────────────
+import urllib.request
+
+def _hf_dive_chat(question: str) -> str | None:
+    """Call HF Inference API for dive-related questions. Returns None on failure."""
+    token = os.environ.get("HF_API_TOKEN", "")
+    if not token:
+        return None
+    prompt = (
+        "[INST] You are an expert scuba diving instructor and dive planning specialist. "
+        "Answer the following question concisely and safely. "
+        "Always prioritize diver safety. If asked in Turkish, answer in Turkish. "
+        "Keep your answer under 150 words.\n\n"
+        f"Question: {question} [/INST]"
+    )
+    import json as _json
+    payload = _json.dumps({
+        "inputs": prompt,
+        "parameters": {"max_new_tokens": 250, "temperature": 0.6, "return_full_text": False}
+    }).encode()
+    req = urllib.request.Request(
+        "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+        data=payload,
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = _json.loads(resp.read().decode())
+            if isinstance(result, list) and result:
+                return result[0].get("generated_text", "").strip()
+    except Exception as e:
+        logger.warning(f"HF dive assistant failed: {e}")
+    return None
+
+def _rule_based_dive(question: str) -> str:
+    """Keyword-based fallback for common dive questions."""
+    q = question.lower()
+    if any(w in q for w in ["nitrox", "enriched air", "ean"]):
+        return "Nitrox (Enriched Air) için maksimum derinlik, seçilen oksijen yüzdesine bağlıdır. EAN32 için MOD yaklaşık 33m, EAN36 için 28m'dir. Dalış bilgisayarınızı doğru gazla programlamayı unutmayın."
+    if any(w in q for w in ["deco", "decompression", "dekompresyon"]):
+        return "Dekompresyon duraklarını asla atlamamalısınız. Planlanan durma sürelerini 1.5-2x olarak artırmanız güvenlik marjını artırır. Güvenlik durağı (5m, 3-5 dk) her dalışta önerilir."
+    if any(w in q for w in ["narcosis", "azot narkoz", "nitrogen narcosis"]):
+        return "Azot narkozu genellikle 30m'nin altında belirginleşir. Belirtiler: uyuşukluk, karar verme güçlüğü. Çözüm: sığ suya çıkın. Teknik dalışçılar trimix gazı kullanır."
+    if any(w in q for w in ["bcd", "inflator", "jacket"]):
+        return "BCD inflator sorunlarında: manuel ekleme valfini kontrol edin, dump valflerin tıkandığından emin olun. Dalışa girmeden önce inflator ve dump valflerini mutlaka test edin."
+    if any(w in q for w in ["surface", "yüzey", "emergency", "acil"]):
+        return "Yüzey acil durumunda: DSMB (dekompresyon şamandırası) şişirin, bekleyin ve tekneye konumunuzu bildirin. Asla yalnız yüzmeye çalışmayın. Buddy sistemi hayat kurtarır."
+    return "Dalış sorunuzu daha spesifik yapar mısınız? Gas planlaması, ekipman, güvenlik prosedürleri veya çevre hakkında bilgi alabilirim."
+
+@app.route('/api/ai/dive-assistant', methods=['POST'])
+def ai_dive_assistant():
+    """AI-powered dive planning and education assistant (HF Mixtral-8x7B)."""
+    data = request.get_json(silent=True) or {}
+    question = (data.get("question") or "").strip()
+    if not question or len(question) < 3:
+        return jsonify({"error": "Soru gerekli (min 3 karakter)"}), 422
+
+    # Try HF first, fall back to rule-based
+    answer = _hf_dive_chat(question) or _rule_based_dive(question)
+
+    return jsonify({"answer": answer, "source": "mixtral-8x7b" if os.environ.get("HF_API_TOKEN") else "rule-based"})
