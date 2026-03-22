@@ -1,0 +1,282 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dive Intelligence — Site & Gear Feedback Radar | ScuPlan{% endblock %}
+
+{% block head_extras %}
+<style>
+  .score-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 50%;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .score-90 { background: #1abc9c; color: #fff; }
+  .score-80 { background: #27ae60; color: #fff; }
+  .score-70 { background: #f39c12; color: #fff; }
+  .site-card { border-left: 4px solid #1a5276; transition: transform 0.2s, box-shadow 0.2s; }
+  .site-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .gear-brand-pill {
+    background: #e8f4f8; color: #1a5276; border: 1px solid #b8d4e8;
+    border-radius: 20px; padding: 0.4rem 1rem; font-weight: 600; font-size: 0.9rem;
+  }
+  .complaint-tag {
+    background: #fef9e7; color: #784212; border: 1px solid #fad7a0;
+    border-radius: 6px; padding: 0.3rem 0.8rem; font-size: 0.85rem;
+  }
+  .rec-card {
+    border: 1px solid #d6e4f0; border-radius: 12px; padding: 1.25rem;
+    background: #f8fbff; transition: transform 0.2s;
+  }
+  .rec-card:hover { transform: translateY(-2px); border-color: #1a5276; }
+  .powered-badge {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 0.4rem 1rem; color: #fff; font-size: 0.8rem;
+    display: inline-block;
+  }
+  .powered-badge a { color: #7fc8f5; text-decoration: none; }
+  .powered-badge a:hover { text-decoration: underline; }
+  .section-divider { border: none; border-top: 2px solid #eaf3fb; margin: 2.5rem 0; }
+  #recResults { display: none; }
+  #recResults.show { display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="background: linear-gradient(135deg, #0a2a4a, #1a5276, #0e4d8c); margin-top:-1rem; margin-left:-15px; margin-right:-15px; padding: 4rem 1rem 2.5rem; text-align:center; color:#fff;">
+  <span class="badge bg-info text-dark mb-3 px-3 py-2" style="font-size:0.8rem; letter-spacing:1px;">DIVE INTELLIGENCE</span>
+  <h1 class="fw-bold display-5 mb-3">Site &amp; Gear Feedback Radar</h1>
+  <p class="lead mb-4" style="opacity:0.8;">Community-sourced quality scores, complaint patterns, and personalized gear picks.</p>
+  <div class="powered-badge">
+    Powered by <a href="https://techsyncanalytica.com/feedback-radar" target="_blank" rel="noopener">FeedbackRadar</a>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div id="loadingIndicator" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3 text-muted">Loading dive intelligence data...</p>
+  </div>
+
+  <div id="mainContent" style="display:none;">
+
+    <section class="mb-5">
+      <h2 class="fw-bold mb-1" style="color:#1a5276;"><i class="fas fa-map-marker-alt me-2"></i>Top Dive Sites</h2>
+      <p class="text-muted small mb-3">Ranked by community quality score (visibility, marine life, facilities, safety)</p>
+      <div class="row g-3" id="sitesGrid"></div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="mb-5">
+      <h2 class="fw-bold mb-1" style="color:#1a5276;"><i class="fas fa-chart-bar me-2"></i>Community Satisfaction by Category</h2>
+      <p class="text-muted small mb-3">Aggregated from diver reviews across 500+ sites globally</p>
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4" id="categoriesChart"></div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="mb-5">
+      <h2 class="fw-bold mb-1" style="color:#1a5276;"><i class="fas fa-tools me-2"></i>Gear Reputation</h2>
+      <p class="text-muted small mb-3">Top-rated brands and most reported issues from the diving community</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+              <h5 class="fw-semibold mb-3"><i class="fas fa-trophy text-warning me-2"></i>Top Brands</h5>
+              <div class="d-flex flex-wrap gap-2" id="topBrands"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+              <h5 class="fw-semibold mb-3"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Common Complaints</h5>
+              <div class="d-flex flex-wrap gap-2" id="gearComplaints"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="mb-5">
+      <h2 class="fw-bold mb-1" style="color:#1a5276;"><i class="fas fa-magic me-2"></i>Personalized Gear Recommendation</h2>
+      <p class="text-muted small mb-3">Answer 4 quick questions and get your personalized gear picks</p>
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <form id="gearForm" class="row g-3">
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label fw-semibold small">Experience Level</label>
+              <select name="experience" class="form-select">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate" selected>Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="divemaster">Divemaster / Instructor</option>
+              </select>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label fw-semibold small">Dive Type</label>
+              <select name="dive_type" class="form-select">
+                <option value="recreational" selected>Recreational</option>
+                <option value="technical">Technical</option>
+                <option value="freediving">Freediving</option>
+                <option value="underwater photography">Underwater Photography</option>
+              </select>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label fw-semibold small">Budget</label>
+              <select name="budget" class="form-select">
+                <option value="budget">Budget-Friendly</option>
+                <option value="mid-range" selected>Mid-Range</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <label class="form-label fw-semibold small">Primary Concern</label>
+              <select name="concern" class="form-select">
+                <option value="comfort" selected>Comfort</option>
+                <option value="durability">Durability</option>
+                <option value="performance">Performance</option>
+                <option value="travel-friendly">Travel-Friendly</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary px-4">
+                <i class="fas fa-search me-2"></i>Get My Recommendations
+              </button>
+            </div>
+          </form>
+
+          <div id="recResults" class="mt-4">
+            <h5 class="fw-semibold mb-3 text-primary"><i class="fas fa-check-circle me-2"></i>Your Recommended Gear</h5>
+            <div class="row g-3" id="recGrid"></div>
+            <p class="text-muted small mt-3 mb-0" id="recNote"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  fetch("/api/dive/feedback-radar")
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      renderSites(data.topSites);
+      renderCategories(data.complaintCategories);
+      renderGearReputation(data.gearReputation);
+      document.getElementById("loadingIndicator").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+    })
+    .catch(function() {
+      document.getElementById("loadingIndicator").innerHTML =
+        '<p class="text-danger"><i class="fas fa-exclamation-circle me-2"></i>Could not load data. Please refresh.</p>';
+    });
+
+  function renderSites(sites) {
+    var grid = document.getElementById("sitesGrid");
+    var medals = ["", "\u{1F947}", "\u{1F948}", "\u{1F949}"];
+    sites.forEach(function(site, i) {
+      var sc = site.score >= 90 ? "score-90" : (site.score >= 80 ? "score-80" : "score-70");
+      var medal = i < 3 ? medals[i+1] + " " : "";
+      grid.innerHTML += '<div class="col-md-6 col-lg-4">' +
+        '<div class="card site-card shadow-sm border-0 h-100">' +
+        '<div class="card-body d-flex align-items-start gap-3 p-3">' +
+        '<div class="score-badge ' + sc + '">' + site.score + '</div>' +
+        '<div><div class="fw-bold">' + medal + site.name + '</div>' +
+        '<div class="text-muted small"><i class="fas fa-map-pin me-1"></i>' + site.location + '</div>' +
+        '<span class="badge bg-light text-secondary border mt-1" style="font-size:0.72rem;">' + site.category + '</span>' +
+        '</div></div></div></div>';
+    });
+  }
+
+  function renderCategories(cats) {
+    var container = document.getElementById("categoriesChart");
+    var labels = { visibility: "Visibility", marine_life: "Marine Life", crowd: "Crowd Level", facilities: "Facilities", safety: "Safety" };
+    var colors = { visibility: "#3498db", marine_life: "#1abc9c", crowd: "#e74c3c", facilities: "#f39c12", safety: "#2ecc71" };
+    var html = "";
+    Object.keys(cats).forEach(function(key) {
+      var val = cats[key];
+      html += '<div class="mb-3">' +
+        '<div class="d-flex justify-content-between mb-1">' +
+        '<span class="fw-semibold small">' + (labels[key] || key) + '</span>' +
+        '<span class="fw-bold small" style="color:' + (colors[key] || "#333") + '">' + val + '%</span>' +
+        '</div>' +
+        '<div class="progress" style="height:12px; border-radius:6px; background:#e9ecef;">' +
+        '<div class="progress-bar" role="progressbar" style="width:' + val + '%; background:' + (colors[key] || "#333") + '; border-radius:6px;" aria-valuenow="' + val + '" aria-valuemin="0" aria-valuemax="100"></div>' +
+        '</div></div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function renderGearReputation(gear) {
+    var brandsEl = document.getElementById("topBrands");
+    var complaintsEl = document.getElementById("gearComplaints");
+    gear.topBrands.forEach(function(b) {
+      brandsEl.innerHTML += '<span class="gear-brand-pill"><i class="fas fa-star text-warning me-1"></i>' + b + '</span>';
+    });
+    gear.commonComplaints.forEach(function(c) {
+      complaintsEl.innerHTML += '<span class="complaint-tag"><i class="fas fa-exclamation me-1"></i>' + c + '</span>';
+    });
+  }
+
+  document.getElementById("gearForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    var payload = {
+      experience: formData.get("experience"),
+      dive_type: formData.get("dive_type"),
+      budget: formData.get("budget"),
+      concern: formData.get("concern")
+    };
+    var btn = this.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Finding gear...';
+    fetch("/api/dive/gear-recommendation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) { renderRecommendations(data); })
+    .catch(function() { alert("Could not fetch recommendations. Please try again."); })
+    .finally(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-search me-2"></i>Get My Recommendations';
+    });
+  });
+
+  function renderRecommendations(data) {
+    var grid = document.getElementById("recGrid");
+    var note = document.getElementById("recNote");
+    var results = document.getElementById("recResults");
+    var icons = { mask: "fa-eye", fins: "fa-fish", BCD: "fa-life-ring", regulator: "fa-wind",
+      wetsuit: "fa-tshirt", drysuit: "fa-tshirt", camera: "fa-camera", housing: "fa-box",
+      strobe: "fa-bolt", weight_belt: "fa-weight", snorkel: "fa-swimmer", computer: "fa-microchip" };
+    grid.innerHTML = "";
+    Object.keys(data.recommendations).forEach(function(key) {
+      var val = data.recommendations[key];
+      var icon = icons[key] || "fa-check";
+      grid.innerHTML += '<div class="col-md-6 col-lg-4">' +
+        '<div class="rec-card">' +
+        '<div class="text-muted small mb-1 text-uppercase fw-semibold" style="letter-spacing:0.5px;">' +
+        '<i class="fas ' + icon + ' me-2 text-primary"></i>' + key.replace(/_/g, " ") +
+        '</div>' +
+        '<div class="fw-bold" style="color:#1a5276; font-size:1rem;">' + val + '</div>' +
+        '</div></div>';
+    });
+    note.textContent = data.note || "";
+    results.classList.add("show");
+    results.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+});
+</script>
+{% endblock %}

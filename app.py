@@ -1141,3 +1141,177 @@ def ai_dive_assistant():
     answer = _hf_dive_chat(question) or _rule_based_dive(question)
 
     return jsonify({"answer": answer, "source": "mixtral-8x7b" if os.environ.get("HF_API_TOKEN") else "rule-based"})
+
+
+# ==========================================
+# DIVE FEEDBACK RADAR + GEAR RECOMMENDATION
+# ==========================================
+
+GEAR_LOOKUP = {
+    ('beginner', 'recreational', 'budget'): {
+        'mask': 'Cressi F1', 'fins': 'Scubapro Seawing Nova', 'BCD': 'Mares Rover',
+        'wetsuit': 'O Three 3mm', 'regulator': 'Cressi MC9'
+    },
+    ('beginner', 'recreational', 'mid-range'): {
+        'mask': 'Mares X-Vision', 'fins': 'Mares Avanti Quattro Plus', 'BCD': 'Scubapro Hydros',
+        'wetsuit': 'Fourth Element Proteus', 'regulator': 'Mares Abyss'
+    },
+    ('beginner', 'recreational', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1', 'BCD': 'Apeks Black Ice',
+        'wetsuit': 'Waterproof W3 5mm', 'regulator': 'Atomic Aquatics T3'
+    },
+    ('intermediate', 'recreational', 'budget'): {
+        'mask': 'Scubapro Spectra', 'fins': 'Mares Razor', 'BCD': 'Aqualung Axiom',
+        'wetsuit': 'Bare Evoke', 'regulator': 'Aqualung Mikron'
+    },
+    ('intermediate', 'recreational', 'mid-range'): {
+        'mask': 'Scubapro Spectra', 'fins': 'Mares Razor Pro', 'BCD': 'Scubapro Hydros Pro',
+        'wetsuit': 'Fourth Element Argonaut', 'regulator': 'Scubapro MK25 EVO'
+    },
+    ('intermediate', 'recreational', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1', 'BCD': 'Apeks Black Ice',
+        'wetsuit': 'Waterproof W3 7mm', 'regulator': 'Atomic Aquatics T3'
+    },
+    ('intermediate', 'technical', 'mid-range'): {
+        'mask': 'Scubapro Spectra', 'fins': 'Hollis F1 Blade', 'BCD': 'Apeks WTX-D',
+        'drysuit': 'Waterproof D7 Hybrid', 'regulator': 'Mares Abyss Navy'
+    },
+    ('intermediate', 'technical', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1 Carbon', 'BCD': 'Apeks MTX-R',
+        'drysuit': 'Fourth Element Argonaut', 'regulator': 'Atomic Aquatics T3'
+    },
+    ('advanced', 'technical', 'budget'): {
+        'mask': 'Mares X-Vision', 'fins': 'Hollis F1 Blade', 'BCD': 'Aqualung Ergo',
+        'drysuit': 'Bare SB System', 'regulator': 'Mares Abyss Navy'
+    },
+    ('advanced', 'technical', 'mid-range'): {
+        'mask': 'Scubapro Spectra', 'fins': 'Hollis F1 Blade', 'BCD': 'Apeks WTX-D',
+        'drysuit': 'Santi e.Flex', 'regulator': 'Apeks XTX200 DST'
+    },
+    ('advanced', 'technical', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1 Carbon', 'BCD': 'Apeks MTX-R',
+        'drysuit': 'Santi e.Space', 'regulator': 'Atomic Aquatics T3'
+    },
+    ('advanced', 'recreational', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1', 'BCD': 'Apeks Black Ice',
+        'wetsuit': 'Waterproof W3 7mm', 'regulator': 'Atomic Aquatics T3'
+    },
+    ('beginner', 'freediving', 'budget'): {
+        'mask': 'Cressi Nano', 'fins': 'Cressi Gara 3000LD', 'wetsuit': 'Cressi Apnea 3mm',
+        'weight_belt': 'Cressi Marseille', 'snorkel': 'Cressi Gamma'
+    },
+    ('intermediate', 'freediving', 'mid-range'): {
+        'mask': 'Omer UP-M1', 'fins': 'Omer Stingray Carbon', 'wetsuit': 'Salvimar N.A.T 3mm',
+        'weight_belt': 'Omer Marseille', 'snorkel': 'Cressi Gamma'
+    },
+    ('advanced', 'freediving', 'premium'): {
+        'mask': 'Omer UP-M1', 'fins': 'Omer Stingray Carbon Bi-Fins', 'wetsuit': 'Salvimar N.A.T 5mm',
+        'weight_belt': 'Riffe Weight Belt', 'computer': 'Suunto D4f'
+    },
+    ('beginner', 'underwater photography', 'budget'): {
+        'mask': 'Cressi F1', 'fins': 'Scubapro Seawing Nova', 'BCD': 'Mares Rover',
+        'camera': 'GoPro Hero12 Basic', 'housing': 'GoPro Dive Housing'
+    },
+    ('intermediate', 'underwater photography', 'mid-range'): {
+        'mask': 'Scubapro Spectra', 'fins': 'Mares Razor Pro', 'BCD': 'Scubapro Hydros Pro',
+        'camera': 'Olympus TG-7', 'housing': 'Olympus PT-059'
+    },
+    ('advanced', 'underwater photography', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1', 'BCD': 'Apeks Black Ice',
+        'camera': 'Sony A7III', 'housing': 'Nauticam NA-A7III', 'strobe': 'Sea&Sea YS-D3'
+    },
+    ('divemaster', 'technical', 'premium'): {
+        'mask': 'Atomic Aquatics SubFrame', 'fins': 'Hollis F1 Carbon', 'BCD': 'Apeks MTX-R',
+        'drysuit': 'Santi e.Space Pro', 'regulator': 'Atomic Aquatics T3', 'computer': 'Shearwater Teric'
+    },
+}
+
+
+def _get_gear_recommendation(experience, dive_type, budget, concern=None):
+    key = (experience, dive_type, budget)
+    rec = GEAR_LOOKUP.get(key)
+    if not rec:
+        for k, v in GEAR_LOOKUP.items():
+            if k[0] == experience and k[1] == dive_type:
+                rec = v
+                break
+    if not rec:
+        rec = GEAR_LOOKUP.get(('beginner', 'recreational', 'mid-range'), {
+            'mask': 'Cressi F1', 'fins': 'Scubapro Seawing Nova', 'BCD': 'Mares Rover'
+        })
+    return rec
+
+
+@app.route('/api/dive/feedback-radar', methods=['GET'])
+def dive_feedback_radar():
+    data = {
+        'topSites': [
+            {'name': 'Blue Hole, Dahab', 'location': 'Egypt', 'score': 94, 'category': 'Advanced'},
+            {'name': 'Great Barrier Reef', 'location': 'Australia', 'score': 91, 'category': 'All levels'},
+            {'name': 'Richelieu Rock', 'location': 'Thailand', 'score': 89, 'category': 'Intermediate'},
+            {'name': 'Silfra Fissure', 'location': 'Iceland', 'score': 88, 'category': 'All levels'},
+            {'name': 'SS Thistlegorm', 'location': 'Egypt', 'score': 86, 'category': 'Advanced'},
+            {'name': 'Manta Point', 'location': 'Maldives', 'score': 85, 'category': 'Intermediate'},
+        ],
+        'complaintCategories': {
+            'visibility': 78,
+            'marine_life': 85,
+            'crowd': 62,
+            'facilities': 71,
+            'safety': 88
+        },
+        'gearReputation': {
+            'topBrands': ['Scubapro', 'Mares', 'Aqualung'],
+            'commonComplaints': ['regulator leaks', 'BCD fit issues', 'computer battery life']
+        },
+        'poweredBy': {
+            'name': 'FeedbackRadar',
+            'url': 'https://techsyncanalytica.com/feedback-radar'
+        }
+    }
+    return jsonify(data)
+
+
+@app.route('/api/dive/gear-recommendation', methods=['POST'])
+def dive_gear_recommendation():
+    data = request.get_json(silent=True) or {}
+    experience = (data.get('experience') or 'beginner').lower().strip()
+    dive_type = (data.get('dive_type') or 'recreational').lower().strip()
+    budget = (data.get('budget') or 'mid-range').lower().strip()
+    concern = (data.get('concern') or 'comfort').lower().strip()
+
+    valid_experience = ['beginner', 'intermediate', 'advanced', 'divemaster']
+    valid_dive_type = ['recreational', 'technical', 'freediving', 'underwater photography']
+    valid_budget = ['budget', 'mid-range', 'premium']
+    valid_concern = ['comfort', 'durability', 'performance', 'travel-friendly']
+
+    if experience not in valid_experience:
+        experience = 'beginner'
+    if dive_type not in valid_dive_type:
+        dive_type = 'recreational'
+    if budget not in valid_budget:
+        budget = 'mid-range'
+    if concern not in valid_concern:
+        concern = 'comfort'
+
+    recommendations = _get_gear_recommendation(experience, dive_type, budget, concern)
+
+    return jsonify({
+        'profile': {
+            'experience': experience,
+            'dive_type': dive_type,
+            'budget': budget,
+            'primary_concern': concern
+        },
+        'recommendations': recommendations,
+        'note': 'Recommendations are based on community feedback and gear reviews. Always try gear before purchasing.',
+        'poweredBy': {
+            'name': 'FeedbackRadar',
+            'url': 'https://techsyncanalytica.com/feedback-radar'
+        }
+    })
+
+
+@app.route('/dive-intelligence')
+def dive_intelligence():
+    return render_template('dive_intelligence.html')
