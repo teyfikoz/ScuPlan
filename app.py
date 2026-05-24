@@ -1057,6 +1057,18 @@ def blog_pre_dive_checklist():
 def blog_during_dive_safety():
     return render_template('blog/posts/during-dive-safety.html')
 
+@app.route('/blog/tourist-dive-dangers')
+def blog_tourist_dive_dangers():
+    return render_template('blog/posts/tourist-dive-dangers.html')
+
+@app.route('/blog/scuba-equipment-guide')
+def blog_scuba_equipment_guide():
+    return render_template('blog/posts/scuba-equipment-guide.html')
+
+@app.route('/blog/scuba-basics-beginners')
+def blog_scuba_basics_beginners():
+    return render_template('blog/posts/scuba-basics-beginners.html')
+
 # Category Pages (redirect to main blog for now)
 @app.route('/blog/category/equipment')
 def blog_category_equipment():

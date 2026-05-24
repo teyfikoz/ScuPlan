@@ -1,64 +1,68 @@
 {% extends "layout.html" %}
 
-{% block title %}ScuPlan Blog - Diving Equipment Reviews, Safety Guides & Education{% endblock %}
+{% block title %}ScuPlan Dive Blog — Safety Guides, Equipment Reviews & Beginner Tutorials{% endblock %}
+
+{% block meta_description %}Expert scuba diving guides: tourist dive dangers, equipment reviews, beginner safety rules, pre-dive checklists, and dive computer recommendations. Free resources for all divers.{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <!-- Hero Section -->
+    <!-- JSON-LD for Blog -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "ScuPlan Dive Blog",
+      "url": "https://scuplan.com/blog",
+      "description": "Expert scuba diving guides: safety, equipment, beginner tutorials, and dive planning.",
+      "publisher": {"@type": "Organization", "name": "ScuPlan", "url": "https://scuplan.com"}
+    }
+    </script>
+
+    <!-- Hero -->
     <div class="row mb-5">
         <div class="col-12 text-center">
             <h1 class="display-4 fw-bold text-primary">
-                <i class="fas fa-book me-3"></i>ScuPlan Dive Blog
+                <i class="fas fa-book-open me-3"></i>ScuPlan Dive Blog
             </h1>
-            <p class="lead text-muted">
-                Expert diving advice, equipment reviews, safety guides, and dive education
-            </p>
+            <p class="lead text-muted">Expert diving advice, equipment reviews, safety guides, and dive education — for beginners and experienced divers alike.</p>
         </div>
     </div>
 
-    <!-- Featured Posts -->
-    <div class="row mb-5">
+    <!-- Safety Warning Posts (High Priority) -->
+    <div class="row mb-4">
         <div class="col-12">
-            <h2 class="fw-bold mb-4">
-                <i class="fas fa-star text-warning me-2"></i>Featured Posts
-            </h2>
+            <h2 class="fw-bold mb-3"><i class="fas fa-shield-alt text-danger me-2"></i>Safety — Must Read</h2>
         </div>
 
-        <!-- Post 1: Dive Computers (Affiliate) -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm hover-shadow">
-                <div class="card-header bg-primary text-white">
-                    <i class="fas fa-laptop me-2"></i>Equipment Review
+            <div class="card h-100 shadow-sm hover-shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Tourist Dive Warning
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title fw-bold">Best Dive Computers 2025</h5>
-                    <p class="card-text text-muted">
-                        Comprehensive guide to choosing the perfect dive computer. From beginner-friendly models to advanced technical diving computers.
-                    </p>
+                    <h5 class="card-title fw-bold">Tourist Dive Dangers: Why Short-Course Programs Are Riskier Than You Think</h5>
+                    <p class="card-text text-muted">DSD programs offer 30-minute training before 12m dives. Learn the real risks, fatality statistics, and 10 questions to ask before any tourist dive.</p>
                     <div class="mb-2">
-                        <span class="badge bg-success">Affiliate Review</span>
-                        <span class="badge bg-info">Equipment</span>
+                        <span class="badge bg-danger">Safety Warning</span>
+                        <span class="badge bg-warning text-dark">10 min read</span>
                     </div>
                 </div>
                 <div class="card-footer bg-light">
-                    <a href="/blog/best-dive-computers-2025" class="btn btn-primary w-100">
-                        Read Full Review <i class="fas fa-arrow-right ms-2"></i>
+                    <a href="/blog/tourist-dive-dangers" class="btn btn-danger w-100">
+                        Read Now <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Post 2: Pre-Dive Checklist (Safety) -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm hover-shadow">
+            <div class="card h-100 shadow-sm hover-shadow border-danger">
                 <div class="card-header bg-danger text-white">
-                    <i class="fas fa-shield-alt me-2"></i>Diving Safety
+                    <i class="fas fa-clipboard-check me-2"></i>Pre-Dive Safety
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title fw-bold">Pre-Dive Safety Checklist</h5>
-                    <p class="card-text text-muted">
-                        Essential pre-dive safety checks every diver must perform. Includes BWRAF checklist and downloadable PDF.
-                    </p>
+                    <h5 class="card-title fw-bold">Pre-Dive Safety Checklist (BWRAF)</h5>
+                    <p class="card-text text-muted">The complete BWRAF checklist every diver must run before every dive. Includes downloadable PDF and interactive version on ScuPlan.</p>
                     <div class="mb-2">
                         <span class="badge bg-danger">Safety</span>
                         <span class="badge bg-warning text-dark">Free PDF</span>
@@ -72,17 +76,14 @@
             </div>
         </div>
 
-        <!-- Post 3: During Dive Safety (Safety) -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm hover-shadow">
+            <div class="card h-100 shadow-sm hover-shadow border-warning">
                 <div class="card-header bg-warning text-dark">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Diving Safety
+                    <i class="fas fa-swimmer me-2"></i>During-Dive Safety
                 </div>
                 <div class="card-body">
                     <h5 class="card-title fw-bold">During-Dive Safety Procedures</h5>
-                    <p class="card-text text-muted">
-                        Critical safety procedures to follow during your dive. Buddy system, air management, and emergency protocols.
-                    </p>
+                    <p class="card-text text-muted">Critical safety procedures to follow during your dive: buddy system, air management, emergency protocols, and safe ascent.</p>
                     <div class="mb-2">
                         <span class="badge bg-danger">Safety</span>
                         <span class="badge bg-secondary">Essential</span>
@@ -90,24 +91,114 @@
                 </div>
                 <div class="card-footer bg-light">
                     <a href="/blog/during-dive-safety" class="btn btn-warning w-100">
-                        Read Safety Guide <i class="fas fa-arrow-right ms-2"></i>
+                        Read Guide <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Coming Soon Section -->
+    <!-- Beginner Guides -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold mb-3"><i class="fas fa-graduation-cap text-primary me-2"></i>Beginner Guides</h2>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm hover-shadow">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-water me-2"></i>Complete Beginner's Guide
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Scuba Diving Basics: The Complete Beginner's Guide</h5>
+                    <p class="card-text text-muted">From your first certification to your first 100 dives — everything new divers need to know about pre-dive checks, equalization, buoyancy, air management, and post-dive rules.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-primary">Beginner</span>
+                        <span class="badge bg-success">14 min read</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <a href="/blog/scuba-basics-beginners" class="btn btn-primary w-100">
+                        Start Here <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm hover-shadow">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-tools me-2"></i>Equipment Guide
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Complete Scuba Equipment Guide 2026</h5>
+                    <p class="card-text text-muted">BCD, regulator, wetsuit, mask, fins, dive computer, tanks — what each piece does, how to choose, and how to maintain it. Includes Amazon links to top models.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-success">Equipment</span>
+                        <span class="badge bg-primary">Affiliate Review</span>
+                        <span class="badge bg-info">15 min read</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <a href="/blog/scuba-equipment-guide" class="btn btn-success w-100">
+                        Read Equipment Guide <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipment Reviews -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold mb-3"><i class="fas fa-star text-warning me-2"></i>Equipment Reviews</h2>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm hover-shadow">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-laptop me-2"></i>Dive Computer Review
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Best Dive Computers 2025: Complete Buying Guide</h5>
+                    <p class="card-text text-muted">Comprehensive comparison of top dive computers from Shearwater, Garmin, Suunto, Oceanic, and Mares. With Amazon links and price ranges.</p>
+                    <div class="mb-2">
+                        <span class="badge bg-success">Affiliate Review</span>
+                        <span class="badge bg-info">12 min read</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <a href="/blog/best-dive-computers-2025" class="btn btn-dark w-100">
+                        Read Full Review <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ScuPlan Tools CTA -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white text-center p-4">
+                <h3><i class="fas fa-calculator me-2"></i>Plan Every Dive with ScuPlan</h3>
+                <p class="lead mb-3">Free professional dive planning tools: MOD calculator, gas planning, NDL calculator, BWRAF checklist, and more.</p>
+                <a href="/" class="btn btn-light btn-lg me-2">Open Dive Planner</a>
+                <a href="/checklist" class="btn btn-outline-light btn-lg">Pre-Dive Checklist</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon -->
     <div class="row">
         <div class="col-12">
             <div class="alert alert-info">
                 <h5><i class="fas fa-clock me-2"></i>Coming Soon</h5>
                 <ul class="mb-0">
-                    <li>Regulator Buying Guide</li>
-                    <li>BCD Comparison Review</li>
-                    <li>Post-Dive Care & Recovery</li>
-                    <li>SAC Rate Calculation Guide</li>
-                    <li>Decompression Theory Basics</li>
+                    <li>Nitrogen Narcosis: Diving Deep Safely</li>
+                    <li>Nitrox Diving: Benefits, Risks, and How to Analyze Your Mix</li>
+                    <li>Decompression Theory for Recreational Divers</li>
+                    <li>Regulator Buying Guide & Service Schedule</li>
+                    <li>Best Dive Destinations: Mediterranean Edition</li>
                 </ul>
             </div>
         </div>
@@ -115,12 +206,7 @@
 </div>
 
 <style>
-.hover-shadow {
-    transition: all 0.3s ease;
-}
-.hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
-}
+.hover-shadow { transition: all 0.3s ease; }
+.hover-shadow:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important; }
 </style>
 {% endblock %}

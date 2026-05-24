@@ -9,7 +9,7 @@
 
     <!-- SEO Meta Tags -->
     <title>{% block title %}ScuPlan | Free Scuba Diving Planner & Calculator{% endblock %}</title>
-    <meta name="description" content="Free professional dive planning calculator with safety tools, decompression planning, and technical diving calculations. Zero-cost dive education with AI assistant. Start planning your dives safely - try ScuPlan now!" />
+    <meta name="description" content="{% block meta_description %}Free professional dive planning calculator with safety tools, decompression planning, and technical diving calculations. Zero-cost dive education with AI assistant. Start planning your dives safely - try ScuPlan now!{% endblock %}" />
     <meta name="keywords" content="free scuba diving planner, dive planning calculator, diving decompression planner, technical diving calculator, dive safety checklist, MOD calculation, scuba dive plan calculator, dive safety planning, technical diving calculations, dive decompression planning, diving gas mixture calculator, scuba diving MOD calculator, dive buddy planning, diving safety checklist, underwater dive planner, recreational diving calculator, diving depth calculator, scuba gas consumption calculator, dive planning tool, scuba diving safety, diving computer alternative, dive plan software, technical diving planner, recreational dive planning, zero cost dive education, free diving calculator, diving AI assistant, scuba diving training, diving physics calculator, NDL calculator, SAC rate calculator, buoyancy calculator" />
     <meta name="language" content="en" />
     <meta name="robots" content="index, follow" />
@@ -196,6 +196,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="offlineStorageButton" onclick="showOfflineStorageModal(); return false;">
                             <i class="fas fa-save me-1"></i> Saved Plans
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog" id="blogLink">
+                            <i class="fas fa-book-open me-1"></i> Blog
                         </a>
                     </li>
                     <li class="nav-item">
