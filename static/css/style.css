@@ -15,6 +15,10 @@
     --card-bg: #ffffff;
 }
 
+html {
+    scroll-padding-top: 75px;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--body-bg);
