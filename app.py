@@ -46,7 +46,7 @@ db_available = True
 
 # Import models
 try:
-    from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
+    from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem, BlogPost
 except ImportError:
     app.logger.error("Could not import models")
 
@@ -54,7 +54,7 @@ except ImportError:
 with app.app_context():
     try:
         # Import models within the app context
-        from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem
+        from models import DivePlan, Tank, Buddy, Checklist, ChecklistItem, BlogPost
         db.create_all()
 
         # Create default checklists if they don't exist
@@ -1043,7 +1043,15 @@ def calculate_multi_level_api():
 # ===== BLOG ROUTES =====
 @app.route('/blog')
 def blog_index():
-    return render_template('blog/index.html')
+    from models import BlogPost
+    try:
+        dynamic_posts = (BlogPost.query
+                         .filter_by(published=True)
+                         .order_by(BlogPost.created_at.desc())
+                         .all())
+    except Exception:
+        dynamic_posts = []
+    return render_template('blog/index.html', dynamic_posts=dynamic_posts)
 
 @app.route('/blog/best-dive-computers-2025')
 def blog_dive_computers():
@@ -1068,6 +1076,16 @@ def blog_scuba_equipment_guide():
 @app.route('/blog/scuba-basics-beginners')
 def blog_scuba_basics_beginners():
     return render_template('blog/posts/scuba-basics-beginners.html')
+
+# Dynamic route for AI-generated posts (must be placed after static slug routes)
+@app.route('/blog/<slug>')
+def blog_dynamic_post(slug):
+    from models import BlogPost
+    post = BlogPost.query.filter_by(slug=slug, published=True).first()
+    if post is None:
+        return render_template('blog/index.html'), 404
+    return render_template('blog/post_dynamic.html', post=post,
+                           sections=post.sections(), faq=post.faq())
 
 # Category Pages (redirect to main blog for now)
 @app.route('/blog/category/equipment')

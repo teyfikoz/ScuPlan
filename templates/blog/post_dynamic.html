@@ -1,0 +1,217 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ post.title }} | ScuPlan Blog{% endblock %}
+
+{% block meta_description %}{{ post.meta_description }}{% endblock %}
+
+{% block head_extras %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ post.title | tojson }},
+  "description": {{ post.meta_description | tojson }},
+  "author": {"@type": "Organization", "name": "ScuPlan"},
+  "publisher": {"@type": "Organization", "name": "ScuPlan", "url": "https://scuplan.com"},
+  "datePublished": "{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}",
+  "dateModified": "{{ post.created_at.strftime('%Y-%m-%d') if post.created_at else '' }}",
+  "url": "https://scuplan.com/blog/{{ post.slug }}",
+  "mainEntityOfPage": "https://scuplan.com/blog/{{ post.slug }}"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/blog">Blog</a></li>
+            <li class="breadcrumb-item active">{{ post.title | truncate(50) }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+
+            <!-- Header -->
+            <h1 class="display-5 fw-bold mb-3">{{ post.title }}</h1>
+            <p class="lead text-muted mb-3">{{ post.meta_description }}</p>
+            <div class="mb-3">
+                <span class="badge bg-{{ post.category_color }}">{{ post.category }}</span>
+                <span class="badge bg-secondary">{{ post.read_time }}</span>
+                {% if post.ai_generated %}
+                <span class="badge bg-light text-dark border"><i class="fas fa-robot me-1"></i>AI-Assisted</span>
+                {% endif %}
+            </div>
+            <p class="text-muted small">
+                <i class="fas fa-clock me-1"></i>{{ post.read_time }}
+                {% if post.created_at %}
+                &nbsp;|&nbsp;<i class="fas fa-calendar me-1"></i>{{ post.created_at.strftime('%B %d, %Y') }}
+                {% endif %}
+                &nbsp;|&nbsp;<i class="fas fa-user me-1"></i>ScuPlan
+            </p>
+
+            <hr class="my-4">
+
+            <!-- Introduction -->
+            {% if post.intro %}
+            <div class="lead mb-4">
+                <p>{{ post.intro }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Article Sections -->
+            {% for section in sections %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 fw-bold mb-3">
+                        <i class="fas fa-chevron-right text-{{ post.category_color }} me-2"></i>{{ section.heading }}
+                    </h2>
+                    <p>{{ section.content }}</p>
+                    {% if section.tip %}
+                    <div class="alert alert-info mb-0" role="alert">
+                        <i class="fas fa-lightbulb me-2"></i><strong>Quick Tip:</strong> {{ section.tip }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Mid-article ad after 3rd section #}
+            {% if loop.index == 3 and adsense_enabled %}
+            <div class="text-center my-4 ads-consent-slot ads-consent-hidden">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="{{ adsense_client_id }}"
+                     data-ad-slot="{{ whitelabel.adsense_slots.main_content }}"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <!-- Conclusion -->
+            {% if post.conclusion %}
+            <div class="card mb-4 bg-light border-0">
+                <div class="card-body">
+                    <h2 class="h4 fw-bold mb-3"><i class="fas fa-flag-checkered me-2"></i>Conclusion</h2>
+                    <p class="mb-0">{{ post.conclusion }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- FAQ -->
+            {% if faq %}
+            <div class="card mb-4">
+                <div class="card-header bg-{{ post.category_color }} text-white">
+                    <h2 class="h5 mb-0"><i class="fas fa-question-circle me-2"></i>Frequently Asked Questions</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        {% for item in faq %}
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="faqHeading{{ loop.index }}">
+                                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#faqCollapse{{ loop.index }}"
+                                        aria-expanded="{{ 'true' if loop.first else 'false' }}"
+                                        aria-controls="faqCollapse{{ loop.index }}">
+                                    {{ item.q }}
+                                </button>
+                            </h3>
+                            <div id="faqCollapse{{ loop.index }}"
+                                 class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                                 aria-labelledby="faqHeading{{ loop.index }}"
+                                 data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">{{ item.a }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Back to Blog -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/blog" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Blog
+                </a>
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-calculator me-2"></i>Try Dive Planner
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 80px;">
+
+                <!-- AdSense Sidebar Ad -->
+                {% if adsense_enabled %}
+                <div class="mb-4 ads-consent-slot ads-consent-hidden">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="{{ adsense_client_id }}"
+                         data-ad-slot="{{ whitelabel.adsense_slots.sidebar }}"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                </div>
+                {% endif %}
+
+                <!-- ScuPlan Tools Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-calculator me-2"></i>ScuPlan Tools
+                    </div>
+                    <div class="card-body">
+                        <p class="small">Plan your dive safely with professional tools:</p>
+                        <a href="/" class="btn btn-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-water me-1"></i>Dive Planner
+                        </a>
+                        <a href="/checklist" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-tasks me-1"></i>Pre-Dive Checklist
+                        </a>
+                        <a href="/technical" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                            <i class="fas fa-flask me-1"></i>Technical Dive Planner
+                        </a>
+                        <a href="/dive_education" class="btn btn-outline-info btn-sm w-100">
+                            <i class="fas fa-graduation-cap me-1"></i>Dive Education
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Category Info Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-{{ post.category_color }} text-white">
+                        <i class="fas fa-tag me-2"></i>{{ post.category }}
+                    </div>
+                    <div class="card-body">
+                        <p class="small mb-2"><strong>Keywords:</strong></p>
+                        <p class="small text-muted">{{ post.keywords }}</p>
+                        <a href="/blog" class="btn btn-sm btn-outline-{{ post.category_color }} w-100">
+                            More Articles <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Safety Reminder -->
+                <div class="card mb-4 border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Safety Reminder
+                    </div>
+                    <div class="card-body">
+                        <p class="small mb-0">Always dive within your training and certification limits. When in doubt, don't dive. Get proper instruction from a certified instructor.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

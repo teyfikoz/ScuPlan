@@ -130,14 +130,63 @@ class ChecklistItem(db.Model):
     checklist_id = db.Column(db.Integer, db.ForeignKey('checklist.id'), nullable=False)
     text = db.Column(db.String(255), nullable=False)
     order = db.Column(db.Integer, default=0)
-    
+
     # Relationship
     checklist = relationship("Checklist", back_populates="items")
-    
+
     def to_dict(self):
         """Convert to dictionary for JSON serialization"""
         return {
             'id': self.id,
             'text': self.text,
             'order': self.order
+        }
+
+
+class BlogPost(db.Model):
+    """AI-generated blog post model"""
+    __tablename__ = 'blog_post'
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(200), unique=True, nullable=False, index=True)
+    title = db.Column(db.String(300), nullable=False)
+    meta_description = db.Column(db.String(160), default='')
+    keywords = db.Column(db.Text, default='')
+    category = db.Column(db.String(50), default='General')
+    # Bootstrap color name: primary, danger, success, warning, info, secondary
+    category_color = db.Column(db.String(20), default='primary')
+    read_time = db.Column(db.String(20), default='8 min read')
+    intro = db.Column(db.Text, default='')
+    # JSON list of {"heading": str, "content": str, "tip": str|null}
+    sections_json = db.Column(db.Text, default='[]')
+    conclusion = db.Column(db.Text, default='')
+    # JSON list of {"q": str, "a": str}
+    faq_json = db.Column(db.Text, default='[]')
+    published = db.Column(db.Boolean, default=True)
+    ai_generated = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    def sections(self):
+        try:
+            return json.loads(self.sections_json or '[]')
+        except Exception:
+            return []
+
+    def faq(self):
+        try:
+            return json.loads(self.faq_json or '[]')
+        except Exception:
+            return []
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'slug': self.slug,
+            'title': self.title,
+            'meta_description': self.meta_description,
+            'category': self.category,
+            'category_color': self.category_color,
+            'read_time': self.read_time,
+            'published': self.published,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
         }
