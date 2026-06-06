@@ -72,25 +72,38 @@ Notlar:
 
 ### Google AdSense Entegrasyonu
 
-1. **AdSense Ayarları**
-   - White Label Admin sayfasına gidin: http://127.0.0.1:5001/admin/whitelabel
-   - "Monetization" bölümünde AdSense ayarlarını yapın:
-     - ✅ "Enable Google AdSense" seçeneğini işaretleyin
-     - AdSense Client ID'nizi girin (örn: `ca-pub-1234567890123456`)
-     - Her reklam slotu için Slot ID'leri girin
-   - Ayrica "Google Tag & Consent Mode" alaninda `G-FZYPK08YL7` veya kendi Measurement ID degerinizi girin
-   - EEA/UK/Isvicre trafigi veya Google ads/analytics kullaniminda Consent Mode'u acik birakin
+**Durum:** Infrastructure hazır, ca-pub ID bekliyor.
 
-2. **Reklam Konumları**
-   - **Ana İçerik:** Her sayfanın içerik sonunda
-   - **Footer:** Footer'dan hemen önce
-   - **Sidebar:** (Gelecekte eklenecek)
+1. **Publisher ID ve Slot ID'leri Alma**
+   - Google AdSense hesabına gir: https://www.google.com/adsense
+   - Account → Account information → Publisher ID (`ca-pub-XXXXXXXXXXXXXXXX`)
+   - Ads → By ad unit → Create new ad unit → 3 adet unit oluştur:
+     - Main Content (responsive horizontal)
+     - Footer (responsive horizontal)
+     - Sidebar (responsive vertical)
+   - Her birinin Slot ID'sini not al
 
-3. **AdSense Hesabı Alma**
-   - Google AdSense'e kaydolun: https://www.google.com/adsense
-   - Web sitenizi ekleyin ve onay alın
-   - Publisher ID ve Ad Slot ID'lerini alın
-   - White Label Admin'den bu bilgileri girin
+2. **Sunucuda Güncelleme**
+   ```bash
+   ssh -i ~/.ssh/id_ed25519 root@46.62.164.198
+   # .env güncelle:
+   nano /var/www/scuplan/.env
+   # ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXX  ← gerçek ID ile değiştir
+
+   # whitelabel_settings.json güncelle:
+   nano /var/www/scuplan/whitelabel_settings.json
+   # adsense_client_id ve adsense_slots içindeki REPLACE_SLOT_ID değerlerini doldur
+
+   systemctl restart scuplan
+   ```
+
+3. **Reklam Konumları (aktif)**
+   - **Ana İçerik:** Her sayfanın içerik sonunda (`main_content` slot)
+   - **Footer:** Footer'dan hemen önce (`footer` slot)
+   - **Sidebar:** Blog yazılarının sağ sütununda (`sidebar` slot)
+   - **Mid-Article:** Blog yazılarının 3. bölümünden sonra (`main_content` slot)
+
+4. **Consent Mode:** Ziyaretçi izin verene kadar reklamlar gizlenir (GDPR uyumlu)
 
 ### White Label Özellikleri
 
@@ -257,6 +270,39 @@ Production için PostgreSQL kullanılması önerilir.
 3. **Nginx Proxy**
    - Nginx ile reverse proxy yapılandırın
    - SSL sertifikası ekleyin (Let's Encrypt)
+
+## 🤖 Haftalık Blog Otomasyon Scripti
+
+`scripts/generate_blog_post.py` — her Pazartesi sabahı HuggingFace API üzerinden
+Llama-3.1-8B-Instruct kullanarak SEO-optimized dalış içeriği üretir ve veritabanına kaydeder.
+
+### Manuel Çalıştırma
+```bash
+ssh -i ~/.ssh/id_ed25519 root@46.62.164.198
+cd /var/www/scuplan
+source venv/bin/activate
+python scripts/generate_blog_post.py
+```
+
+### Cron Job (otomatik kurulu)
+```
+0 8 * * 1  # Her Pazartesi saat 08:00 UTC
+```
+Log: `/var/log/scuplan-blog.log`
+
+### Kontrol
+```bash
+crontab -l | grep scuplan        # Cron job aktif mi?
+tail -20 /var/log/scuplan-blog.log  # Son log
+```
+
+### Konu Havuzu
+`scripts/generate_blog_post.py` içinde `TOPICS` listesi — 25 konu mevcut.
+Yeni konular eklemek için `TOPICS` listesine `(slug, title)` tuple ekle.
+
+### Blog Post URL Yapısı
+- Dinamik: `https://scuplan.com/blog/<slug>` → `BlogPost` tablosundan
+- Statik: `https://scuplan.com/blog/tourist-dive-dangers` → HTML template'den
 
 ## 🆘 Sorun Giderme
 
