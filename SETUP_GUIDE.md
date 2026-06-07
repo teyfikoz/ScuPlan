@@ -59,7 +59,7 @@ Temel `.env` ayarlari:
 GOOGLE_TAG_ID=G-FZYPK08YL7
 GOOGLE_CONSENT_MODE_ENABLED=true
 ADSENSE_ENABLED=false
-ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXXX
+ADSENSE_CLIENT_ID=ca-pub-1281503375146617
 ```
 
 Notlar:
@@ -76,7 +76,7 @@ Notlar:
 
 1. **Publisher ID ve Slot ID'leri Alma**
    - Google AdSense hesabına gir: https://www.google.com/adsense
-   - Account → Account information → Publisher ID (`ca-pub-XXXXXXXXXXXXXXXX`)
+   - Account → Account information → Publisher ID (`ca-pub-1281503375146617`)
    - Ads → By ad unit → Create new ad unit → 3 adet unit oluştur:
      - Main Content (responsive horizontal)
      - Footer (responsive horizontal)
@@ -88,7 +88,7 @@ Notlar:
    ssh -i ~/.ssh/id_ed25519 root@46.62.164.198
    # .env güncelle:
    nano /var/www/scuplan/.env
-   # ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXX  ← gerçek ID ile değiştir
+   # ADSENSE_CLIENT_ID=ca-pub-1281503375146617  ← gerçek ID ile değiştir
 
    # whitelabel_settings.json güncelle:
    nano /var/www/scuplan/whitelabel_settings.json
