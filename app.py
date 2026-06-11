@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, Response, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from dotenv import load_dotenv
@@ -1149,6 +1149,142 @@ def bio_page():
     except Exception:
         latest_posts = []
     return render_template('bio.html', latest_posts=latest_posts)
+
+# ===== AFFILIATE CLICK TRACKING (/go/<target>) =====
+# Server-side outbound redirect: logs the click to the DB (works even with
+# ad blockers that strip GA events) and 302s to the affiliate URL.
+@app.route('/go/<path:target>')
+def go_outbound(target):
+    url = affiliates.resolve_outbound(target)
+    if not url:
+        return redirect(url_for('index'))
+    try:
+        from models import AffiliateClick
+        db.session.add(AffiliateClick(
+            target=target[:200],
+            referrer=(request.referrer or '')[:500],
+        ))
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.warning(f"Affiliate click log failed: {e}")
+    return redirect(url, code=302)
+
+@app.route('/api/affiliate/stats')
+def affiliate_stats():
+    """Click counts per affiliate target (all-time and last 30 days)."""
+    from models import AffiliateClick
+    from sqlalchemy import func
+    from datetime import timedelta
+    try:
+        rows = (db.session.query(AffiliateClick.target, func.count(AffiliateClick.id))
+                .group_by(AffiliateClick.target).all())
+        cutoff = datetime.now() - timedelta(days=30)
+        recent = (db.session.query(AffiliateClick.target, func.count(AffiliateClick.id))
+                  .filter(AffiliateClick.created_at >= cutoff)
+                  .group_by(AffiliateClick.target).all())
+        return jsonify({
+            'all_time': {t: c for t, c in rows},
+            'last_30_days': {t: c for t, c in recent},
+            'total': sum(c for _, c in rows),
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# ===== SEO: DYNAMIC SITEMAP, RSS FEED, ROBOTS, INDEXNOW =====
+STATIC_SITEMAP_PAGES = [
+    # (path, changefreq, priority)
+    ('/', 'weekly', '1.0'),
+    ('/checklist', 'monthly', '0.8'),
+    ('/technical', 'monthly', '0.8'),
+    ('/dive_routes', 'weekly', '0.7'),
+    ('/dive_education', 'weekly', '0.7'),
+    ('/blog', 'daily', '0.9'),
+    ('/gear', 'weekly', '0.9'),
+    ('/privacy', 'yearly', '0.4'),
+    ('/terms', 'yearly', '0.4'),
+]
+STATIC_BLOG_SLUGS = [
+    'best-dive-computers-2025', 'pre-dive-checklist', 'during-dive-safety',
+    'tourist-dive-dangers', 'scuba-equipment-guide', 'scuba-basics-beginners',
+]
+
+@app.route('/sitemap.xml')
+def dynamic_sitemap():
+    """Sitemap generated live so AI-published posts are indexed automatically."""
+    from models import BlogPost
+    base = 'https://scuplan.com'
+    today = datetime.now().strftime('%Y-%m-%d')
+    entries = []
+    for path, freq, prio in STATIC_SITEMAP_PAGES:
+        entries.append((f'{base}{path}', today, freq, prio))
+    for collection in affiliates.list_collections():
+        entries.append((f"{base}/gear/{collection['slug']}", today, 'weekly', '0.9'))
+    for slug in STATIC_BLOG_SLUGS:
+        entries.append((f'{base}/blog/{slug}', today, 'monthly', '0.7'))
+    try:
+        posts = BlogPost.query.filter_by(published=True).all()
+        for post in posts:
+            lastmod = post.created_at.strftime('%Y-%m-%d') if post.created_at else today
+            entries.append((f'{base}/blog/{post.slug}', lastmod, 'monthly', '0.7'))
+    except Exception:
+        pass
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, lastmod, freq, prio in entries:
+        xml.append(f'  <url><loc>{loc}</loc><lastmod>{lastmod}</lastmod>'
+                   f'<changefreq>{freq}</changefreq><priority>{prio}</priority></url>')
+    xml.append('</urlset>')
+    return Response('\n'.join(xml), mimetype='application/xml')
+
+@app.route('/feed.xml')
+def rss_feed():
+    """RSS feed of published posts — also the bridge that lets n8n auto-create
+    social posts from every new AI article (watch this feed with an RSS node)."""
+    from models import BlogPost
+    from xml.sax.saxutils import escape
+    base = 'https://scuplan.com'
+    try:
+        posts = (BlogPost.query.filter_by(published=True)
+                 .order_by(BlogPost.created_at.desc()).limit(20).all())
+    except Exception:
+        posts = []
+    items = []
+    for post in posts:
+        pub = (post.created_at or datetime.now()).strftime('%a, %d %b %Y %H:%M:%S +0000')
+        items.append(
+            '    <item>\n'
+            f'      <title>{escape(post.title)}</title>\n'
+            f'      <link>{base}/blog/{post.slug}</link>\n'
+            f'      <guid isPermaLink="true">{base}/blog/{post.slug}</guid>\n'
+            f'      <pubDate>{pub}</pubDate>\n'
+            f'      <category>{escape(post.category or "Diving")}</category>\n'
+            f'      <description>{escape(post.meta_description or "")}</description>\n'
+            '    </item>')
+    rss = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0">\n'
+        '  <channel>\n'
+        '    <title>ScuPlan Dive Blog</title>\n'
+        f'    <link>{base}/blog</link>\n'
+        '    <description>Scuba diving guides, gear reviews and dive travel from ScuPlan.</description>\n'
+        '    <language>en-us</language>\n'
+        + '\n'.join(items) + '\n'
+        '  </channel>\n'
+        '</rss>')
+    return Response(rss, mimetype='application/rss+xml')
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
+@app.route('/indexnow.txt')
+def indexnow_key():
+    """IndexNow key file (free instant indexing for Bing/Yandex/Seznam)."""
+    key = os.environ.get('INDEXNOW_KEY', '').strip()
+    if not key:
+        return Response('IndexNow key not configured', status=404, mimetype='text/plain')
+    return Response(key, mimetype='text/plain')
 
 # ===== PRIVACY & TERMS =====
 @app.route('/privacy')

@@ -321,6 +321,35 @@ def git_push_markdown(path: str) -> None:
         logger.warning(f"git push skipped/failed (article is still live in DB): {e}")
 
 
+def ping_indexnow(urls: list[str]) -> None:
+    """
+    Submit freshly published URLs to IndexNow (free instant indexing for
+    Bing/Yandex/Seznam; Google picks the post up via /sitemap.xml).
+    No-op when INDEXNOW_KEY is unset. Never fatal.
+    """
+    key = os.environ.get("INDEXNOW_KEY", "").strip()
+    if not key:
+        logger.info("INDEXNOW_KEY not set — skipping IndexNow ping.")
+        return
+    payload = json.dumps({
+        "host": "scuplan.com",
+        "key": key,
+        "keyLocation": "https://scuplan.com/indexnow.txt",
+        "urlList": urls,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.indexnow.org/indexnow",
+        data=payload,
+        headers={"Content-Type": "application/json; charset=utf-8"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            logger.info(f"IndexNow ping: HTTP {resp.status} for {len(urls)} URL(s)")
+    except Exception as e:
+        logger.warning(f"IndexNow ping failed (non-fatal): {e}")
+
+
 def publish_post(title: str, slug: str, category: str, data: dict, session) -> None:
     from models import BlogPost
     post = BlogPost(
@@ -374,6 +403,8 @@ def main() -> int:
             return 0
 
         publish_post(title, slug, category, data, db.session)
+        ping_indexnow([f"https://scuplan.com/blog/{slug}",
+                       "https://scuplan.com/sitemap.xml"])
         md_path = save_markdown(title, slug, category, data)
         if args.push:
             git_push_markdown(md_path)

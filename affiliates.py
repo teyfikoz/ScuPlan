@@ -79,9 +79,43 @@ def get_collection(slug):
     resolved = dict(collection)
     resolved['slug'] = slug
     resolved['products'] = [
-        {**p, 'url': amazon_url(p)} for p in collection.get('products', [])
+        {**p, 'url': amazon_url(p), 'go': f"/go/amazon/{slug}/{i}"}
+        for i, p in enumerate(collection.get('products', []))
     ]
     return resolved
+
+
+# Liveaboard destination slugs accepted by /go/liveaboard/<dest>
+LIVEABOARD_DESTINATIONS = {
+    'red-sea', 'maldives', 'indonesia', 'thailand', 'philippines',
+    'galapagos-islands', 'australia', 'mexico', 'caribbean', 'egypt', 'turkey',
+}
+
+
+def resolve_outbound(target):
+    """
+    Map a named /go/<target> path to its affiliate URL.
+    Only known targets resolve (never echoes user input) so the redirect
+    route cannot be abused as an open redirect. Returns None when unknown.
+    """
+    if target == 'liveaboard':
+        return liveaboard_url()
+    if target == 'padi':
+        return padi_url()
+    if target.startswith('liveaboard/'):
+        dest = target.split('/', 1)[1]
+        if dest in LIVEABOARD_DESTINATIONS:
+            return liveaboard_url(f'diving/{dest}')
+        return liveaboard_url()
+    if target.startswith('amazon/'):
+        parts = target.split('/')
+        if len(parts) == 3:
+            collection = get_collection(parts[1])
+            try:
+                return collection['products'][int(parts[2])]['url'] if collection else None
+            except (ValueError, IndexError):
+                return None
+    return None
 
 
 def list_collections():

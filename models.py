@@ -190,3 +190,22 @@ class BlogPost(db.Model):
             'published': self.published,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
+
+
+class AffiliateClick(db.Model):
+    """Server-side affiliate outbound click log (ad-blocker-proof, zero-cost
+    revenue analytics). Written by the /go/<target> redirect route."""
+    __tablename__ = 'affiliate_click'
+
+    id = db.Column(db.Integer, primary_key=True)
+    target = db.Column(db.String(200), nullable=False, index=True)
+    referrer = db.Column(db.String(500), default='')
+    created_at = db.Column(db.DateTime, default=datetime.now, index=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'target': self.target,
+            'referrer': self.referrer,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }

@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://scuplan.com/static/sitemap.xml
+Sitemap: https://scuplan.com/sitemap.xml

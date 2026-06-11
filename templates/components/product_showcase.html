@@ -30,7 +30,7 @@
         </p>
         <p class="small flex-grow-1">{{ product.blurb }}</p>
         <p class="small mb-2"><i class="fas fa-user-check text-info me-1"></i><strong>Best for:</strong> {{ product.best_for }}</p>
-        <a href="{{ product.url }}" target="_blank" rel="sponsored nofollow noopener"
+        <a href="{{ product.go or product.url }}" target="_blank" rel="sponsored nofollow noopener"
            class="btn btn-warning fw-bold w-100">
             <i class="fab fa-amazon me-2"></i>Check Price on Amazon
         </a>
@@ -64,7 +64,7 @@
                 <strong class="small">{{ product.name }}</strong>
                 <span class="small text-muted d-block">{{ _stars(product.rating) }} {{ product.rating }} &middot; {{ product.price_range }}</span>
             </div>
-            <a href="{{ product.url }}" target="_blank" rel="sponsored nofollow noopener"
+            <a href="{{ product.go or product.url }}" target="_blank" rel="sponsored nofollow noopener"
                class="btn btn-sm btn-outline-warning text-nowrap">
                 <i class="fab fa-amazon me-1"></i>Price
             </a>

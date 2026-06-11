@@ -378,3 +378,23 @@ python scripts/social_caption_generator.py --topic "Kaş'ta gece dalışı" --pl
 - Link-in-Bio sayfası: `scuplan.com/bio` — `bio.scuplan.com` CNAME'i siteye yönlendirin,
   uygulama subdomain'i otomatik `/bio`'ya yönlendirir. Instagram/TikTok/YouTube bio
   linki olarak `bio.scuplan.com` kullanın.
+
+### 5. Sıfır Maliyetli Büyüme Katmanı (ai-dev-toolkit'ten ilhamla)
+Hiçbiri yeni servis/abonelik gerektirmez; hepsi mevcut VPS + ücretsiz API'lerle çalışır.
+
+- **Affiliate tıklama takibi (Umami benzeri, self-hosted):** Tüm affiliate linkleri
+  `/go/<hedef>` üzerinden geçer → DB'ye loglanır (ad-blocker'a takılmaz) → rapor:
+  `GET /api/affiliate/stats` (all-time + son 30 gün, hedef bazında).
+- **Dinamik sitemap:** `/sitemap.xml` artık DB'den canlı üretiliyor — AI ajanının
+  yayınladığı her makale otomatik indekse girer (robots.txt güncellendi).
+- **RSS köprüsü:** `/feed.xml` — n8n'e bir "RSS Feed Trigger" node'u ekleyin;
+  her yeni blog makalesi otomatik sosyal medya postuna dönüşür (içerik döngüsü kapanır).
+- **IndexNow:** `.env`'e `INDEXNOW_KEY` ekleyin (`python -c "import secrets; print(secrets.token_hex(16))"`),
+  blog ajanı her yayında Bing/Yandex'e ücretsiz anında indeksleme pingi atar
+  (`/indexnow.txt` route'u anahtarı doğrular).
+- **Blog → Shorts senaryosu (MoneyPrinterTurbo yaklaşımı):**
+  ```bash
+  python scripts/blog_to_shorts.py --lang tr   # son makaleyi 30-45sn video senaryosuna çevirir
+  ```
+  Çıktı JSON'u n8n + Higgsfield hattına verin: hook, sahne sahne görsel yönergesi,
+  seslendirme metni ve CTA'lı caption hazır gelir. Zincir: Ollama → Groq → offline şablon.

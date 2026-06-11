@@ -37,14 +37,9 @@
 </div>
 <script>
 function scuplanLiveaboardSearch(form) {
-    var base = {{ liveaboard_search_base | tojson }};
     var dest = form.destination.value;
-    var url = base;
-    if (dest) {
-        // Insert destination path segment before any affiliate query string
-        var parts = base.split('?');
-        url = parts[0].replace(/\/$/, '') + '/' + dest + (parts[1] ? '?' + parts[1] : '');
-    }
+    // Route through /go/ so the click is logged server-side (ad-blocker-proof)
+    var url = dest ? '/go/liveaboard/' + encodeURIComponent(dest) : '/go/liveaboard';
     if (window.gtag) { gtag('event', 'affiliate_click', {affiliate: 'liveaboard', destination: dest || 'all'}); }
     window.open(url, '_blank', 'noopener');
     return false;
@@ -62,7 +57,7 @@ function scuplanLiveaboardSearch(form) {
                 <p class="mb-md-0 small" style="opacity:.9;">Maldives, Red Sea, Galápagos &amp; 100+ destinations — up to 40% off last-minute dive safari cabins.</p>
             </div>
             <div class="col-md-4 text-md-end">
-                <a href="{{ liveaboard_url }}" target="_blank" rel="sponsored nofollow noopener"
+                <a href="/go/liveaboard" target="_blank" rel="sponsored nofollow noopener"
                    class="btn btn-warning fw-bold"
                    onclick="window.gtag && gtag('event','affiliate_click',{affiliate:'liveaboard',placement:'banner'});">
                     Browse Deals <i class="fas fa-arrow-right ms-1"></i>
@@ -80,7 +75,7 @@ function scuplanLiveaboardSearch(form) {
     </div>
     <div class="card-body">
         <p class="small mb-3">Start your PADI Open Water certification online today — theory at home, dives on vacation. The #1 most-recognized dive certification worldwide.</p>
-        <a href="{{ padi_affiliate_url }}" target="_blank" rel="sponsored nofollow noopener"
+        <a href="/go/padi" target="_blank" rel="sponsored nofollow noopener"
            class="btn btn-primary fw-bold w-100"
            onclick="window.gtag && gtag('event','affiliate_click',{affiliate:'padi',placement:'sidebar'});">
             <i class="fas fa-water me-2"></i>Start PADI eLearning
