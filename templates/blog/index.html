@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from 'components/affiliate_widgets.html' import liveaboard_banner with context %}
 
 {% block title %}ScuPlan Dive Blog — Safety Guides, Equipment Reviews & Beginner Tutorials{% endblock %}
 
@@ -27,6 +28,9 @@
             <p class="lead text-muted">Expert diving advice, equipment reviews, safety guides, and dive education — for beginners and experienced divers alike.</p>
         </div>
     </div>
+
+    <!-- High-ticket affiliate hero banner -->
+    {{ liveaboard_banner() }}
 
     <!-- Safety Warning Posts (High Priority) -->
     <div class="row mb-4">

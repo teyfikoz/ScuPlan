@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% from 'components/affiliate_widgets.html' import liveaboard_search_box, padi_course_cta with context %}
+
+{% block title %}Scuba Diving Gear Guides & Reviews | ScuPlan{% endblock %}
+{% block meta_description %}Hand-picked scuba gear buyer's guides: best dive computers, BCDs, regulators and more — ranked by real divers and updated for 2026.{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold"><i class="fas fa-shopping-bag text-warning me-2"></i>Dive Gear Guides</h1>
+        <p class="lead text-muted">No fluff, no 40-item lists. The gear we'd actually buy, updated for 2026.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% for collection in collections %}
+            <a href="/gear/{{ collection.slug }}" class="card mb-4 text-decoration-none shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="h4 fw-bold mb-1">
+                                <i class="fas {{ collection.icon or 'fa-trophy' }} text-warning me-2"></i>{{ collection.title }}
+                            </h2>
+                            <p class="text-muted small mb-1">{{ collection.intro | truncate(140) }}</p>
+                            <span class="badge bg-secondary">{{ collection.products | length }} picks</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted ms-3"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            {{ liveaboard_search_box() }}
+            {{ padi_course_cta() }}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@ import technical_diving
 load_dotenv()
 
 from whitelabel_config import get_config
+import affiliates
 
 # Loglama yapılandırması
 logging.basicConfig(level=logging.DEBUG)
@@ -165,14 +166,29 @@ def inject_whitelabel_config():
         if consent_mode_enabled_env is not None
         else wl_config.get('google_consent_mode_enabled', bool(google_tag_id))
     )
-    return {
+    adsense_auto_ads_enabled = parse_bool_env("ADSENSE_AUTO_ADS_ENABLED")
+    context = {
         'whitelabel': wl_config.to_dict(),
         'app_name': wl_config.get('app_name', 'ScuPlan'),
         'adsense_enabled': adsense_enabled,
         'adsense_client_id': adsense_client_id,
+        'adsense_auto_ads_enabled': (
+            adsense_auto_ads_enabled if adsense_auto_ads_enabled is not None else True
+        ),
         'google_tag_id': google_tag_id,
         'google_consent_mode_enabled': google_consent_mode_enabled
     }
+    context.update(affiliates.get_affiliate_context())
+    return context
+
+
+# bio.scuplan.com subdomain'i link-in-bio sayfasına yönlendir
+@app.before_request
+def route_bio_subdomain():
+    host = (request.host or '').split(':')[0].lower()
+    if host.startswith('bio.') and request.path == '/':
+        return redirect(url_for('bio_page'))
+    return None
 
 # White label admin routes
 @app.route('/admin/whitelabel')
@@ -1084,8 +1100,11 @@ def blog_dynamic_post(slug):
     post = BlogPost.query.filter_by(slug=slug, published=True).first()
     if post is None:
         return render_template('blog/index.html'), 404
+    gear_slug = 'beginner-dive-computers' if 'computer' in (post.keywords or '').lower() \
+        else 'best-dive-gear-2026'
     return render_template('blog/post_dynamic.html', post=post,
-                           sections=post.sections(), faq=post.faq())
+                           sections=post.sections(), faq=post.faq(),
+                           gear_collection=affiliates.get_collection(gear_slug))
 
 # Category Pages (redirect to main blog for now)
 @app.route('/blog/category/equipment')
@@ -1099,6 +1118,37 @@ def blog_category_safety():
 @app.route('/blog/category/education')
 def blog_category_education():
     return render_template('blog/index.html')
+
+# ===== AFFILIATE GEAR GUIDES (Amazon) =====
+@app.route('/gear')
+def gear_index():
+    """Affiliate gear guide hub page"""
+    return render_template('gear_index.html', collections=affiliates.list_collections())
+
+@app.route('/gear/<slug>')
+def gear_collection(slug):
+    """Single product showcase page, driven by static/data/affiliate_products.json"""
+    collection = affiliates.get_collection(slug)
+    if collection is None:
+        return redirect(url_for('gear_index'))
+    other_collections = [c for c in affiliates.list_collections() if c['slug'] != slug]
+    return render_template('gear.html', collection=collection,
+                           other_collections=other_collections)
+
+# ===== LINK-IN-BIO (bio.scuplan.com / scuplan.com/bio) =====
+@app.route('/bio')
+def bio_page():
+    """Mobile-first link-in-bio landing page for Instagram/Shorts traffic"""
+    from models import BlogPost
+    try:
+        latest_posts = (BlogPost.query
+                        .filter_by(published=True)
+                        .order_by(BlogPost.created_at.desc())
+                        .limit(3)
+                        .all())
+    except Exception:
+        latest_posts = []
+    return render_template('bio.html', latest_posts=latest_posts)
 
 # ===== PRIVACY & TERMS =====
 @app.route('/privacy')

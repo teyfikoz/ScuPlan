@@ -1,0 +1,79 @@
+{# ============================================================
+   Product Showcase macros (Amazon affiliate)
+   Usage:
+     {% from 'components/product_showcase.html' import product_grid, product_strip with context %}
+     {{ product_grid(collection) }}            - full gear-page grid
+     {{ product_strip(collection, limit=3) }}  - compact in-article strip
+   All links carry rel="sponsored nofollow noopener" per Google/Amazon rules.
+   ============================================================ #}
+
+{% macro _stars(rating) %}
+    {%- set full = (rating | float) | round(0, 'floor') | int -%}
+    {%- set half = 1 if (rating | float) - full >= 0.5 else 0 -%}
+    {%- for _ in range(full) %}<i class="fas fa-star text-warning"></i>{% endfor -%}
+    {%- if half %}<i class="fas fa-star-half-alt text-warning"></i>{% endif -%}
+    {%- for _ in range(5 - full - half) %}<i class="far fa-star text-warning"></i>{% endfor -%}
+{% endmacro %}
+
+{% macro product_card(product) %}
+<div class="card h-100 shadow-sm product-card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-white">
+        <span class="badge bg-{{ product.badge_color or 'primary' }}">{{ product.badge }}</span>
+        <small class="text-muted">{{ product.category }}</small>
+    </div>
+    <div class="card-body d-flex flex-column">
+        <h3 class="h5 fw-bold mb-1">{{ product.name }}</h3>
+        <p class="small text-muted mb-2">
+            {{ product.brand }}
+            &nbsp;|&nbsp; {{ _stars(product.rating) }} <span class="ms-1">{{ product.rating }}</span>
+            &nbsp;|&nbsp; <span class="text-success fw-bold">{{ product.price_range }}</span>
+        </p>
+        <p class="small flex-grow-1">{{ product.blurb }}</p>
+        <p class="small mb-2"><i class="fas fa-user-check text-info me-1"></i><strong>Best for:</strong> {{ product.best_for }}</p>
+        <a href="{{ product.url }}" target="_blank" rel="sponsored nofollow noopener"
+           class="btn btn-warning fw-bold w-100">
+            <i class="fab fa-amazon me-2"></i>Check Price on Amazon
+        </a>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro product_grid(collection) %}
+<div class="alert alert-light border small mb-4">
+    <i class="fas fa-info-circle me-1"></i>{{ affiliate_disclosure }}
+</div>
+<div class="row g-4">
+    {% for product in collection.products %}
+    <div class="col-md-6 col-lg-4">
+        {{ product_card(product) }}
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro product_strip(collection, limit=3) %}
+<div class="card my-4 border-warning">
+    <div class="card-header bg-warning text-dark">
+        <i class="fas {{ collection.icon or 'fa-trophy' }} me-2"></i><strong>{{ collection.title }}</strong>
+    </div>
+    <div class="card-body">
+        {% for product in collection.products[:limit] %}
+        <div class="d-flex justify-content-between align-items-center {% if not loop.last %}border-bottom pb-2 mb-2{% endif %}">
+            <div class="me-2">
+                <span class="badge bg-{{ product.badge_color or 'primary' }} me-1">{{ product.badge }}</span>
+                <strong class="small">{{ product.name }}</strong>
+                <span class="small text-muted d-block">{{ _stars(product.rating) }} {{ product.rating }} &middot; {{ product.price_range }}</span>
+            </div>
+            <a href="{{ product.url }}" target="_blank" rel="sponsored nofollow noopener"
+               class="btn btn-sm btn-outline-warning text-nowrap">
+                <i class="fab fa-amazon me-1"></i>Price
+            </a>
+        </div>
+        {% endfor %}
+        <a href="/gear/{{ collection.slug }}" class="btn btn-sm btn-warning w-100 mt-2 fw-bold">
+            See the Full {{ collection.products | length }}-Item Ranking <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+        <p class="small text-muted mt-2 mb-0">{{ affiliate_disclosure }}</p>
+    </div>
+</div>
+{% endmacro %}

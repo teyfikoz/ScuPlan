@@ -338,3 +338,43 @@ Yeni konular eklemek için `TOPICS` listesine `(slug, title)` tuple ekle.
 - Bu uygulama eğitim amaçlıdır
 - Gerçek dalışlardan önce profesyonel eğitim alın
 - Her zaman sertifikasyon limitlleriniz dahilinde dalın
+
+## 🤖 Tam Otomatik Gelir Makinesi (AdSense + Affiliate + Blog Ajanı)
+
+### 1. AdSense Auto Ads
+1. `.env` içinde `ADSENSE_CLIENT_ID=ca-pub-GERÇEK_ID` ve `ADSENSE_ENABLED=true` ayarlayın.
+2. `ADSENSE_AUTO_ADS_ENABLED=true` bırakın ve AdSense panelinde scuplan.com için **Auto ads**'i açın.
+3. Consent banner açıkken (`GOOGLE_CONSENT_MODE_ENABLED=true`) reklam scripti yalnızca
+   kullanıcı onayından sonra yüklenir (GDPR/Consent Mode v2 uyumlu).
+
+### 2. Affiliate Katmanı
+- `.env`: `AMAZON_AFFILIATE_TAG`, `LIVEABOARD_AFFILIATE_ID`, `PADI_AFFILIATE_URL`
+- Ürün vitrinleri: `/gear`, `/gear/best-dive-gear-2026`, `/gear/beginner-dive-computers`
+  → İçerik `static/data/affiliate_products.json` dosyasından gelir; ASIN ekleyince
+  linkler otomatik `amazon.com/dp/ASIN?tag=...` formuna döner (boşken tag'li arama linki).
+- Liveaboard arama kutusu + PADI CTA otomatik olarak blog yazılarında (sidebar + makale içi)
+  ve gear sayfalarında render edilir.
+
+### 3. Blog Yazarı Ajanı (haftada 2 makale, Groq)
+```bash
+# .env: GROQ_API_KEY=gsk_...   (ücretsiz: console.groq.com)
+python scripts/blog_writer_agent.py --dry-run   # test
+python scripts/blog_writer_agent.py             # üret + yayınla + content/posts/*.md arşivle
+python scripts/blog_writer_agent.py --push      # + markdown arşivini git'e pushla
+
+# Cron (Pazartesi & Perşembe 09:00):
+0 9 * * 1,4 /var/www/scuplan/venv/bin/python /var/www/scuplan/scripts/blog_writer_agent.py --push >> /var/log/scuplan-blog.log 2>&1
+```
+Makale anında `scuplan.com/blog/<slug>` adresinde yayına girer; kategoriye göre
+Liveaboard/PADI/Amazon affiliate blokları otomatik eklenir.
+
+### 4. Sosyal Medya → Web Trafik Köprüsü
+- Caption/CTA üretici (n8n "Execute Command" node'una takılır, çıktı temiz JSON):
+```bash
+python scripts/social_caption_generator.py --topic "Kaş'ta gece dalışı" --platform reels --lang tr
+```
+  Sıralama: lokal Ollama → Groq → offline şablon (pipeline asla durmaz).
+  Her caption'a günlük rotasyonla "ScuPlan.com (Link Bio'da)" CTA'sı eklenir.
+- Link-in-Bio sayfası: `scuplan.com/bio` — `bio.scuplan.com` CNAME'i siteye yönlendirin,
+  uygulama subdomain'i otomatik `/bio`'ya yönlendirir. Instagram/TikTok/YouTube bio
+  linki olarak `bio.scuplan.com` kullanın.

@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+{% from 'components/affiliate_widgets.html' import liveaboard_search_box, padi_course_cta with context %}
+{% from 'components/product_showcase.html' import product_strip with context %}
 
 {% block title %}{{ post.title }} | ScuPlan Blog{% endblock %}
 
@@ -79,6 +81,17 @@
                     {% endif %}
                 </div>
             </div>
+
+            {# Contextual affiliate block after the 2nd section #}
+            {% if loop.index == 2 %}
+                {% if post.category == 'Travel' %}
+                    {{ liveaboard_search_box() }}
+                {% elif post.category == 'Equipment' and gear_collection %}
+                    {{ product_strip(gear_collection) }}
+                {% elif post.category in ['Beginner', 'Education'] %}
+                    {{ padi_course_cta() }}
+                {% endif %}
+            {% endif %}
 
             {# Mid-article ad after 3rd section #}
             {% if loop.index == 3 and adsense_enabled %}
@@ -163,6 +176,10 @@
                          data-full-width-responsive="true"></ins>
                 </div>
                 {% endif %}
+
+                <!-- High-ticket affiliate widgets -->
+                {{ liveaboard_search_box() }}
+                {{ padi_course_cta() }}
 
                 <!-- ScuPlan Tools Card -->
                 <div class="card mb-4">

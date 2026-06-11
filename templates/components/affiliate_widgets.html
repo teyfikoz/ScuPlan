@@ -1,0 +1,91 @@
+{# ============================================================
+   High-ticket affiliate widgets (Liveaboard.com + PADI)
+   Usage:
+     {% from 'components/affiliate_widgets.html' import liveaboard_search_box, padi_course_cta, liveaboard_banner with context %}
+   Liveaboard sales pay $100–$300+/booking; these belong in hero
+   and sidebar positions. Links use rel="sponsored nofollow noopener".
+   ============================================================ #}
+
+{% macro liveaboard_search_box(compact=false) %}
+<div class="card {% if not compact %}mb-4{% endif %} border-0 shadow"
+     style="background: linear-gradient(135deg, #023e7d 0%, #0077b6 100%);">
+    <div class="card-body text-white">
+        <h3 class="h5 fw-bold mb-1"><i class="fas fa-ship me-2"></i>Find a Liveaboard Trip</h3>
+        <p class="small mb-3" style="opacity:.9;">Eat. Sleep. Dive. Repeat — compare 500+ dive safari boats worldwide.</p>
+        <form class="liveaboard-search" onsubmit="return scuplanLiveaboardSearch(this);">
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                <select class="form-select" name="destination" aria-label="Liveaboard destination">
+                    <option value="">All destinations</option>
+                    <option value="red-sea">Red Sea (Egypt)</option>
+                    <option value="maldives">Maldives</option>
+                    <option value="indonesia">Indonesia (Komodo & Raja Ampat)</option>
+                    <option value="thailand">Thailand (Similan Islands)</option>
+                    <option value="philippines">Philippines (Tubbataha)</option>
+                    <option value="galapagos-islands">Galápagos Islands</option>
+                    <option value="australia">Australia (Great Barrier Reef)</option>
+                    <option value="mexico">Mexico (Socorro)</option>
+                    <option value="caribbean">Caribbean</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-warning fw-bold w-100">
+                <i class="fas fa-search me-2"></i>Search Liveaboards
+            </button>
+        </form>
+        <p class="small mt-2 mb-0" style="opacity:.75;"><i class="fas fa-tag me-1"></i>Best-price guarantee &middot; free cancellation on most boats</p>
+    </div>
+</div>
+<script>
+function scuplanLiveaboardSearch(form) {
+    var base = {{ liveaboard_search_base | tojson }};
+    var dest = form.destination.value;
+    var url = base;
+    if (dest) {
+        // Insert destination path segment before any affiliate query string
+        var parts = base.split('?');
+        url = parts[0].replace(/\/$/, '') + '/' + dest + (parts[1] ? '?' + parts[1] : '');
+    }
+    if (window.gtag) { gtag('event', 'affiliate_click', {affiliate: 'liveaboard', destination: dest || 'all'}); }
+    window.open(url, '_blank', 'noopener');
+    return false;
+}
+</script>
+{% endmacro %}
+
+{% macro liveaboard_banner() %}
+<div class="card mb-4 border-0 shadow text-white"
+     style="background: linear-gradient(120deg, #012a4a 0%, #0077b6 60%, #00b4d8 100%);">
+    <div class="card-body py-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="h4 fw-bold mb-1"><i class="fas fa-ship me-2"></i>Dream Dive Trip? Go Liveaboard.</h2>
+                <p class="mb-md-0 small" style="opacity:.9;">Maldives, Red Sea, Galápagos &amp; 100+ destinations — up to 40% off last-minute dive safari cabins.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ liveaboard_url }}" target="_blank" rel="sponsored nofollow noopener"
+                   class="btn btn-warning fw-bold"
+                   onclick="window.gtag && gtag('event','affiliate_click',{affiliate:'liveaboard',placement:'banner'});">
+                    Browse Deals <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro padi_course_cta(compact=false) %}
+<div class="card {% if not compact %}mb-4{% endif %} border-primary">
+    <div class="card-header bg-primary text-white">
+        <i class="fas fa-graduation-cap me-2"></i><strong>Get Certified to Dive</strong>
+    </div>
+    <div class="card-body">
+        <p class="small mb-3">Start your PADI Open Water certification online today — theory at home, dives on vacation. The #1 most-recognized dive certification worldwide.</p>
+        <a href="{{ padi_affiliate_url }}" target="_blank" rel="sponsored nofollow noopener"
+           class="btn btn-primary fw-bold w-100"
+           onclick="window.gtag && gtag('event','affiliate_click',{affiliate:'padi',placement:'sidebar'});">
+            <i class="fas fa-water me-2"></i>Start PADI eLearning
+        </a>
+        <p class="small text-muted mt-2 mb-0">Then plan your first dives free with the <a href="/">ScuPlan calculator</a>.</p>
+    </div>
+</div>
+{% endmacro %}

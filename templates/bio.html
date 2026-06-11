@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScuPlan | Links — As Seen on Instagram & Shorts</title>
+    <meta name="description" content="Everything from @scuplan in one place: dive guides, the gear I use, free dive planning tools and liveaboard deals.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://scuplan.com/bio">
+    <meta property="og:title" content="ScuPlan — Link in Bio">
+    <meta property="og:description" content="Dive guides, gear lists and free dive planning tools from @scuplan.">
+    <meta property="og:url" content="https://scuplan.com/bio">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% if google_tag_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_tag_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ google_tag_id }}', {'page_title': 'Link in Bio'});
+    </script>
+    {% endif %}
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(170deg, #012a4a 0%, #013a63 35%, #0077b6 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            padding: 2.5rem 1rem 4rem;
+        }
+        .bio-card { width: 100%; max-width: 480px; text-align: center; }
+        .avatar {
+            width: 92px; height: 92px; border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 3px solid rgba(255,255,255,0.6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.4rem; margin: 0 auto 0.9rem;
+        }
+        h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .handle { opacity: 0.85; font-size: 0.95rem; margin-bottom: 0.4rem; }
+        .tagline { opacity: 0.75; font-size: 0.88rem; margin-bottom: 1.6rem; }
+        .bio-link {
+            display: flex; align-items: center; gap: 0.85rem;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 14px;
+            padding: 0.95rem 1.1rem;
+            margin-bottom: 0.8rem;
+            color: #fff; text-decoration: none;
+            text-align: left;
+            transition: transform .12s ease, background .12s ease;
+            backdrop-filter: blur(6px);
+        }
+        .bio-link:hover { transform: translateY(-2px) scale(1.01); background: rgba(255,255,255,0.18); }
+        .bio-link i.icon { font-size: 1.25rem; width: 1.7rem; text-align: center; flex-shrink: 0; }
+        .bio-link .txt strong { display: block; font-size: 0.98rem; }
+        .bio-link .txt span { display: block; font-size: 0.78rem; opacity: 0.78; }
+        .bio-link.hot {
+            background: linear-gradient(90deg, #f7b733, #fc4a1a);
+            border: none; color: #1a1a1a;
+        }
+        .bio-link.hot .txt span { opacity: 0.85; }
+        .section-label {
+            font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+            opacity: 0.6; margin: 1.4rem 0 0.7rem;
+        }
+        .socials { margin-top: 1.6rem; display: flex; justify-content: center; gap: 1.4rem; }
+        .socials a { color: #fff; opacity: 0.8; font-size: 1.45rem; text-decoration: none; }
+        .socials a:hover { opacity: 1; }
+        .foot { margin-top: 1.8rem; font-size: 0.72rem; opacity: 0.55; }
+        .foot a { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="bio-card">
+        <div class="avatar">🤿</div>
+        <h1>ScuPlan</h1>
+        <div class="handle">@scuplan</div>
+        <p class="tagline">Dive smarter. Free dive planning tools, honest gear guides &amp; the spots you saw on my reels.</p>
+
+        <a class="bio-link hot" href="/gear/best-dive-gear-2026?utm_source=bio&utm_medium=social"
+           onclick="window.gtag && gtag('event','bio_click',{link:'gear'});">
+            <i class="icon fas fa-trophy"></i>
+            <span class="txt"><strong>🎒 The Gear I Use & Recommend</strong><span>Best dive gear of 2026 — full ranked list</span></span>
+        </a>
+
+        <a class="bio-link" href="/?utm_source=bio&utm_medium=social"
+           onclick="window.gtag && gtag('event','bio_click',{link:'planner'});">
+            <i class="icon fas fa-calculator"></i>
+            <span class="txt"><strong>Free Dive Planner</strong><span>Gas, deco &amp; safety calculations — no signup</span></span>
+        </a>
+
+        <a class="bio-link" href="{{ liveaboard_url }}" target="_blank" rel="sponsored nofollow noopener"
+           onclick="window.gtag && gtag('event','bio_click',{link:'liveaboard'});">
+            <i class="icon fas fa-ship"></i>
+            <span class="txt"><strong>Book a Liveaboard Trip</strong><span>Maldives, Red Sea, Galápagos — best-price deals</span></span>
+        </a>
+
+        <a class="bio-link" href="{{ padi_affiliate_url }}" target="_blank" rel="sponsored nofollow noopener"
+           onclick="window.gtag && gtag('event','bio_click',{link:'padi'});">
+            <i class="icon fas fa-graduation-cap"></i>
+            <span class="txt"><strong>Get PADI Certified</strong><span>Start your Open Water course online today</span></span>
+        </a>
+
+        {% if latest_posts %}
+        <div class="section-label">Latest from the blog</div>
+        {% for post in latest_posts %}
+        <a class="bio-link" href="/blog/{{ post.slug }}?utm_source=bio&utm_medium=social"
+           onclick="window.gtag && gtag('event','bio_click',{link:'blog'});">
+            <i class="icon fas fa-book-open"></i>
+            <span class="txt"><strong>{{ post.title | truncate(58) }}</strong><span>{{ post.read_time }} &middot; {{ post.category }}</span></span>
+        </a>
+        {% endfor %}
+        {% endif %}
+
+        <div class="socials">
+            <a href="https://www.instagram.com/scuplan" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@scuplan" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@scuplan" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="mailto:teyfikoz@yahoo.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+
+        <p class="foot">Some links are affiliate links — they support ScuPlan at no cost to you.<br>
+            <a href="https://scuplan.com">scuplan.com</a></p>
+    </div>
+</body>
+</html>

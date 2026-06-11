@@ -1,0 +1,205 @@
+{
+  "_comment": "Curated Amazon affiliate showcases. Add the real ASIN for direct /dp/ links; while 'asin' is empty the site falls back to a tagged Amazon search link (still earns commission). Edit freely — pages update without code changes.",
+  "collections": {
+    "best-dive-gear-2026": {
+      "order": 1,
+      "title": "Best Scuba Diving Gear of 2026",
+      "meta_description": "The best scuba diving gear of 2026 — dive computers, BCDs, regulators, masks and lights tested and ranked by divers. Updated buyer's guide with current prices.",
+      "intro": "We ranked the gear that delivers the most safety, comfort and value per dollar in 2026. Every pick below is widely serviced worldwide, beginner-friendly to own, and proven over thousands of dives.",
+      "icon": "fa-trophy",
+      "products": [
+        {
+          "name": "Garmin Descent Mk3i",
+          "brand": "Garmin",
+          "category": "Dive Computer",
+          "badge": "Editor's Choice",
+          "badge_color": "warning",
+          "rating": 4.8,
+          "price_range": "$$$$",
+          "blurb": "Flagship watch-style dive computer with air integration (T2 transceiver), full-color maps, multi-gas/CCR support and everyday smartwatch features. The one computer that does everything.",
+          "best_for": "Divers who want one device for diving, travel and training",
+          "asin": "",
+          "search_query": "Garmin Descent Mk3i dive computer"
+        },
+        {
+          "name": "Shearwater Peregrine TX",
+          "brand": "Shearwater",
+          "category": "Dive Computer",
+          "badge": "Best Screen",
+          "badge_color": "info",
+          "rating": 4.9,
+          "price_range": "$$$",
+          "blurb": "Big, bright 3.2\" color screen, air integration, wireless charging and Shearwater's famously clean interface. The easiest-to-read computer underwater, period.",
+          "best_for": "Recreational divers upgrading from an entry-level computer",
+          "asin": "",
+          "search_query": "Shearwater Peregrine TX dive computer"
+        },
+        {
+          "name": "Scubapro Hydros Pro BCD",
+          "brand": "Scubapro",
+          "category": "BCD",
+          "badge": "Most Comfortable",
+          "badge_color": "success",
+          "rating": 4.7,
+          "price_range": "$$$",
+          "blurb": "Injection-molded Monprene gel harness that molds to your body, near-zero inherent buoyancy and a modular design that packs small for travel. Dries instantly.",
+          "best_for": "Traveling divers and anyone tired of soggy, heavy BCDs",
+          "asin": "",
+          "search_query": "Scubapro Hydros Pro BCD"
+        },
+        {
+          "name": "Apeks XTX50 Regulator",
+          "brand": "Apeks",
+          "category": "Regulator",
+          "badge": "Cold-Water Proof",
+          "badge_color": "primary",
+          "rating": 4.8,
+          "price_range": "$$$",
+          "blurb": "Over-balanced diaphragm first stage, pneumatically balanced second stage and legendary cold-water reliability. Breathes effortlessly at depth and is serviceable anywhere on earth.",
+          "best_for": "Divers who want one regulator for warm and cold water",
+          "asin": "",
+          "search_query": "Apeks XTX50 regulator"
+        },
+        {
+          "name": "Cressi Big Eyes Evolution Mask",
+          "brand": "Cressi",
+          "category": "Mask",
+          "badge": "Best Value",
+          "badge_color": "success",
+          "rating": 4.6,
+          "price_range": "$",
+          "blurb": "Inclined inverted-teardrop lenses give a huge downward field of view, and the soft silicone skirt seals on almost any face. The mask dive pros keep recommending year after year.",
+          "best_for": "Every diver — this is the safe default mask choice",
+          "asin": "",
+          "search_query": "Cressi Big Eyes Evolution dive mask"
+        },
+        {
+          "name": "GoPro HERO13 Black + Dive Housing",
+          "brand": "GoPro",
+          "category": "Camera",
+          "badge": "Content Creator",
+          "badge_color": "danger",
+          "rating": 4.7,
+          "price_range": "$$$",
+          "blurb": "HyperSmooth stabilization, 5.3K video and a 60 m protective housing make this the simplest way to bring back share-worthy dive footage. Pair with a red filter for tropical blue water.",
+          "best_for": "Divers who want Instagram/YouTube-ready underwater video",
+          "asin": "",
+          "search_query": "GoPro HERO13 Black dive housing bundle"
+        },
+        {
+          "name": "BigBlue AL1300NP Dive Light",
+          "brand": "BigBlue",
+          "category": "Dive Light",
+          "badge": "Night Dive Essential",
+          "badge_color": "dark",
+          "rating": 4.6,
+          "price_range": "$$",
+          "blurb": "1300 lumens, four power levels, 100 m depth rating and a glove-friendly push button. Compact enough for a BCD pocket, bright enough to be your primary light.",
+          "best_for": "Night dives, wrecks and looking under ledges",
+          "asin": "",
+          "search_query": "BigBlue AL1300NP dive light"
+        },
+        {
+          "name": "Fourth Element Proteus II 5mm Wetsuit",
+          "brand": "Fourth Element",
+          "category": "Exposure Suit",
+          "badge": "Warmest 5mm",
+          "badge_color": "info",
+          "rating": 4.7,
+          "price_range": "$$$",
+          "blurb": "Thermal-flex lining, glued and blind-stitched seams and a hydrolock neck seal. Consistently rated the warmest and most flexible 5mm wetsuit in independent diver tests.",
+          "best_for": "Divers in 16–24°C water who hate being cold",
+          "asin": "",
+          "search_query": "Fourth Element Proteus II 5mm wetsuit"
+        }
+      ]
+    },
+    "beginner-dive-computers": {
+      "order": 2,
+      "title": "Best Beginner Dive Computers (2026)",
+      "meta_description": "The best entry-level dive computers for new divers in 2026 — simple, safe and affordable. Compared: Cressi Leonardo, Mares Puck Pro+, Suunto Zoop Novo, Peregrine and more.",
+      "intro": "Your first dive computer should be simple to read, conservative by default and affordable enough to buy before your Open Water course ends. These are the models instructors actually recommend to students.",
+      "icon": "fa-stopwatch",
+      "products": [
+        {
+          "name": "Cressi Leonardo",
+          "brand": "Cressi",
+          "category": "Dive Computer",
+          "badge": "Best for Beginners",
+          "badge_color": "success",
+          "rating": 4.6,
+          "price_range": "$",
+          "blurb": "One button, one screen, Air and Nitrox modes and a user-replaceable battery. The single most-recommended first computer in dive shops worldwide — almost impossible to misread.",
+          "best_for": "Brand-new divers who want zero complexity",
+          "asin": "",
+          "search_query": "Cressi Leonardo dive computer"
+        },
+        {
+          "name": "Mares Puck Pro+",
+          "brand": "Mares",
+          "category": "Dive Computer",
+          "badge": "Best Value",
+          "badge_color": "success",
+          "rating": 4.5,
+          "price_range": "$",
+          "blurb": "Slim profile, big digits, Nitrox up to 99% and Bluetooth log upload on the Plus version. Slightly more capable than the Leonardo for roughly the same money.",
+          "best_for": "Budget buyers who still want Bluetooth logbooks",
+          "asin": "",
+          "search_query": "Mares Puck Pro Plus dive computer"
+        },
+        {
+          "name": "Suunto Zoop Novo",
+          "brand": "Suunto",
+          "category": "Dive Computer",
+          "badge": "Most Conservative",
+          "badge_color": "info",
+          "rating": 4.5,
+          "price_range": "$",
+          "blurb": "Suunto's RGBM algorithm errs on the side of safety, with five modes including a full planner. Chunky, tough and trusted by dive schools for decades.",
+          "best_for": "Cautious new divers and dive school use",
+          "asin": "",
+          "search_query": "Suunto Zoop Novo dive computer"
+        },
+        {
+          "name": "Garmin Descent G1",
+          "brand": "Garmin",
+          "category": "Dive Computer",
+          "badge": "Watch Style",
+          "badge_color": "primary",
+          "rating": 4.6,
+          "price_range": "$$",
+          "blurb": "A real dive computer that doubles as a daily fitness watch — GPS surface tracking, 25-day battery and full Garmin Connect integration. Wear it out of the water too.",
+          "best_for": "Divers who want one watch for sport and sea",
+          "asin": "",
+          "search_query": "Garmin Descent G1 dive computer watch"
+        },
+        {
+          "name": "Shearwater Peregrine",
+          "brand": "Shearwater",
+          "category": "Dive Computer",
+          "badge": "Buy Once, Cry Once",
+          "badge_color": "warning",
+          "rating": 4.9,
+          "price_range": "$$",
+          "blurb": "The cheapest way into Shearwater's legendary color screen and interface. Grows with you from Open Water to multi-gas dives — you will never outgrow it as a recreational diver.",
+          "best_for": "Beginners who'd rather skip the upgrade cycle",
+          "asin": "",
+          "search_query": "Shearwater Peregrine dive computer"
+        },
+        {
+          "name": "Aqualung i330R",
+          "brand": "Aqualung",
+          "category": "Dive Computer",
+          "badge": "Compact Color",
+          "badge_color": "info",
+          "rating": 4.4,
+          "price_range": "$$",
+          "blurb": "Rechargeable battery, bright color screen and three gas switching in a compact puck. A modern feel at a mid-entry price point.",
+          "best_for": "Divers who want color and USB charging on a budget",
+          "asin": "",
+          "search_query": "Aqualung i330R dive computer"
+        }
+      ]
+    }
+  }
+}

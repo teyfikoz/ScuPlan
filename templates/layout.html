@@ -97,6 +97,16 @@
     </script>
     {% endif %}
 
+    {% if adsense_enabled and adsense_auto_ads_enabled and not google_consent_mode_enabled
+          and adsense_client_id and 'XXXXXXXX' not in adsense_client_id %}
+    <!-- Google AdSense Auto Ads (loaded immediately when the consent banner is disabled;
+         otherwise the consent-gated loader at the bottom of this template handles it) -->
+    <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}"
+            crossorigin="anonymous"
+            data-scuplan-adsense="true"></script>
+    {% endif %}
+
     <style>
         .consent-banner {
             position: fixed;
@@ -203,6 +213,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/blog" id="blogLink">
                             <i class="fas fa-book-open me-1"></i> Blog
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gear" id="gearLink">
+                            <i class="fas fa-shopping-bag me-1"></i> Gear
                         </a>
                     </li>
                     <li class="nav-item">
