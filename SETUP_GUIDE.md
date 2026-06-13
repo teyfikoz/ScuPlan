@@ -392,9 +392,3 @@ Hiçbiri yeni servis/abonelik gerektirmez; hepsi mevcut VPS + ücretsiz API'lerl
 - **IndexNow:** `.env`'e `INDEXNOW_KEY` ekleyin (`python -c "import secrets; print(secrets.token_hex(16))"`),
   blog ajanı her yayında Bing/Yandex'e ücretsiz anında indeksleme pingi atar
   (`/indexnow.txt` route'u anahtarı doğrular).
-- **Blog → Shorts senaryosu (MoneyPrinterTurbo yaklaşımı):**
-  ```bash
-  python scripts/blog_to_shorts.py --lang tr   # son makaleyi 30-45sn video senaryosuna çevirir
-  ```
-  Çıktı JSON'u n8n + Higgsfield hattına verin: hook, sahne sahne görsel yönergesi,
-  seslendirme metni ve CTA'lı caption hazır gelir. Zincir: Ollama → Groq → offline şablon.
